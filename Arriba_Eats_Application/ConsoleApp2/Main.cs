@@ -1,5 +1,6 @@
 ﻿using Arriba_Eats_App.Arriba_Eats_App.UI;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Main
 {
@@ -7,7 +8,8 @@ namespace Main
 	{
 		static void Main(string[] args)
 		{
-			MainMenuUI.MainMenu(); // debuggin purposes
+			var Menu = new MainMenuUI();
+			Menu.ShowMenu();
 		}
 	}
 }

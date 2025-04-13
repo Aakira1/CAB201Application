@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -13,117 +14,113 @@ using System.Threading.Tasks;
 
 namespace Arriba_Eats_App.Arriba_Eats_App.UI
 {
-	static class MainMenuUI
+	class MenuUI
 	{
-		public static void MainMenu()
+		public virtual void ShowMenu()
 		{
-			MainMenuOptions();
+			Console.WriteLine("Default Menu");
 		}
 
-		#region Handles Main Menu Options and UI functionality
-
-		/// <summary>
-		///  Runs the main menu options for the user to select from.
-		/// </summary>
-		public static void MainMenuOptions()
+		public string GetUserInput()
 		{
-			// set the menu to be active until the user selects to exit.
-			bool IsActive = true;
-			
-			// print message to screen so a selection is visible for the user
-			Console.Clear();
-			Console.WriteLine(WelcomeMessage()+$"\n");
-			Console.WriteLine("From the following selection, using your input keys you can navigate the menu:");
-			Console.WriteLine("1. Customer Login");
-			Console.WriteLine("2. Restaruant Staff Login");
-			Console.WriteLine("3. Delivery Staff Login");
-			Console.WriteLine("4. Register New Account");
-			Console.WriteLine("5. Exit");
-
-			// set variable input to be picked up by the switch case.
-			string input = GetUserInput();
-			HandleEmptyInputs(input);
-
-			switch (input)
-			{
-				case "1":
-					Console.WriteLine("Customer Successfully Logged In");
-					return;
-				case "2":
-					Console.WriteLine("Restaurant Staff Successfully Logged In");
-					return;
-				case "3":
-					Console.WriteLine("Delivery Staff Successfully Logged In");
-					return;
-				case "4":
-					Console.WriteLine("Register New Account");
-					return;
-				case "5":
-					Console.WriteLine("Exiting the program...");
-					IsActive = false;
-					break;
-			}
-
+			Console.Write("Please select from the following: ");
+			string input = Console.ReadLine()!;
+			return input;
 		}
 
-		/// <summary>
-		/// Displays the welcome message to the user.
-		/// </summary>
-		/// <returns>
-		/// returns welcome message to the user.
-		/// </returns>
-		public static string WelcomeMessage()
+		public string GetPasswordInput()
 		{
-			return "Welcome To Arriba Eats!";
+			Console.Write("Please enter your password: ");
+			string password = Console.ReadLine()!;
+			return password;
 		}
 
-		/// <summary>
-		/// Displays the welcome message to the user.
-		/// </summary>
-		/// <returns>
-		/// A string containing the formatted welcome message. 
-		/// </returns>
-		static string GetUserInput()
-		{
-			Console.WriteLine("Please select an option from the menu above:");
-			string userInput = Console.ReadLine()!;
-			return userInput;
-		}
-		#endregion
-
-		#region Debugging Functions & Error Handling Functions
-
-		/// <summary>
-		/// Displays error messages to the user.
-		/// </summary>
-		/// <param name="message">
-		///	An input return
-		/// </param>
-		static void DisplayErrorMessage(string message)
+		public void DisplayErrorMessage(string message)
 		{
 			Console.WriteLine(message);
 		}
 
-
-		/// <summary>
-		/// Handles empty inputs by displaying an error message and returning to the main menu.
-		/// </summary>
-		/// <param name="Input">
-		/// a string that handles user input to determine if it is empty.
-		/// </param>
-		static void HandleEmptyInputs(string Input)
+		public void HandleEmptyInput(string Input)
 		{
-			string ErrorMessage = "";
-			if (Input is null || Input == string.Empty)
+			if (string.IsNullOrEmpty(Input))
 			{
-				ErrorMessage = "Error: Input cannot be empty. Please try again.";
-				DisplayErrorMessage(ErrorMessage);
-				Console.WriteLine("Press any key to continue...");
+				DisplayErrorMessage("Input cannot be empty. Please try again.");
 				Console.ReadKey();
 				Console.Clear();
-				MainMenuOptions();
 			}
 		}
-		#endregion
+
+		public string WelcomeMessage()
+		{
+			return "Welcome to Arriba Eats!";
+		}
+
 	}
+
+	class MainMenuUI : MenuUI
+	{
+		public override void ShowMenu()
+		{
+			bool IsActive = true;
+
+			while (IsActive)
+			{
+				//Console.Clear();
+				Console.WriteLine(WelcomeMessage()+"\n");
+				Console.WriteLine("1. Login");
+				Console.WriteLine("2. Register");
+				Console.WriteLine("3. Exit"); 
+
+				string Input = GetUserInput();
+				if (string.IsNullOrEmpty(Input))
+				{
+					HandleEmptyInput(Input);
+					continue;
+				}
+				IsActive = SelectionMenu(Input);
+			}
+
+			Console.WriteLine("Thankyou for using Arriba Eats!");
+		}
+
+		private bool SelectionMenu(string Input)
+		{
+			switch (Input)
+			{
+				case "1":
+					LoginUI login = new LoginUI();
+					login.ShowMenu();
+					break;
+				case "2":
+					RegisterAccountUI register = new RegisterAccountUI();
+					register.ShowMenu();
+					break;
+				case "3":
+					Console.WriteLine("Exiting the application...");
+					return false;
+				default:
+					Console.WriteLine("Invalid selection. Please try again.\n");
+					break;
+			}
+
+			return true;
+		}
+	}
+
+	class RegisterAccountUI : MainMenuUI
+	{
+		public override void ShowMenu()
+		{
+
+		}
+	}
+
+	class LoginUI : MainMenuUI
+	{
+		// This class is a placeholder for the sub menu functionality.
+		// It can be implemented later as needed.
+		// For now, it inherits from MainMenuUI to access its methods and properties.
+	}
+
+
 }
