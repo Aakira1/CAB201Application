@@ -31,12 +31,14 @@ namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
 		public string Email { get; set; }
 		public string MobileNumber { get; set; }
 		public string Password { get; set; }
+		public string Username { get; set; }
+		public UserType UserType { get; set; } // Enum to differentiate between user types
 	}
 
 	/// <summary>
 	/// Admin class represents an administrator in the system, including their name, email, and mobile number.
 	/// </summary>
-	public class Customer : UserData
+	public class User : UserData
 	{
 		public Location DeliveryLocation { get; set; }
 		public List<Order> OrderHistory { get; set; } = new List<Order>();
@@ -97,7 +99,7 @@ namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
 	public class Order
 	{
 		public Guid UUID { get; set; }
-		public Customer Customer { get; set; }
+		public User Customer { get; set; }
 		public Restaraunt Restaraunt { get; set; }
 		public DeliveryService DeliveryPerson { get; set; }
 		public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
@@ -153,6 +155,13 @@ namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
 		Cooking,
 		OutForDelivery,
 		Delivered
+	}
+
+	public enum UserType
+	{
+		Customer,
+		DeliveryService,
+		Client
 	}
 
 	#endregion

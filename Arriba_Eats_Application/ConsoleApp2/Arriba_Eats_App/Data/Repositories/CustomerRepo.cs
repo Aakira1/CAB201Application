@@ -5,32 +5,32 @@ using System.Collections.Generic;
 
 namespace Arriba_Eats_App.Data.Repositories
 {
-	public class CustomerRepo : IRepository<Customer>
+	public class CustomerRepo : IRepository<User>
 	{
 		// in memory collection
-		private List<Customer> _customers = new List<Customer>();
+		private List<User> _users = new List<User>();
 
-		public IEnumerable<Customer> GetAll()
+		public IEnumerable<User> GetAll()
 		{
-			if (_customers.Count == 0)
+			if (_users.Count == 0)
 			{
 				Console.WriteLine("No customers found"); // debug line
 			}
 			Console.WriteLine("Customers found"); // debug line
-			return _customers;
+			return _users;
 		}
 
-		public Customer GetById(Guid UUID)
+		public User GetById(Guid UUID)
 		{
-			if (_customers.Find(c => c.UUID == UUID) == null)
+			if (_users.Find(c => c.UUID == UUID) == null)
 			{
-				Console.WriteLine("Customer not found"); // debug line
+				Console.WriteLine("User not found"); // debug line
 			}
-			Console.WriteLine("Customer found"); // debug line
-			return _customers.Find(c => c.UUID == UUID);
+			Console.WriteLine("User found"); // debug line
+			return _users.Find(c => c.UUID == UUID);
 		}
 
-		public void Add(Customer Entity)
+		public void Add(User Entity)
 		{
 			if (Entity.Address == null || Entity.MobileNumber == null)
 			{
@@ -38,48 +38,31 @@ namespace Arriba_Eats_App.Data.Repositories
 			}
 
 			if (Entity.UUID == Guid.Empty) Entity.UUID = Guid.NewGuid(); // generate a new UUID if not set
-			_customers.Add(Entity);
+			_users.Add(Entity);
 		}
 
-		public void Update(Customer Entity)
+		public void Update(User Entity)
 		{
-			var index = _customers.FindIndex(c => c.UUID == Entity.UUID);
+			var index = _users.FindIndex(c => c.UUID == Entity.UUID);
 			if(index < 0)
 			{
-				Console.WriteLine("Customer not found"); // debug line
+				Console.WriteLine("User not found"); // debug line
 				return;
 			}
 
-			if (index >= 0) _customers[index] = Entity; // update the customer in the collection
+			if (index >= 0) _users[index] = Entity; // update the customer in the collection
 		}
 
 		public void Delete(Guid UUID)
 		{
 			var customer = GetById(UUID);
-			if (customer != null) _customers.Remove(customer);// remove the customer from the collection
+			if (customer != null) _users.Remove(customer);// remove the customer from the collection
 		}
 
 		public void SaveChanges()
 		{
 			// In a real application, this would save changes to a database
 			// as a result of the assessment I have made the structure memory based only as requirements.
-		}
-
-		/// Get a customer by email
-		public Customer GetByDetails(string UserDetail)
-		{
-			var CustomerByEmail = _customers.Find(c => c.Email == UserDetail);
-			var CustomerByMobile = _customers.Find(c => c.MobileNumber == UserDetail);
-			var CustomerByUUID = _customers.Find(c => c.UUID.ToString() == UserDetail);
-
-			if (CustomerByEmail == null && CustomerByMobile == null && CustomerByUUID == null)
-			{
-				Console.WriteLine("Customer not found"); // debug line
-				return null;
-			}
-
-			Console.WriteLine("Customer found"); // debug line
-			return CustomerByEmail ?? CustomerByMobile ?? CustomerByUUID;
 		}
 	}
 }
