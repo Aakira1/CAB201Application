@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Arriba_Eats_App\Utilities%28optional%29\" />
+    <Compile Remove="Arriba_Eats_App\Utilities%28optional%29\**" />
+    <EmbeddedResource Remove="Arriba_Eats_App\Utilities%28optional%29\**" />
+    <None Remove="Arriba_Eats_App\Utilities%28optional%29\**" />
   </ItemGroup>
 
 </Project>
