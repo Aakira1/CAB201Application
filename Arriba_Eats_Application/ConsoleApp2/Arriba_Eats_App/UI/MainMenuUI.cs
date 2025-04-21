@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace Arriba_Eats_App.Arriba_Eats_App.UI
 {
+	/// <summary>
+	/// MenuUI class is the base class for all menu-related user interfaces in the application.
+	/// </summary>
 	class MenuUI
 	{
 		public virtual void ShowMenu()
@@ -57,6 +60,9 @@ namespace Arriba_Eats_App.Arriba_Eats_App.UI
 
 	}
 
+	/// <summary>
+	/// MainMenuUI class is responsible for displaying the main menu of the application.
+	/// </summary>
 	class MainMenuUI : MenuUI
 	{
 		public override void ShowMenu()
@@ -107,14 +113,20 @@ namespace Arriba_Eats_App.Arriba_Eats_App.UI
 		}
 	}
 
+	/// <summary>
+	/// RegisterAccountUI class is responsible for displaying the registration menu of the application.
+	/// </summary>
 	class RegisterAccountUI : MainMenuUI
 	{
 		public override void ShowMenu()
 		{
-
+			
 		}
 	}
 
+	/// <summary>
+	/// LoginUI class is responsible for displaying the login menu of the application.
+	/// </summary>
 	class LoginUI : MainMenuUI
 	{
 		// This class is a placeholder for the sub menu functionality.
