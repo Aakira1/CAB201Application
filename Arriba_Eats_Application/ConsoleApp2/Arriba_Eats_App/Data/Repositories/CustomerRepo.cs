@@ -16,7 +16,7 @@ namespace Arriba_Eats_App.Data.Repositories
 			{
 				Console.WriteLine("No customers found"); // debug line
 			}
-			Console.WriteLine("Customers found"); // debug line
+			//Console.WriteLine("Customers found"); // debug line
 			return _users;
 		}
 

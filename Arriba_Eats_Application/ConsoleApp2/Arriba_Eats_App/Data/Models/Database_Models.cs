@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
 {
+	#region Public Classes
 	/// <summary>
 	/// This namespace contains the data models for the Arriba Eats application.
 	/// </summary>
@@ -16,8 +17,6 @@ namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
 	/// <author>Ayden Beggs</author> 
 	/// <date>19/04/2025</date>
 	/// <version>1.0</version>
-
-	#region Data Models
 
 	/// <summary>
 	/// UserData class is the base class for all user-related data in the application.
@@ -63,10 +62,6 @@ namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
 		public Restaraunt Restaraunt { get; set; }
 	}
 
-
-	#endregion
-
-	#region Class Definitions & Enums
 	// ----------------------------------------------------------- Object class for additional user data ----------------------------------------------------------- //
 	/// <summary>
 	/// MenuItem class represents a menu item in a restaurant, including its name, price, and UUID.
@@ -144,7 +139,8 @@ namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
 			return Math.Sqrt(Math.Pow(X - other.X, 2) + Math.Pow(Y - other.Y, 2)); // Euclidean distance, not accurate for real-world distances      --*note: likely to be restructed but currently fits the projects requirements.*--
 		}
 	}
-
+	#endregion
+	#region Enums
 	/// <summary>
 	/// OrderStatus enum represents the status of an order in the system.
 	/// </summary>

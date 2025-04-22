@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-
+using Arriba_Eats_App.Arriba_Eats_App.Data.Models;
+using Arriba_Eats_App.Arriba_Eats_App.Services;
 // Personal note
 /*
 	
@@ -24,18 +24,18 @@ namespace Arriba_Eats_App.Arriba_Eats_App.UI
 			Console.WriteLine("Default Menu");
 		}
 
-		public string GetUserInput()
-		{
-			Console.Write("Please select from the following: ");
-			string input = Console.ReadLine()!;
-			return input;
-		}
-
 		public string GetPasswordInput()
 		{
 			Console.Write("Please enter your password: ");
 			string password = Console.ReadLine()!;
 			return password;
+		}
+
+		public string GetUserInput()
+		{
+			Console.Write("Please enter your username: ");
+			string username = Console.ReadLine()!;
+			return username;
 		}
 
 		public void DisplayErrorMessage(string message)
@@ -58,6 +58,29 @@ namespace Arriba_Eats_App.Arriba_Eats_App.UI
 			return "Welcome to Arriba Eats!";
 		}
 
+		public void HiddenPassword(string Password)
+		{
+			Password = string.Empty;
+
+			ConsoleKey key;
+			do
+			{
+				var KeyInfo = Console.ReadKey(intercept: true);
+				key = KeyInfo.Key;
+
+				if (key == ConsoleKey.Backspace && Password.Length > 0)
+				{
+					Password = Password.Substring(0, (Password.Length - 1));
+					Console.Write("\b \b");
+					Password = Password[0..^1];
+				}
+				else if (!char.IsControl(KeyInfo.KeyChar))
+				{
+					Console.Write("*");
+					Password += KeyInfo.KeyChar;
+				}
+			} while (key != ConsoleKey.Enter);
+		}
 	}
 
 	/// <summary>
@@ -132,6 +155,45 @@ namespace Arriba_Eats_App.Arriba_Eats_App.UI
 		// This class is a placeholder for the sub menu functionality.
 		// It can be implemented later as needed.
 		// For now, it inherits from MainMenuUI to access its methods and properties.
+		public override void ShowMenu()
+		{
+			bool IsActive = true;
+
+			while (IsActive)
+			{
+				//Console.Clear();
+				Console.WriteLine("Enter Your Username");
+				string Input = GetUserInput();
+				if (string.IsNullOrEmpty(Input))
+				{
+					HandleEmptyInput(Input);
+					continue;
+				}
+				IsActive = SelectionMenu(Input);
+			}
+		}
+		private bool SelectionMenu(string Input)
+		{
+			UserService _userService = new UserService();
+
+			switch (Input)
+			{
+				case "1":
+					LoginUI login = new LoginUI();
+					login.ShowMenu();
+					break;
+				case "2":
+					RegisterAccountUI register = new RegisterAccountUI();
+					register.ShowMenu();
+					break;
+				default:
+					Console.WriteLine("Invalid selection. Please try again.\n");
+					break;
+			}
+
+			return true;
+		}
+
 	}
 
 

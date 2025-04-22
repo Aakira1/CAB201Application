@@ -18,10 +18,12 @@ namespace Main
 				Name = "John Doe",
 				Address = "123 Main St",
 				MobileNumber = "123-456-7890",
-				UserType = UserType.Customer
+				UserType = UserType.Customer,
+				Username = "johndoe",
+				Password = "password123",
 			};
 			User.Add(Customer);
-			User.SearchUserDetails(Customer, UserType.Customer, "Name");
+			User.ReturnLoginValidation(Customer.Username, Customer.Password);
 		}
 	}
 }
