@@ -25,13 +25,19 @@ namespace Arriba_Eats_App.Arriba_Eats_App.Services
 				Console.WriteLine("Customer cannot be null");
 				return;
 			}
-			if (string.IsNullOrEmpty(Data.Name) || string.IsNullOrEmpty(Data.Address) || string.IsNullOrEmpty(Data.MobileNumber))
+			if (string.IsNullOrEmpty(Data.Name) 
+				|| string.IsNullOrEmpty(Data.Email) 
+				|| string.IsNullOrEmpty(Data.MobileNumber) 
+				|| string.IsNullOrEmpty(Data.Age)
+				|| string.IsNullOrEmpty(Data.Password)
+				|| string.IsNullOrEmpty(Data.DeliveryLocation.ToString())
+				)
 			{
 				Console.WriteLine("Customer details are incomplete");
 				return;
 			}
 			Add(Data);
-			Console.WriteLine("Customer added successfully");
+			Console.WriteLine($"You have been successfully registered as a customer, {Data.Name}!");
 		}
 
 		/// <summary>
