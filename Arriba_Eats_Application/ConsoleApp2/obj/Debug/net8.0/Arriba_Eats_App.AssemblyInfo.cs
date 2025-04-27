@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Arriba_Eats_App")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f54db4ceb02e3f8e8173969ecbb839091ffc063c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0311d5307b20570ac568df899801ecaf34f40d7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Arriba_Eats_App")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Arriba_Eats_App")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,165 +1,198 @@
-﻿using Arriba_Eats_App.Arriba_Eats_App.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Arriba_Eats_App.Arriba_Eats_App.Data.Models
+namespace Arriba_Eats_App.Data.Models
 {
-	#region Public Classes
+	#region Base Classes
 	/// <summary>
-	/// This namespace contains the data models for the Arriba Eats application.
-	/// </summary>
-	/// <remarks>
-	/// The data models are used to represent the data structures used in the application.
-	/// </remarks>
-	/// <author>Ayden Beggs</author> 
-	/// <date>19/04/2025</date>
-	/// <version>1.0</version>
-
-	/// <summary>
-	/// UserData class is the base class for all user-related data in the application.
+	/// Base class for all user-related data in the application
 	/// </summary>
 	public abstract class UserData
 	{
-		public Guid UUID { get; set; }
-		public string Name { get; set; }
-		public string Age { get; set; }
-		public string Address { get; set; }
-		public string Email { get; set; }
-		public string MobileNumber { get; set; }
-		public string Password { get; set; }
-		public string Username { get; set; }
-		public UserType UserType { get; set; } // Enum to differentiate between user types
+		public Guid Id { get; set; } = Guid.NewGuid();
+		public required string Name { get; set; }
+		public required string Age { get; set; }
+		public required string Address { get; set; }
+		public required string Email { get; set; }
+		public required string MobileNumber { get; set; }
+		public required string Username { get; set; }
+		public required string Password { get; set; } // Should be stored as hash in production
+		public UserType UserType { get; set; }
 	}
 
 	/// <summary>
-	/// Admin class represents an administrator in the system, including their name, email, and mobile number.
+	/// Base class for all entities with unique identifier
+	/// </summary>
+	public abstract class EntityBase
+	{
+		public Guid Id { get; set; } = Guid.NewGuid();
+	}
+	#endregion
+
+	#region User Types
+	/// <summary>
+	/// Standard user/customer account
 	/// </summary>
 	public class User : UserData
 	{
-		public Location DeliveryLocation { get; set; }
-		public List<Order> OrderHistory { get; set; } = new List<Order>();
+		public required Location DeliveryLocation { get; set; }
+		public List<Order> OrderHistory { get; set; } = new();
 		public decimal WalletBalance { get; set; }
 		public decimal TotalSpent { get; set; }
 	}
 
 	/// <summary>
-	/// DeliveryService class represents a delivery person in the system, including their vehicle type, license plate, and current location.
+	/// Delivery person account with vehicle details
 	/// </summary>
-	public class DeliveryService : UserData
+	public class DeliveryPerson : UserData
 	{
-		public string VehicleType { get; set; }
-		public string LicensePlate { get; set; }
-		public string VehicleColor { get; set; }
-		public Location CurrentLocation { get; set; }
-		public Order CurrentOrderStatus { get; set; }
-	}
-
-	public class Client : UserData
-	{
-		public Restaraunt Restaraunt { get; set; }
-	}
-
-	// ----------------------------------------------------------- Object class for additional user data ----------------------------------------------------------- //
-	/// <summary>
-	/// MenuItem class represents a menu item in a restaurant, including its name, price, and UUID.
-	/// </summary>
-	public class MenuItem
-	{
-		public Guid UUID { get; set; }
-		public string Name { get; set; }
-		public decimal Price { get; set; }
+		public required string VehicleType { get; set; }
+		public required string LicensePlate { get; set; }
+		public required string VehicleColor { get; set; }
+		public required Location CurrentLocation { get; set; }
+		public Order? CurrentOrder { get; set; }
+		public List<Order> CompletedDeliveries { get; set; } = new();
 	}
 
 	/// <summary>
-	/// Restaraunt class represents a restaurant, including its name, address, phone number, location, menu items, and ratings.
+	/// Restaurant owner/manager account
 	/// </summary>
-	public class Restaraunt
+	public class RestaurantOwner : UserData
 	{
-		public Guid UUID { get; set; }
-		public string Name { get; set; }
-		public string Address { get; set; }
-		public string PhoneNumber { get; set; }
-		public Location Location { get; set; }
-		public List<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
-		public List<Ratings> ItemRatings { get; set; } = new List<Ratings>();
-		//public double AverageRating => Ratings.Any() ? Ratings.Average(r => r.Stars) : 0;
+		public required Restaurant Restaurant { get; set; }
+	}
+	#endregion
+
+	#region Business Entities
+	/// <summary>
+	/// Restaurant with menu and location information
+	/// </summary>
+	public class Restaurant : EntityBase
+	{
+		public required string Name { get; set; }
+		public required string Address { get; set; }
+		public required string PhoneNumber { get; set; }
+		public required Location Location { get; set; }
+		public List<MenuItem> MenuItems { get; set; } = new();
+		public List<Rating> Ratings { get; set; } = new();
+
+		// Calculated property for average rating
+		public double AverageRating => Ratings.Any() ? Ratings.Average(r => r.Stars) : 0;
 	}
 
 	/// <summary>
-	/// Order class represents a customer's order, including the customer, restaurant, delivery person, and order items.
+	/// Menu item with name, description and price
 	/// </summary>
-	public class Order
+	public class MenuItem : EntityBase
 	{
-		public Guid UUID { get; set; }
-		public User Customer { get; set; }
-		public Restaraunt Restaraunt { get; set; }
-		public DeliveryService DeliveryPerson { get; set; }
-		public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-		public OrderStatus Status { get; set; }
-		public DateTime OrderDate { get; set; }
-		public decimal TotalAmount => OrderItems.Sum(item => item.MenuItem.Price * item.Quantity); // Calculate total amount based on order items and their quantities
+		public required string Name { get; set; }
+		public string? Description { get; set; }
+		public required decimal Price { get; set; }
+		public string? ImageUrl { get; set; }
+		public List<Rating> Ratings { get; set; } = new();
 
+		// Calculated property for average rating
+		public double AverageRating => Ratings.Any() ? Ratings.Average(r => r.Stars) : 0;
 	}
 
 	/// <summary>
-	/// OrderItem class represents an item in an order, including the menu item and its quantity.
+	/// Customer order with items, status and tracking
 	/// </summary>
-	public class OrderItem
+	public class Order : EntityBase
 	{
-		public MenuItem MenuItem { get; set; }
-		public int Quantity { get; set; }
+		public required User Customer { get; set; }
+		public required Restaurant Restaurant { get; set; }
+		public DeliveryPerson? DeliveryPerson { get; set; }
+		public List<OrderItem> Items { get; set; } = new();
+		public OrderStatus Status { get; set; } = OrderStatus.Placed;
+		public DateTime OrderDate { get; set; } = DateTime.Now;
+		public DateTime? DeliveredDate { get; set; }
+
+		// Calculated properties
+		public decimal Subtotal => Items.Sum(item => item.MenuItem.Price * item.Quantity);
+		public decimal DeliveryFee { get; set; } = 2.99m;
+		public decimal Tax => Subtotal * 0.0875m; // Example 8.75% tax
+		public decimal TotalAmount => Subtotal + DeliveryFee + Tax;
 	}
 
 	/// <summary>
-	/// Ratings class represents a customer's rating and review for a menu item.
+	/// Item in an order with quantity and special instructions
 	/// </summary>
-	public class Ratings
+	public class OrderItem : EntityBase
 	{
-		public Guid CustomerID { get; set; }
-		public string RatingStars { get; set; }
-		public int Stars { get; set; }
-		public string Review { get; set; }
-		public DateTime DatePosted { get; set; }
+		public required MenuItem MenuItem { get; set; }
+		public int Quantity { get; set; } = 1;
+		public string? SpecialInstructions { get; set; }
+		public decimal ItemTotal => MenuItem.Price * Quantity;
 	}
 
 	/// <summary>
-	/// Location class represents a geographical location with latitude and longitude.
+	/// Rating for restaurant or menu item
+	/// </summary>
+	public class Rating : EntityBase
+	{
+		public required User Customer { get; set; }
+		public int Stars { get; set; } // 1-5 star rating
+		public string? Review { get; set; }
+		public DateTime DatePosted { get; set; } = DateTime.Now;
+	}
+
+	/// <summary>
+	/// Geographic location with latitude and longitude
 	/// </summary>
 	public class Location
 	{
-		public double X { get; set; } // latitude
-		public double Y { get; set; } // longitude
+		public Location(double latitude, double longitude)
+		{
+			Latitude = latitude;
+			Longitude = longitude;
+		}
 
+		public double Latitude { get; set; }
+		public double Longitude { get; set; }
 
+		/// <summary>
+		/// Calculate simple Euclidean distance to another location
+		/// </summary>
+		/// <remarks>
+		/// This is not accurate for real-world distances and should be replaced
+		/// with actual geolocation calculations in production
+		/// </remarks>
 		public double DistanceTo(Location other)
 		{
-			return Math.Sqrt(Math.Pow(X - other.X, 2) + Math.Pow(Y - other.Y, 2)); // Euclidean distance, not accurate for real-world distances      --*note: likely to be restructed but currently fits the projects requirements.*--
+			return Math.Sqrt(Math.Pow(Latitude - other.Latitude, 2) +
+						   Math.Pow(Longitude - other.Longitude, 2));
 		}
+
+		public override string ToString() => $"({Latitude}, {Longitude})";
 	}
 	#endregion
+
 	#region Enums
 	/// <summary>
-	/// OrderStatus enum represents the status of an order in the system.
+	/// Status of an order in the system
 	/// </summary>
 	public enum OrderStatus
 	{
-		Ordered,
+		Placed,
+		Confirmed,
 		Preparing,
-		Cooking,
+		ReadyForPickup,
 		OutForDelivery,
-		Delivered
+		Delivered,
+		Cancelled
 	}
 
+	/// <summary>
+	/// Type of user in the system
+	/// </summary>
 	public enum UserType
 	{
 		Customer,
-		DeliveryService,
-		Client
+		DeliveryPerson,
+		RestaurantOwner,
+		Administrator
 	}
-
 	#endregion
 }
-
