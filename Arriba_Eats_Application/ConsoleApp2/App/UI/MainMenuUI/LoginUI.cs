@@ -1,12 +1,12 @@
 ﻿using System;
 using Arriba_Eats_App.Services;
 
-namespace Arriba_Eats_App.Arriba_Eats_App.UI.MainMenuUI
+namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 {
 	/// <summary>
 	/// LoginUI class is responsible for displaying the login menu of the application.
 	/// </summary>
-	class LoginUI : MainMenuUI
+	class LoginUI : MenuUI
 	{
 		private UserService userService = new UserService();
 

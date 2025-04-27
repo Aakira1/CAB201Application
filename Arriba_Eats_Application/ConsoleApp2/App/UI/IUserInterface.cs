@@ -5,14 +5,15 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arriba_Eats_App.Arriba_Eats_App.UI
+namespace Arriba_Eats_App.UI
 {
     public interface IUserInterface
     {
-        public virtual void ShowMenu(bool isActive)
-		{
-			Console.WriteLine("Default Menu");
-		}
+		// non overridable methods
+		void ClearScreen();
+		void WaitForKeyPress();
+
+		// variable methods 
 		string WelcomeMessage()
 		{
 			return "Welcome to Arriba Eats!";
@@ -25,7 +26,6 @@ namespace Arriba_Eats_App.Arriba_Eats_App.UI
         string GetSecuredInput(string input);
         void DisplayOutput(string message);
 		void DisplayError(string message);
-        void ClearScreen();
-		void WaitForKeyPress();
+
 	}
 }

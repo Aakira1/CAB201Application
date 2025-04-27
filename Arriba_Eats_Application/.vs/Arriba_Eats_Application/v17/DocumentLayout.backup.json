@@ -3,28 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\arriba_eats_app\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\arriba_eats_app\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\arriba_eats_app\\ui\\mainmenuui\\registeraccountui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\arriba_eats_app\\ui\\mainmenuui\\registeraccountui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\arriba_eats_app\\ui\\mainmenuui\\mainmenuui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\arriba_eats_app\\ui\\mainmenuui\\mainmenuui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\arriba_eats_app\\data\\models\\inmemorydatastore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\arriba_eats_app\\data\\models\\inmemorydatastore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\app\\ui\\mainmenuui\\mainmenuui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\app\\ui\\mainmenuui\\mainmenuui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\arriba_eats_app\\ui\\mainmenuui\\loginui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\arriba_eats_app\\ui\\mainmenuui\\loginui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\app\\ui\\menuui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\app\\ui\\menuui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\app\\ui\\customermenuui\\customersui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\app\\ui\\customermenuui\\customersui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\consoleapp2\\app\\ui\\mainmenuui\\loginui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{795E6BFF-E114-4D7D-B089-52F807FF784F}|ConsoleApp2\\Arriba_Eats_App.csproj|solutionrelative:consoleapp2\\app\\ui\\mainmenuui\\loginui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,84 +30,71 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "RegisterAccountUI.cs",
-              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\RegisterAccountUI.cs",
-              "RelativeDocumentMoniker": "ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\RegisterAccountUI.cs",
-              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\RegisterAccountUI.cs",
-              "RelativeToolTip": "ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\RegisterAccountUI.cs",
-              "ViewState": "AgIAAHEAAAAAAAAAAADgv4EAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-27T10:19:17.581Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainMenuUI.cs",
-              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\MainMenuUI.cs",
-              "RelativeDocumentMoniker": "ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\MainMenuUI.cs",
-              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\MainMenuUI.cs",
-              "RelativeToolTip": "ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\MainMenuUI.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAjwFEAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-27T10:18:53.346Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Main.cs",
               "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Main.cs",
               "RelativeDocumentMoniker": "ConsoleApp2\\Main.cs",
               "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Main.cs",
               "RelativeToolTip": "ConsoleApp2\\Main.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAABkAAAAAAAAAAAAYwCQAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-27T10:18:35.497Z",
+              "WhenOpened": "2025-04-27T15:15:54.055Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\Services\\UserService.cs",
-              "RelativeDocumentMoniker": "ConsoleApp2\\Arriba_Eats_App\\Services\\UserService.cs",
-              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\Services\\UserService.cs",
-              "RelativeToolTip": "ConsoleApp2\\Arriba_Eats_App\\Services\\UserService.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAADgvzgAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "MenuUI.cs",
+              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\MenuUI.cs",
+              "RelativeDocumentMoniker": "ConsoleApp2\\App\\UI\\MenuUI.cs",
+              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\MenuUI.cs",
+              "RelativeToolTip": "ConsoleApp2\\App\\UI\\MenuUI.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-27T10:15:52.489Z",
+              "WhenOpened": "2025-04-27T15:13:08.827Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "LoginUI.cs",
-              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\LoginUI.cs",
-              "RelativeDocumentMoniker": "ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\LoginUI.cs",
-              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\LoginUI.cs",
-              "RelativeToolTip": "ConsoleApp2\\Arriba_Eats_App\\UI\\MainMenuUI\\LoginUI.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAwAAAAXAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "CustomersUI.cs",
+              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\CustomerMenuUI\\CustomersUI.cs",
+              "RelativeDocumentMoniker": "ConsoleApp2\\App\\UI\\CustomerMenuUI\\CustomersUI.cs",
+              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\CustomerMenuUI\\CustomersUI.cs",
+              "RelativeToolTip": "ConsoleApp2\\App\\UI\\CustomerMenuUI\\CustomersUI.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-27T10:15:44.362Z",
+              "WhenOpened": "2025-04-27T15:11:31.183Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainMenuUI.cs",
+              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\MainMenuUI\\MainMenuUI.cs",
+              "RelativeDocumentMoniker": "ConsoleApp2\\App\\UI\\MainMenuUI\\MainMenuUI.cs",
+              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\MainMenuUI\\MainMenuUI.cs",
+              "RelativeToolTip": "ConsoleApp2\\App\\UI\\MainMenuUI\\MainMenuUI.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-27T15:11:23.122Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "InMemoryDataStore.cs",
-              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\Data\\Models\\InMemoryDataStore.cs",
-              "RelativeDocumentMoniker": "ConsoleApp2\\Arriba_Eats_App\\Data\\Models\\InMemoryDataStore.cs",
-              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\Arriba_Eats_App\\Data\\Models\\InMemoryDataStore.cs",
-              "RelativeToolTip": "ConsoleApp2\\Arriba_Eats_App\\Data\\Models\\InMemoryDataStore.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAAwwIcAAAAuAAAAAAAAAA==",
+              "Title": "LoginUI.cs",
+              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\MainMenuUI\\LoginUI.cs",
+              "RelativeDocumentMoniker": "ConsoleApp2\\App\\UI\\MainMenuUI\\LoginUI.cs",
+              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\ConsoleApp2\\App\\UI\\MainMenuUI\\LoginUI.cs",
+              "RelativeToolTip": "ConsoleApp2\\App\\UI\\MainMenuUI\\LoginUI.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-27T10:15:23.746Z",
+              "WhenOpened": "2025-04-27T15:11:04.292Z",
               "EditorCaption": ""
             }
           ]

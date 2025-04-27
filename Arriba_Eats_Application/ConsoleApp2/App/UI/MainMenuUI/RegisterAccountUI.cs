@@ -2,12 +2,12 @@
 using Arriba_Eats_App.Data.Models;
 using Arriba_Eats_App.Services;
 
-namespace Arriba_Eats_App.Arriba_Eats_App.UI.MainMenuUI
+namespace Arriba_Eats_App.UI.MenuUI
 {
 	/// <summary>
 	/// RegisterAccountUI class is responsible for displaying the registration menu of the application.
 	/// </summary>
-	class RegisterAccountUI : MainMenuUI
+	class RegisterAccountUI : MenuUI
 	{
 		private UserService userService = new UserService();
 
@@ -31,7 +31,6 @@ namespace Arriba_Eats_App.Arriba_Eats_App.UI.MainMenuUI
 			}
 			IsActive = SelectionMenu(Input);
 		}
-
 		public override bool SelectionMenu(string Input)
 		{
 			switch (Input)

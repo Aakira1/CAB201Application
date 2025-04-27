@@ -1,11 +1,12 @@
-﻿using Arriba_Eats_App.Arriba_Eats_App.UI;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Arriba_Eats_App.Arriba_Eats_App.Services;
 using Arriba_Eats_App.Data.Models;
-using Arriba_Eats_App.Arriba_Eats_App.UI.MainMenuUI;
+using Arriba_Eats_App.UI;
+using Arriba_Eats_App.UI.MenuUI;
+using Arriba_Eats_App.Services;
+using Arriba_Eats_App.UI.MenuUI.MainMenuUI;
 
-namespace Main
+namespace Main 
 {
 	class InitiateProgram
 	{

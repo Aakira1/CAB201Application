@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Arriba_Eats_App.Arriba_Eats_App.UI;
+using Arriba_Eats_App.UI;
 
-namespace Arriba_Eats_App.Arriba_Eats_App.Services
+namespace Arriba_Eats_App.Services
 {
     public static class UIService
     {
