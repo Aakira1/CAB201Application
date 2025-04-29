@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Arriba_Eats_App.Data.Models;
 using Arriba_Eats_App.Services;
 using Arriba_Eats_App.UI;
@@ -43,7 +44,7 @@ namespace Arriba_Eats_App.UI.MenuUI
 			string input = Console.ReadLine() ?? string.Empty;
 			return input;
 		}
-		public string GetSecuredInput(string prompt)
+		public string GetSecuredInput(string prompt, bool isActive)
 		{
 			if (!string.IsNullOrEmpty(prompt))
 			{
@@ -53,22 +54,41 @@ namespace Arriba_Eats_App.UI.MenuUI
 			string password = string.Empty;
 			ConsoleKey key;
 
+
+
 			do
 			{
 				var keyInfo = Console.ReadKey(intercept: true);
 				key = keyInfo.Key;
-
-				if (key == ConsoleKey.Backspace && password.Length > 0)
+				if (isActive)
 				{
-					Console.Write("\b \b");
-					password = password[0..^1];
+					if (key == ConsoleKey.Backspace && password.Length > 0)
+					{
+						Console.Write("\b \b");
+						password = password[0..^1];
+					}
+					else if (!char.IsControl(keyInfo.KeyChar))
+					{
+						Console.Write("*");
+						password += keyInfo.KeyChar;
+					}
 				}
-				else if (!char.IsControl(keyInfo.KeyChar))
+				else
 				{
-					Console.Write("*");
-					password += keyInfo.KeyChar;
+					if (key == ConsoleKey.Backspace && password.Length > 0)
+					{
+						Console.Write("\b \b");
+						password = password[0..^1];
+					}
+					else if (!char.IsControl(keyInfo.KeyChar))
+					{
+						Console.Write(keyInfo.KeyChar);
+						password += keyInfo.KeyChar;
+					}
 				}
 			} while (key != ConsoleKey.Enter);
+
+
 
 			Console.WriteLine();
 			return password;

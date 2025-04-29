@@ -14,30 +14,9 @@ namespace Arriba_Eats_App.UI
 			return Console.ReadLine() ?? string.Empty;
 		}
 
-		public string GetSecuredInput(string input)
+		public string GetSecuredInput(string input, bool isActive)
 		{
-			Console.Write(input);
-			string password = string.Empty;
-			ConsoleKey key;
-			do
-			{
-				var KeyInfo = Console.ReadKey(true);
-				key = KeyInfo.Key;
-
-				if (key == ConsoleKey.Backspace && password.Length > 0)
-				{
-					Console.Write("\b \b");
-					password = password[0..^1];
-				} else if (!char.IsControl(KeyInfo.KeyChar))
-				{
-					Console.Write("*");
-					password += KeyInfo.KeyChar;
-				}
-			} 
-			while (key != ConsoleKey.Enter);
-			
-			Console.WriteLine();
-			return password;
+			return string.Empty;
 		}
 
 		public void DisplayOutput(string message)

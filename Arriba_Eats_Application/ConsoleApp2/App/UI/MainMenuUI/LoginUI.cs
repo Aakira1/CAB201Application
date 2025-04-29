@@ -12,6 +12,11 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 
 		public override void ShowMenu(bool IsActive)
 		{
+			MainMenuUI mainMenuUI = new MainMenuUI();
+			ConsoleKey consoleKey;
+			var keyinfo = Console.ReadKey(true);
+			consoleKey = keyinfo.Key;
+
 			while (IsActive)
 			{
 				ClearScreen();
@@ -20,14 +25,14 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 				string UserName = GetInput();
 
 				DisplayOutput("Enter Your Password");
-				string Password = GetSecuredInput(string.Empty);
+				string Password = GetSecuredInput(string.Empty, true);
 
 				if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
 				{
-					if (string.IsNullOrEmpty(UserName))
-						DisplayError(HandleEmptyInput(UserName));
-					if (string.IsNullOrEmpty(Password))
-						DisplayError(HandleEmptyInput(Password));
+					if (string.IsNullOrEmpty(UserName)) DisplayError(HandleEmptyInput(UserName));
+
+					if (string.IsNullOrEmpty(Password)) DisplayError(HandleEmptyInput(Password));
+					
 					WaitForKeyPress();
 					continue;
 				}
@@ -40,7 +45,7 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 						// Navigate to user menu based on user type
 						// You would implement this part
 						WaitForKeyPress();
-						break;
+						break; // add additional logic here
 					}
 					else
 					{
@@ -52,20 +57,38 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 					DisplayError($"Error during login: {ex.Message}");
 				}
 
-				DisplayOutput("Do you want to try again? (y/n)");
+				DisplayOutput("Do you want to try again? (y/n) or enter to return to the main menu.");
 				string retryInput = GetInput();
-				if (retryInput.ToLower() != "y")
+
+				// Check if the user wants to retry (if enter is press defaults to main menu)
+				if (retryInput.ToLower() != "y" || keyinfo.Key == ConsoleKey.Enter)
 				{
 					DisplayOutput("Returning to Selection Menu...");
-					break;
+					mainMenuUI.ShowMenu(true);
+					continue;
 				}
+
 			}
 		}
 
 		public override bool SelectionMenu(string Input)
 		{
-			// This method is not needed for LoginUI as we handle inputs directly in ShowMenu
-			return false;
+			switch (Input)
+			{
+				case "1":
+					// Implement logic for option 1
+					break;
+				case "2":
+					// Implement logic for option 2
+					break;
+				case "3":
+					DisplayOutput("Exiting the application...");
+					return false;
+				default:
+					DisplayError("Invalid selection. Please try again.");
+					return true;
+			}
+			return true; // Keep the menu active
 		}
 	}
 }

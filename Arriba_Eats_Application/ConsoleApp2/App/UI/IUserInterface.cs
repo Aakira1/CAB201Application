@@ -23,7 +23,7 @@ namespace Arriba_Eats_App.UI
 			return "Input cannot be empty. Please try again.";
 		}
 		string GetInput();
-        string GetSecuredInput(string input);
+        string GetSecuredInput(string input, bool isActive);
         void DisplayOutput(string message);
 		void DisplayError(string message);
 

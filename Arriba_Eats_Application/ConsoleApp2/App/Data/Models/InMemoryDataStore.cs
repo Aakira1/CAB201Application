@@ -49,6 +49,16 @@ namespace Arriba_Eats_App.Data
 			var user = GetUserById(id);
 			return user != null && _users.Remove(user);
 		}
+
+		public static bool CheckUsernameExists(string username)
+		{
+			return _users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+		}
+
+		public static bool CheckEmailExists(string email)
+		{
+			return _users.Any(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+		}
 		#endregion
 
 		#region Delivery Person Management
@@ -81,6 +91,7 @@ namespace Arriba_Eats_App.Data
 		}
 
 		#endregion
+
 		#region Restaurant Management
 		public static IReadOnlyList<Restaurant> Restaurants => _restaurants.AsReadOnly();
 		public static IReadOnlyList<RestaurantOwner> RestaurantOwners => _restaurantOwners.AsReadOnly();
@@ -198,6 +209,7 @@ namespace Arriba_Eats_App.Data
 		}
 
 		#endregion
+
 		#region Rating Management
 		public static IReadOnlyList<Rating> Ratings => _ratings.AsReadOnly();
 
@@ -246,6 +258,7 @@ namespace Arriba_Eats_App.Data
 		{
 			// Implementation for seeding sample data would go here
 			// This would create test users, restaurants, menu items, etc.
+
 		}
 		#endregion
 	}

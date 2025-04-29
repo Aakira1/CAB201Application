@@ -478,6 +478,26 @@ namespace Arriba_Eats_App.Services
 			}
 		}
 
+		public bool CheckUsernameExists(string username)
+		{
+			if (string.IsNullOrEmpty(username))
+			{
+				Console.WriteLine("Username cannot be empty");
+				return false;
+			}
+			return InMemoryDataStore.CheckUsernameExists(username);
+		}
+
+		public bool CheckEmailExists(string email)
+		{
+			if (string.IsNullOrEmpty(email))
+			{
+				Console.WriteLine("Email cannot be empty");
+				return false;
+			}
+			return InMemoryDataStore.CheckEmailExists(email);
+		}
+
 		/// <summary>
 		/// Truncates a string to a specified maximum length, adding ellipsis if truncated
 		/// </summary>
@@ -489,6 +509,7 @@ namespace Arriba_Eats_App.Services
 			if (string.IsNullOrEmpty(str)) return string.Empty;
 			return str.Length <= maxLength ? str : str.Substring(0, maxLength - 3) + "...";
 		}
+
 		#endregion
 	}
 }
