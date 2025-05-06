@@ -18,15 +18,17 @@ namespace Arriba_Eats_App.Data.Models
 		public required string MobileNumber { get; set; }
 		public required string Username { get; set; }
 		public required string Password { get; set; } // Should be stored as hash in production
-		public UserType UserType { get; set; }
+		public EUserType UserType { get; set; }
 	}
 
 	/// <summary>
 	/// Base class for all entities with unique identifier
 	/// </summary>
-	public abstract class EntityBase
+	public abstract class EntityBase : UserData
 	{
 		public Guid Id { get; set; } = Guid.NewGuid();
+		public DateTime CreatedAt { get; set; } = DateTime.Now;
+		public DateTime UpdatedAt { get; set; } = DateTime.Now;
 	}
 	#endregion
 
@@ -34,7 +36,7 @@ namespace Arriba_Eats_App.Data.Models
 	/// <summary>
 	/// Standard user/customer account
 	/// </summary>
-	public class User : UserData
+	public class User : EntityBase
 	{
 		public required Location DeliveryLocation { get; set; }
 		public List<Order> OrderHistory { get; set; } = new();
@@ -45,20 +47,20 @@ namespace Arriba_Eats_App.Data.Models
 	/// <summary>
 	/// Delivery person account with vehicle details
 	/// </summary>
-	public class DeliveryPerson : UserData
+	public class DeliveryPerson : EntityBase
 	{
 		public required string VehicleType { get; set; }
 		public required string LicensePlate { get; set; }
 		public required string VehicleColor { get; set; }
 		public required Location CurrentLocation { get; set; }
-		public Order? CurrentOrder { get; set; }
+		public List<Order> CurrentOrder { get; set; } = new();
 		public List<Order> CompletedDeliveries { get; set; } = new();
 	}
 
 	/// <summary>
 	/// Restaurant owner/manager account
 	/// </summary>
-	public class RestaurantOwner : UserData
+	public class RestaurantOwner : EntityBase
 	{
 		public required Restaurant Restaurant { get; set; }
 	}
@@ -70,30 +72,26 @@ namespace Arriba_Eats_App.Data.Models
 	/// </summary>
 	public class Restaurant : EntityBase
 	{
-		public required string Name { get; set; }
-		public required string Address { get; set; }
-		public required string PhoneNumber { get; set; }
-		public required Location Location { get; set; }
+		public required User Client { get; set; }
+		public required string CuisineType { get; set; }
+		public required Location LocationXY { get; set; } = new(0, 0);
 		public List<MenuItem> MenuItems { get; set; } = new();
+		public List<Order> Orders { get; set; } = new();
 		public List<Rating> Ratings { get; set; } = new();
+		public required string RestaurantName { get; set; } = string.Empty;
 
-		// Calculated property for average rating
-		public double AverageRating => Ratings.Any() ? Ratings.Average(r => r.Stars) : 0;
+
 	}
 
-	/// <summary>
-	/// Menu item with name, description and price
-	/// </summary>
 	public class MenuItem : EntityBase
 	{
-		public required string Name { get; set; }
-		public string? Description { get; set; }
-		public required decimal Price { get; set; }
-		public string? ImageUrl { get; set; }
-		public List<Rating> Ratings { get; set; } = new();
-
-		// Calculated property for average rating
-		public double AverageRating => Ratings.Any() ? Ratings.Average(r => r.Stars) : 0;
+		public required string Category { get; set; }
+		public required string Ingredients { get; set; }
+		public required string PreparationTime { get; set; }
+		public required string ServingSize { get; set; }
+		public required bool IsAvailable { get; set; } = true;
+		public required int Stars { get; set; } = 0;
+		public List<Rating>? Ratings { get; internal set; }
 	}
 
 	/// <summary>
@@ -102,18 +100,20 @@ namespace Arriba_Eats_App.Data.Models
 	public class Order : EntityBase
 	{
 		public required User Customer { get; set; }
+		public required DeliveryPerson DeliveryPerson { get; set; }
+		public required Guid OrderId { get; set; } = Guid.NewGuid();
+		public required string OrderNumber { get; set; } = string.Empty;
+		public required string DeliveryAddress { get; set; } = string.Empty;
+		public required Location DeliveryLocation { get; set; } = new(0, 0);
+		public required string SpecialInstructions { get; set; } = string.Empty;
+		public required string PaymentMethod { get; set; } = "Credit Card";
+		public required string OrderStatus { get; set; } = "Pending";
+		public required DateTime EstimatedDeliveryTime { get; set; }
+		public required DateTime ActualDeliveryTime { get; set; }
 		public required Restaurant Restaurant { get; set; }
-		public DeliveryPerson? DeliveryPerson { get; set; }
-		public List<OrderItem> Items { get; set; } = new();
-		public OrderStatus Status { get; set; } = OrderStatus.Placed;
-		public DateTime OrderDate { get; set; } = DateTime.Now;
-		public DateTime? DeliveredDate { get; set; }
-
-		// Calculated properties
-		public decimal Subtotal => Items.Sum(item => item.MenuItem.Price * item.Quantity);
-		public decimal DeliveryFee { get; set; } = 2.99m;
-		public decimal Tax => Subtotal * 0.0875m; // Example 8.75% tax
-		public decimal TotalAmount => Subtotal + DeliveryFee + Tax;
+		public required EOrderStatus Status { get; set; }
+		public DateTime OrderDate { get; internal set; }
+		public float TotalAmount { get; internal set; }
 	}
 
 	/// <summary>
@@ -121,10 +121,19 @@ namespace Arriba_Eats_App.Data.Models
 	/// </summary>
 	public class OrderItem : EntityBase
 	{
+		public required Order Order { get; set; }
 		public required MenuItem MenuItem { get; set; }
-		public int Quantity { get; set; } = 1;
-		public string? SpecialInstructions { get; set; }
-		public decimal ItemTotal => MenuItem.Price * Quantity;
+		public required Restaurant Restaurant { get; set; }
+		public required DeliveryPerson DeliveryPerson { get; set; }
+		public required User Customer { get; set; }
+		public required Location DeliveryLocation { get; set; } = new(0, 0);
+		public required string SpecialInstructions { get; set; } = string.Empty;
+		public required int Quantity { get; set; } = 1;
+		public required decimal Price { get; set; } = 0.0m;
+		public required string OrderStatus { get; set; } = "Pending";
+		public required string PaymentMethod { get; set; } = "Credit Card";
+		public required DateTime EstimatedDeliveryTime { get; set; }
+		public required DateTime ActualDeliveryTime { get; set; }
 	}
 
 	/// <summary>
@@ -132,10 +141,13 @@ namespace Arriba_Eats_App.Data.Models
 	/// </summary>
 	public class Rating : EntityBase
 	{
+		public required Restaurant Restaurant { get; set; }
+		public required MenuItem MenuItem { get; set; }
+		public required DeliveryPerson DeliveryPerson { get; set; }
+		public required Order Order { get; set; }
 		public required User Customer { get; set; }
-		public int Stars { get; set; } // 1-5 star rating
-		public string? Review { get; set; }
-		public DateTime DatePosted { get; set; } = DateTime.Now;
+		public required Location DeliveryLocation { get; set; } = new(0, 0);
+		public required string SpecialInstructions { get; set; } = string.Empty;
 	}
 
 	/// <summary>
@@ -173,7 +185,7 @@ namespace Arriba_Eats_App.Data.Models
 	/// <summary>
 	/// Status of an order in the system
 	/// </summary>
-	public enum OrderStatus
+	public enum EOrderStatus
 	{
 		Placed,
 		Confirmed,
@@ -187,12 +199,13 @@ namespace Arriba_Eats_App.Data.Models
 	/// <summary>
 	/// Type of user in the system
 	/// </summary>
-	public enum UserType
+	public enum EUserType
 	{
-		Customer,
-		DeliveryPerson,
-		RestaurantOwner,
-		Administrator
+		None = 0,
+		Customer = 1,
+		DeliveryPerson = 2,
+		RestaurantOwner = 3,
+		Administrator = 4
 	}
 	#endregion
 }

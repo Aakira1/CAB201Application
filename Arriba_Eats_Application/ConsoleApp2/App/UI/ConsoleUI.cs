@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Arriba_Eats_App.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,6 +42,17 @@ namespace Arriba_Eats_App.UI
 		{
 			Console.WriteLine("Press any key to continue...");
 			Console.ReadKey(true);
+		}
+
+		public bool SelectionMenu(string Input, EUserType userType)
+		{
+			Console.WriteLine("Default Selection Menu");
+			return true;
+		}
+
+		public void ShowMenu(bool IsActive, EUserType userType)
+		{
+			Console.WriteLine(IsActive ? "Menu is active" : "Menu is inactive");
 		}
 	}
 }

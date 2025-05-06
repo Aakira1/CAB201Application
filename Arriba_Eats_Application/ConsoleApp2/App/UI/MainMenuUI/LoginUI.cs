@@ -1,4 +1,5 @@
 ﻿using System;
+using Arriba_Eats_App.Data.Models;
 using Arriba_Eats_App.Services;
 
 namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
@@ -10,7 +11,7 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 	{
 		private UserService userService = new UserService();
 
-		public override void ShowMenu(bool IsActive)
+		public override void ShowMenu(bool IsActive, EUserType userType)
 		{
 			MainMenuUI mainMenuUI = new MainMenuUI();
 			ConsoleKey consoleKey;
@@ -64,14 +65,14 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 				if (retryInput.ToLower() != "y" || keyinfo.Key == ConsoleKey.Enter)
 				{
 					DisplayOutput("Returning to Selection Menu...");
-					mainMenuUI.ShowMenu(true);
+					mainMenuUI.ShowMenu(true, userType);
 					continue;
 				}
 
 			}
 		}
 
-		public override bool SelectionMenu(string Input)
+		public override bool SelectionMenu(string Input, EUserType userType)
 		{
 			switch (Input)
 			{

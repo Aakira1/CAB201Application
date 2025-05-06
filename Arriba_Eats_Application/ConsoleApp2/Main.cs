@@ -42,7 +42,7 @@ namespace Main
 
 			// use the existing menu structure but with improved and enhanced functionality
 			var MainMenu = new MainMenuUI();
-			MainMenu.ShowMenu(true);
+			MainMenu.ShowMenu(true, EUserType.None);
 		}
 
 		/// <summary>

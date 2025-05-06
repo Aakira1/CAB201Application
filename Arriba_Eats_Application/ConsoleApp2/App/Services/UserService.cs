@@ -45,13 +45,50 @@ namespace Arriba_Eats_App.Services
 			}
 
 			// Set user type and ID if not set
-			user.UserType = UserType.Customer;
+			user.UserType = EUserType.Customer;
 			if (user.Id == Guid.Empty)
 				user.Id = Guid.NewGuid();
 
 			// Add user to data store
 			InMemoryDataStore.AddUser(user);
 			Console.WriteLine($"You have been successfully registered as a customer, {user.Name}!\n");
+			return true;
+		}
+		public bool RegisterDeliveryPerson(DeliveryPerson deliveryPerson)
+		{
+			if (deliveryPerson == null)
+			{
+				Console.WriteLine("Delivery person cannot be null");
+				return false;
+			}
+
+			if (string.IsNullOrEmpty(deliveryPerson.Name) ||
+				string.IsNullOrEmpty(deliveryPerson.Email) ||
+				string.IsNullOrEmpty(deliveryPerson.MobileNumber) ||
+				string.IsNullOrEmpty(deliveryPerson.Age) ||
+				string.IsNullOrEmpty(deliveryPerson.Password) ||
+				string.IsNullOrEmpty(deliveryPerson.Username) ||
+				string.IsNullOrEmpty(deliveryPerson.VehicleType) ||
+				string.IsNullOrEmpty(deliveryPerson.LicensePlate) ||
+				string.IsNullOrEmpty(deliveryPerson.VehicleColor))
+			{
+				Console.WriteLine("Delivery person details are incomplete");
+				return false;
+			}
+			// Check if username already exists
+			if (InMemoryDataStore.GetUserByUsername(deliveryPerson.Username) != null)
+			{
+				Console.WriteLine("Username already exists");
+				return false;
+			}
+			// Set user type and ID if not set
+			deliveryPerson.UserType = EUserType.DeliveryPerson;
+			if (deliveryPerson.Id == Guid.Empty)
+				deliveryPerson.Id = Guid.NewGuid();
+
+			// Add delivery person to data store
+			InMemoryDataStore.AddDeliveryPerson(deliveryPerson);
+			Console.WriteLine($"You have been successfully registered as a delivery person, {deliveryPerson.Name}!\n");
 			return true;
 		}
 
@@ -164,6 +201,8 @@ namespace Arriba_Eats_App.Services
 			return users;
 		}
 
+
+
 		/// <summary>
 		/// Finds users by name, mobile or email
 		/// </summary>
@@ -171,7 +210,7 @@ namespace Arriba_Eats_App.Services
 		/// <param name="mobile">Optional mobile filter</param>
 		/// <param name="email">Optional email filter</param>
 		/// <returns>List of matching users</returns>
-		public List<User> FindUsers(string name = null, string mobile = null, string email = null)
+		public List<User> FindUsers(string name = "", string mobile = "", string email = "")
 		{
 			var users = InMemoryDataStore.Users.ToList();
 
@@ -376,7 +415,8 @@ namespace Arriba_Eats_App.Services
 		{
 			// Get all users from the data store
 			var users = InMemoryDataStore.Users;
-
+			var users2 = InMemoryDataStore.DeliveryPersons;
+			
 			// Check if there are any users
 			if (users.Count == 0)
 			{
@@ -415,7 +455,7 @@ namespace Arriba_Eats_App.Services
 				phoneWidth + 
 				balanceWidth + 10));
 
-			// Display each user
+			// Display each user & delivery person
 			foreach (var user in users)
 			{
 				Console.WriteLine(
@@ -429,9 +469,23 @@ namespace Arriba_Eats_App.Services
 				);
 			}
 
+
+			foreach (var deliverer in users2)
+			{
+				Console.WriteLine(
+					$"{deliverer.Id.ToString().PadRight(idWidth)} | " +
+					$"{TruncateString(deliverer.Name, nameWidth).PadRight(nameWidth)} | " +
+					$"{TruncateString(deliverer.Username, usernameWidth).PadRight(usernameWidth)} | " +
+					$"{TruncateString(deliverer.Email, emailWidth).PadRight(emailWidth)} | " +
+					$"{TruncateString(deliverer.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
+					$" | {deliverer.UserType}"
+				);
+			}
+
 			// Display footer with count
 			Console.WriteLine();
-			Console.WriteLine($"Total Users: {users.Count}");
+			Console.WriteLine($"Total Users: {users.Count + users2.Count}");
+
 		}
 
 		/// <summary>
@@ -477,6 +531,37 @@ namespace Arriba_Eats_App.Services
 				}
 			}
 		}
+
+		public void DisplayDelivererDetails(Guid userId)
+		{
+			// Get user from data store
+			var Deliverer = InMemoryDataStore.GetDeliveryPersonById(userId);
+
+			// Check if user exists
+			if (Deliverer == null)
+			{
+				Console.WriteLine($"User with ID {userId} not found.");
+				return;
+			}
+
+			// Display detailed user information
+			Console.WriteLine($"=== User Details: {Deliverer.Name} ===");
+			Console.WriteLine();
+			Console.WriteLine($"ID:               {Deliverer.Id}");
+			Console.WriteLine($"Name:             {Deliverer.Name}");
+			Console.WriteLine($"Username:         {Deliverer.Username}");
+			Console.WriteLine($"Email:            {Deliverer.Email}");
+			Console.WriteLine($"Phone:            {Deliverer.MobileNumber}");
+			Console.WriteLine($"Address:          {Deliverer.Address}");
+			Console.WriteLine($"Age:              {Deliverer.Age}");
+			Console.WriteLine($"User Type:        {Deliverer.UserType}");
+			Console.WriteLine($"Vehicle Type:     {Deliverer.VehicleType}");
+			Console.WriteLine($"License Plate:    {Deliverer.LicensePlate}");
+			Console.WriteLine($"Vehicle Color:    {Deliverer.VehicleColor}");
+			Console.WriteLine($"Current Location: {Deliverer.CurrentLocation}");
+			Console.WriteLine($"User Type:		  {Deliverer.UserType}");
+		}
+
 
 		public bool CheckUsernameExists(string username)
 		{

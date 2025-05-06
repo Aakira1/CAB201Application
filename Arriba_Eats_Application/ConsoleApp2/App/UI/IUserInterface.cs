@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Arriba_Eats_App.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -26,6 +27,7 @@ namespace Arriba_Eats_App.UI
         string GetSecuredInput(string input, bool isActive);
         void DisplayOutput(string message);
 		void DisplayError(string message);
-
+		bool SelectionMenu(string Input, EUserType userType);
+		void ShowMenu(bool IsActive, EUserType userType);
 	}
 }

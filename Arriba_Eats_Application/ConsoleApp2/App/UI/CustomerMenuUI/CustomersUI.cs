@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Arriba_Eats_App.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,14 +14,14 @@ namespace Arriba_Eats_App.UI.MenuUI.CustomerMenuUI
 
 		}
 
-		public override bool SelectionMenu(string input)
+		public override bool SelectionMenu(string input, EUserType userType)
 		{
-			return base.SelectionMenu(input);
+			return base.SelectionMenu(input, userType);
 		}
 
-		public override void ShowMenu(bool isActive)
+		public override void ShowMenu(bool isActive, EUserType userType)
 		{
-			base.ShowMenu(isActive);
+			base.ShowMenu(isActive, userType);
 		}
 	}
 }

@@ -21,9 +21,30 @@ namespace Arriba_Eats_App.UI.MenuUI
 			MobileNumber = string.Empty,
 			Name = string.Empty,
 			Password = string.Empty,
-			UserType = UserType.Customer,
+			UserType = EUserType.Customer,
 			DeliveryLocation = new Location(0, 0)
 		};
+
+		public DeliveryPerson deliveryPerson { get; set; } = new DeliveryPerson()
+		{
+			Name = string.Empty,
+			Age = string.Empty,
+			Address = string.Empty,
+			Email = string.Empty,
+			MobileNumber = string.Empty,
+			Username = string.Empty,
+			Password = string.Empty,
+			VehicleType = string.Empty,
+			LicensePlate = string.Empty,
+			VehicleColor = string.Empty,
+			CurrentLocation = new Location(0, 0),
+			CurrentOrder = null,
+			CompletedDeliveries = new List<Order>(),
+		};
+
+
+
+
 		public void ClearScreen()
 		{
 			Console.Clear();
@@ -110,11 +131,12 @@ namespace Arriba_Eats_App.UI.MenuUI
 			}
 			return input;
 		}
-		public virtual void ShowMenu(bool isActive)
+		public virtual void ShowMenu(bool isActive, EUserType userType)
 		{
 			Console.WriteLine("Default Menu");
+			userType = EUserType.None;
 		}
-		public virtual bool SelectionMenu(string input)
+		public virtual bool SelectionMenu(string input, EUserType userType)
 		{
 			return false;
 		}

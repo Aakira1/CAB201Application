@@ -1,4 +1,5 @@
-﻿using Arriba_Eats_App.Services;
+﻿using Arriba_Eats_App.Data.Models;
+using Arriba_Eats_App.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 	/// </summary>
 	class MainMenuUI : MenuUI
 	{
-		public override void ShowMenu(bool IsActive)
+		public override void ShowMenu(bool IsActive, EUserType userType)
 		{
 			while (IsActive)
 			{
@@ -36,23 +37,23 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 					WaitForKeyPress();
 					continue;
 				}
-				IsActive = SelectionMenu(Input);
+				IsActive = SelectionMenu(Input, EUserType.None);
 			}
 
 			DisplayOutput("Thankyou for using Arriba Eats!");
 		}
 
-		public override bool SelectionMenu(string Input)
+		public override bool SelectionMenu(string Input, EUserType userType)
 		{
 			switch (Input)
 			{
 				case "1":
 					LoginUI login = new LoginUI();
-					login.ShowMenu(true);
+					login.ShowMenu(true, EUserType.None);
 					break;
 				case "2":
 					RegisterAccountUI register = new RegisterAccountUI();
-					register.ShowMenu(true);
+					register.ShowMenu(true, EUserType.None);
 					break;
 				case "3":
 					DisplayOutput("Exiting the application...");

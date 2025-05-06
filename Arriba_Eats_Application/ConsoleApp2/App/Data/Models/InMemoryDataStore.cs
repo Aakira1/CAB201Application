@@ -192,8 +192,8 @@ namespace Arriba_Eats_App.Data
 			_orders.Where(o => o.DeliveryPerson?.Id == deliveryPersonId).ToList();
 
 		public static List<Order> GetActiveOrders() =>
-			_orders.Where(o => o.Status != OrderStatus.Delivered &&
-							  o.Status != OrderStatus.Cancelled).ToList();
+			_orders.Where(o => o.Status != EOrderStatus.Delivered &&
+							  o.Status != EOrderStatus.Cancelled).ToList();
 
 		public static void UpdateOrder(Order order)
 		{

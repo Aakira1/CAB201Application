@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reflection.Metadata.Ecma335;
 using Arriba_Eats_App.Data.Models;
 using Arriba_Eats_App.Services;
+using Arriba_Eats_App.UI.MenuUI.MainMenuUI;
 
 namespace Arriba_Eats_App.UI.MenuUI
 {
@@ -12,13 +14,13 @@ namespace Arriba_Eats_App.UI.MenuUI
 	{
 		private UserService userService = new UserService();
 
-		public override void ShowMenu(bool IsActive)
+		public override void ShowMenu(bool IsActive, EUserType userType)
 		{
 			ClearScreen();
 			DisplayOutput("Register Account Menu\n");
 			DisplayOutput("1. Customer");
 			DisplayOutput("2. Deliverer");
-			DisplayOutput("3. Client");
+			DisplayOutput("3. Client (Restaraunt)");
 			DisplayOutput("4. Return to the previous menu");
 			DisplayOutput("Please Enter a choice between 1 and 4:");
 
@@ -30,11 +32,38 @@ namespace Arriba_Eats_App.UI.MenuUI
 				WaitForKeyPress();
 				return;
 			}
-			IsActive = SelectionMenu(Input);
+			if (Input == "1")
+			{
+				SelectionMenu(Input, EUserType.Customer);
+				DisplayOutput("Customer");
+			}
+			else if (Input == "2")
+			{
+				SelectionMenu(Input, EUserType.DeliveryPerson);
+				DisplayOutput("Deliverer");
+			}
+			else if (Input == "3")
+			{
+				SelectionMenu(Input, EUserType.RestaurantOwner);
+				DisplayOutput("Client");
+			}
+			else if (Input == "4")
+			{
+				DisplayOutput("Returning to the previous menu...");
+				return;
+			}
+			else
+			{
+				DisplayError("Invalid input. Please try again.");
+				WaitForKeyPress();
+				return;
+			}
 		}
-		public override bool SelectionMenu(string Input)
+		public override bool SelectionMenu(string Input, EUserType userType)
 		{
-			return true;
+			bool isValid = false;
+
+			//return true;
 			/*
 				rewrite this to use the new user registration method
 				switch on enum - if 1 = customer, 2 = deliverer, 3 = client
@@ -44,209 +73,353 @@ namespace Arriba_Eats_App.UI.MenuUI
 
 			 */
 
-			//switch (Input)
-			//{
-			//case "1":
-			//try
-			//{
-			//bool isValid = false;
-
-			//ClearScreen();
-			//DisplayOutput("Registering User - Customer");
-			//DisplayOutput("Please enter your details -\n");
-
-			//while (!isValid)
-			//{
-			//// Check if the name is valid
-			//DisplayOutput("Please enter your name: ");
-			//User.Name = GetInput();
-
-			//if (string.IsNullOrEmpty(User.Name))
-			//{
-			//DisplayError("Name cannot be empty");
-			//}
-			//else
-			//{
-			//isValid = true; // Continue to the next input
-			//}
-
-			//// Check if the name is valid
-			//DisplayOutput("Please enter your age (18-100): ");
-			//User.Age = GetInput();
-
-			//if (string.IsNullOrEmpty(User.Age))
-			//{
-			//DisplayError("Age cannot be empty");
-			//}
-			//if (!int.TryParse(User.Age, out int age) || age < 18 || age > 100)
-			//{
-			//DisplayError("Invalid age. Age must be between 18 and 100.");
-			//}
-			//else
-			//{
-			//isValid = true; // Continue to the next input
-			//}
-
-			//// Check if the user already exists
-			//DisplayOutput("Please enter your email address: ");
-			//User.Email = GetInput();
-
-			//if (string.IsNullOrEmpty(User.Email))
-			//{
-			//DisplayError("Email cannot be empty");
-			//}
-			//if (userService.CheckEmailExists(User.Email))
-			//{
-			//DisplayError("Email already registered. Please use a different email.");
-			//}
-			//else
-			//{
-			//isValid = true; // Continue to the next input
-			//}
-			//// Check if the email is already registered
-			//DisplayOutput("Please enter your mobile phone number: ");
-			//User.MobileNumber = GetInput();
-
-			//if (string.IsNullOrEmpty(User.MobileNumber))
-			//{
-			//DisplayError("Mobile Number cannot be empty");
-			//}
-			//else
-			//{
-			//isValid = true; // Continue to the next input
-			//}
-
-			//// Check if the mobile number is already registered
-			//DisplayOutput("Username: ");
-			//User.Username = GetInput();
-
-			//if (string.IsNullOrEmpty(User.Username))
-			//{
-			//DisplayError("Username cannot be empty");
-			//}
-			//else
-			//{
-			//isValid = true; // Continue to the next input
-			//}
-			//// Check if the username is already registered
-			//if (userService.CheckUsernameExists(User.Username))
-			//{
-			//DisplayError("Username already taken. Please choose a different one.");
-			//}
-
-			//// check if the password is valid
-			//DisplayOutput(
-			//"Your password must:" +
-			//"\n- Be at least 8 characters long" +
-			//"\n- contain a number" +
-			//"\n- contain a lowercase letter" +
-			//"\n- contain an uppercase letter\n" +
-			//"\nPlease enter a password:"
-			//);
-
-			//// Check if the password is valid
-			//DisplayOutput("Password: ");
-			//User.Password = GetInput();
-			//if (string.IsNullOrEmpty(User.Password))
-			//{
-			//DisplayError("Password cannot be empty");
-			//}
-			//if (User.Password.Length < 8 || !User.Password.Any(char.IsDigit) ||
-			//!User.Password.Any(char.IsLower) || !User.Password.Any(char.IsUpper))
-			//{
-			//DisplayError("Password must be at least 8 characters long, contain a number, " +
-			//"and include both uppercase and lowercase letters.");
-			//}
-			//else
-			//{
-			//isValid = true; // Continue to the next input
-			//}
-			//// Check if the password is valid 
-			//DisplayOutput($"Confirm Password: {User.Password}\n" +
-			//"Type Y-Yes or N-No... ");
-			//string confirmPassword = GetInput();
-			//if (confirmPassword == "Y" && confirmPassword == "y")
-			//{
-			//isValid = true; // Continue to the next input
-			//}
-			//if (confirmPassword == "N" && confirmPassword == "n")
-			//{
-			//Console.WriteLine("Please re-enter your password: ");
-			//}
-			//else
-			//{
-			//isValid = true; // Continue to the next input
-			//}
+			if (string.IsNullOrEmpty(Input))
+			{
+				DisplayError(HandleEmptyInput(Input));
+				WaitForKeyPress();
+				return false;
+			}
 
 
+			// Assuming userType is an enum that indicates the type of user
+			switch (userType)
+			{
+				case EUserType.Customer:
+					userService.RegisterUser(GetRegisterDetails(Input, userType)); // register customer
+					break;
+				case EUserType.DeliveryPerson:
+					userService.RegisterDeliveryPerson(GetDeliveryPerson(Input, userType)); // register delivery person
+					break;
+				case EUserType.RestaurantOwner:
+					GetRegisterDetails(Input, EUserType.RestaurantOwner);
+					DisplayOutput("additional Restaurant Owner questions...");
+					break;
+				default:
+					DisplayError("Invalid user type.");
+					break;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// GetRegisterDetails method is responsible for collecting user details for registration.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="userType"></param>
+		/// <returns></returns>
+		private User GetRegisterDetails(string input, EUserType userType)
+
+		{
+			User user = new User()
+			{
+				Username = string.Empty,
+				Address = string.Empty,
+				Age = string.Empty,
+				Email = string.Empty,
+				MobileNumber = string.Empty,
+				Name = string.Empty,
+				Password = string.Empty,
+				UserType = EUserType.Customer,
+				DeliveryLocation = new Location(0, 0)
+			};
+
+			user.UserType = userType; // Set the user type
+
+			DisplayOutput($"Registering {userType} - Please enter your details:");
+
+			DisplayOutput("Enter your username:"); // Added to set the username
+			user.Username = GetInput();
+
+			DisplayOutput("Enter your name:");
+			user.Name = GetInput();
+
+			DisplayOutput("Enter your age (18-100):");
+			user.Age = GetInput();
+
+			DisplayOutput("Enter your Email address:");
+			user.Email = GetInput();
+
+			DisplayOutput("Enter your Mobile Number:");
+			user.MobileNumber = GetInput();
+
+			DisplayOutput("Enter your Address:");
+			user.Address = GetInput();
+
+			// Password validation
+			DisplayOutput(
+			"Your password must: \n"
+			+ "- be at least 8 characters long \n"
+			+ "- contain a number \n"
+			+ "- contain a lowercase letter \n"
+			+ "- contain an uppercase letter \n"
+			+ "Please enter a Password:");
+
+			while (true)
+			{
+				user.Password = GetInput();
+
+				if (string.IsNullOrEmpty(user.Password))
+				{
+					DisplayError("Password cannot be empty.");
+					continue;
+				}
+
+				if (user.Password.Length < 8)
+				{
+					DisplayError("Password must be at least 8 characters long.");
+					continue;
+				}
+
+				if (!user.Password.Any(char.IsDigit))
+				{
+					DisplayError("Password must contain at least one number.");
+					continue;
+				}
+
+				if (!user.Password.Any(char.IsLower))
+				{
+					DisplayError("Password must contain at least one lowercase letter.");
+					continue;
+				}
+
+				if (!user.Password.Any(char.IsUpper))
+				{
+					DisplayError("Password must contain at least one uppercase letter.");
+					continue;
+				}
+
+				break;
+			}
+
+			// Fix password confirmation loop
+			DisplayOutput("Confirm your password:");
+			string confirmPassword;
+			while (true)
+			{
+				confirmPassword = GetInput();
+
+				if (string.IsNullOrEmpty(confirmPassword))
+				{
+					DisplayError("Password confirmation cannot be empty.");
+					continue;
+				}
+
+				if (user.Password != confirmPassword)
+				{
+					DisplayError("Passwords do not match. Please try again.");
+					continue;
+				}
+
+				break; // Only break when passwords match
+			}
+
+			// Set delivery location
+			DisplayOutput("Please enter your delivery location (in the form X,Y)");
+			DisplayOutput("X: ");
+			string X = GetInput();
+			DisplayOutput("Y: ");
+			string Y = GetInput();
+
+			// Initialize DeliveryLocation properly
+			user.DeliveryLocation = new Location(double.Parse(X), double.Parse(Y));
+
+			// Display confirmation
+			DisplayOutput("\nConfirm User Details:");
+			DisplayOutput($"Username: {user.Username}");
+			DisplayOutput($"Name: {user.Name}");
+			DisplayOutput($"Age: {user.Age}");
+			DisplayOutput($"Email: {user.Email}");
+			DisplayOutput($"Mobile Number: {user.MobileNumber}");
+			DisplayOutput($"Address: {user.Address}");
+			DisplayOutput($"Password: {user.Password}");
+			DisplayOutput($"Location: {X}, {Y}");
+			DisplayOutput($"User Type: {userType}");
+			DisplayOutput("Press any key to confirm or 'R' to re-enter details.");
+
+			ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+			if (keyInfo.Key == ConsoleKey.R)
+			{
+				DisplayOutput("Re-entering details...");
+				return GetRegisterDetails(input, userType);
+			}
+
+			DisplayOutput($"You have successfully registered as a delivery person, {user.Name}!");
+
+			WaitForKeyPress();
+			return user;
+		}
+
+		/// <summary>
+		/// DeliveryPerson method is responsible for collecting delivery person details for registration.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="userType"></param>
+		/// <returns></returns>
+		private DeliveryPerson GetDeliveryPerson (string input, EUserType userType)
+		{
+			DeliveryPerson deliveryPerson = new DeliveryPerson()
+			{
+				Name = User.Name,
+				Age = User.Age,
+				Address = User.Address,
+				Email = User.Email,
+				MobileNumber = User.MobileNumber,
+				Username = User.Username,
+				Password = User.Password,
+				VehicleType = string.Empty,
+				LicensePlate = string.Empty,
+				VehicleColor = string.Empty,
+				CurrentLocation = new Location(0,0),
+				CreatedAt = DateTime.Now,
+				UpdatedAt = DateTime.Now,
+				UserType = EUserType.None,
+				Id = Guid.NewGuid(),
+				CurrentOrder = new List<Order>(),
+				CompletedDeliveries = new List<Order>(),
+			};
+
+			deliveryPerson.UserType = userType; // Set the user type
+			DisplayOutput($"Registering {userType} - Please enter your details:");
+
+			DisplayOutput("Enter your username:"); // Added to set the username
+			deliveryPerson.Username = GetInput();
+
+			DisplayOutput("Enter your name:");
+			deliveryPerson.Name = GetInput();
+
+			DisplayOutput("Enter your age (18-100):");
+			deliveryPerson.Age = GetInput();
+
+			DisplayOutput("Enter your Email address:");
+			deliveryPerson.Email = GetInput();
+
+			DisplayOutput("Enter your Mobile Number:");
+			deliveryPerson.MobileNumber = GetInput();
+
+			DisplayOutput("Enter your Address:");
+			deliveryPerson.Address = GetInput();
 
 
+			// Password validation
+			DisplayOutput(
+			"Your password must: \n"
+			+ "- be at least 8 characters long \n"
+			+ "- contain a number \n"
+			+ "- contain a lowercase letter \n"
+			+ "- contain an uppercase letter \n"
+			+ "Please enter a Password:");
 
-			////// Check if the address is valid
-			////DisplayOutput("Address: ");
-			////User.Address = GetInput();
-			////if (string.IsNullOrEmpty(User.Address))
-			////{
-			////DisplayError("Address cannot be empty");
-			////WaitForKeyPress();
-			////return true;
-			////}
+			while (true)
+			{
+				deliveryPerson.Password = GetInput();
 
-			////// Check if the delivery location is valid
-			////DisplayOutput("Delivery Location: ");
-			////DisplayOutput("X Coordinate: ");
-			////string xInput = GetInput();
-			////if (!double.TryParse(xInput, out double x))
-			////{
-			////DisplayError("Invalid X coordinate");
-			////WaitForKeyPress();
-			////return true;
-			////}
+				if (string.IsNullOrEmpty(deliveryPerson.Password))
+				{
+					DisplayError("Password cannot be empty.");
+					continue;
+				}
 
-			////// Check if the delivery location is valid
-			////DisplayOutput("Y Coordinate: ");
-			////string yInput = GetInput();
-			////if (!double.TryParse(yInput, out double y))
-			////{
-			////DisplayError("Invalid Y coordinate");
-			////WaitForKeyPress();
-			////return true;
-			////}
+				if (deliveryPerson.Password.Length < 8)
+				{
+					DisplayError("Password must be at least 8 characters long.");
+					continue;
+				}
 
-			////User.DeliveryLocation = new Location(x, y);
-			////User.UserType = UserType.Customer;
-			////userService.RegisterUser(User);
-			////WaitForKeyPress();
+				if (!deliveryPerson.Password.Any(char.IsDigit))
+				{
+					DisplayError("Password must contain at least one number.");
+					continue;
+				}
 
-			////// Return to main menu after registration
-			////return false; // Return to main menu
-			//}
-			//}
-			//catch (Exception ex)
-			//{
-			//DisplayError($"Error during registration: {ex.Message}");
-			//WaitForKeyPress();
-			//return true; // Return to the registration menu
-			//}
-			//return false; // Return to main menu
-			//case "2":
-			//DisplayOutput("Registering as a Deliverer...");
-			//// Implement deliverer registration
-			//WaitForKeyPress();
-			//break;
-			//case "3":
-			//DisplayOutput("Registering as a Client...");
-			//// Implement client registration
-			//WaitForKeyPress();
-			//break;
-			//case "4":
-			//return false; // Return to main menu
-			//default:
-			//DisplayError("Invalid selection. Please try again.\n");
-			//WaitForKeyPress();
-			//break;
-			//}
-			//return true;
+				if (!deliveryPerson.Password.Any(char.IsLower))
+				{
+					DisplayError("Password must contain at least one lowercase letter.");
+					continue;
+				}
+
+				if (!deliveryPerson.Password.Any(char.IsUpper))
+				{
+					DisplayError("Password must contain at least one uppercase letter.");
+					continue;
+				}
+
+				break;
+			}
+
+			// Fix password confirmation loop
+			DisplayOutput("Confirm your password:");
+			string confirmPassword;
+			while (true)
+			{
+				confirmPassword = GetInput();
+
+				if (string.IsNullOrEmpty(confirmPassword))
+				{
+					DisplayError("Password confirmation cannot be empty.");
+					continue;
+				}
+
+				if (deliveryPerson.Password != confirmPassword)
+				{
+					DisplayError("Passwords do not match. Please try again.");
+					continue;
+				}
+
+				break; // Only break when passwords match
+			}
+
+			// Set delivery location
+			DisplayOutput("Please enter your delivery location (in the form X,Y)");
+			DisplayOutput("X: ");
+			string X = GetInput();
+			DisplayOutput("Y: ");
+			string Y = GetInput();
+
+			// Initialize DeliveryLocation properly
+			deliveryPerson.CurrentLocation = new Location(double.Parse(X), double.Parse(Y));
+
+			// Vehicle details
+			DisplayOutput("Enter your vehicle type:");
+			deliveryPerson.VehicleType = GetInput();
+
+			DisplayOutput("Enter your vehicle license plate:");
+			deliveryPerson.LicensePlate = GetInput();
+
+			DisplayOutput("Enter your vehicle color:");
+			deliveryPerson.VehicleColor = GetInput();
+
+			// Display confirmation
+			DisplayOutput("\nConfirm User Details:");
+			DisplayOutput($"Username: {deliveryPerson.Username}");
+			DisplayOutput($"Name: {deliveryPerson.Name}");
+			DisplayOutput($"Age: {deliveryPerson.Age}");
+			DisplayOutput($"Email: {deliveryPerson.Email}");
+			DisplayOutput($"Mobile Number: {deliveryPerson.MobileNumber}");
+			DisplayOutput($"Address: {deliveryPerson.Address}");
+			DisplayOutput($"Password: {deliveryPerson.Password}");
+			DisplayOutput($"Location: {X}, {Y}");
+			DisplayOutput($"User Type: {userType}");
+			DisplayOutput($"Vehicle Type: {deliveryPerson.VehicleType}");
+			DisplayOutput($"License Plate: {deliveryPerson.LicensePlate}");
+			DisplayOutput($"Vehicle Color: {deliveryPerson.VehicleColor}");
+			DisplayOutput("Press any key to confirm or 'R' to re-enter details.");
+
+			ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+			if (keyInfo.Key == ConsoleKey.R)
+			{
+				DisplayOutput("Re-entering details...");
+				return GetDeliveryPerson(input, userType);
+			}
+
+			DisplayOutput($"You have successfully registered as a delivery person, {deliveryPerson.Name}!");
+
+			WaitForKeyPress();
+			return deliveryPerson;
+		}
+		private Restaurant RestaurantOwner(string input, EUserType userType)
+		{
+			return RestaurantOwner(string.Empty, userType);
 		}
 	}
+
 }
