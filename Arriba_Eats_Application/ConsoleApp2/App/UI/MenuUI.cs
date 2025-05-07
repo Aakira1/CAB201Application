@@ -14,7 +14,6 @@ namespace Arriba_Eats_App.UI.MenuUI
 	{
 		public User User { get; set; } = new User()
 		{
-			Username = string.Empty,
 			Address = string.Empty,
 			Age = string.Empty,
 			Email = string.Empty,
@@ -32,13 +31,12 @@ namespace Arriba_Eats_App.UI.MenuUI
 			Address = string.Empty,
 			Email = string.Empty,
 			MobileNumber = string.Empty,
-			Username = string.Empty,
 			Password = string.Empty,
 			VehicleType = string.Empty,
 			LicensePlate = string.Empty,
 			VehicleColor = string.Empty,
 			CurrentLocation = new Location(0, 0),
-			CurrentOrder = null,
+			CurrentOrder = new List<Order>(),
 			CompletedDeliveries = new List<Order>(),
 		};
 

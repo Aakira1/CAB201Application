@@ -49,11 +49,11 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 			{
 				case "1":
 					LoginUI login = new LoginUI();
-					login.ShowMenu(true, EUserType.None);
+					login.ShowMenu(true, userType);
 					break;
 				case "2":
 					RegisterAccountUI register = new RegisterAccountUI();
-					register.ShowMenu(true, EUserType.None);
+					register.ShowMenu(true, userType);
 					break;
 				case "3":
 					DisplayOutput("Exiting the application...");

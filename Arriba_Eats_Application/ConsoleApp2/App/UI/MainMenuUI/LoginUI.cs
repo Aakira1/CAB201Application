@@ -21,31 +21,31 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 			while (IsActive)
 			{
 				ClearScreen();
-				DisplayOutput("Login Screen");
-				DisplayOutput("Enter Your Username");
-				string UserName = GetInput();
+				DisplayOutput("---------- Login Screen ----------\n");
+				DisplayOutput("Enter Your Email:");
+				string EmailInput = GetInput();
 
 				DisplayOutput("Enter Your Password");
 				string Password = GetSecuredInput(string.Empty, true);
 
-				if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
+				if (string.IsNullOrEmpty(EmailInput) || string.IsNullOrEmpty(Password))
 				{
-					if (string.IsNullOrEmpty(UserName)) DisplayError(HandleEmptyInput(UserName));
+					if (string.IsNullOrEmpty(EmailInput)) DisplayError(HandleEmptyInput(EmailInput));
 
 					if (string.IsNullOrEmpty(Password)) DisplayError(HandleEmptyInput(Password));
 					
-					WaitForKeyPress();
+					//WaitForKeyPress();
 					continue;
 				}
 
 				try
 				{
-					if (userService.ValidateLogin(UserName, Password))
+					if (userService.ValidateLogin(EmailInput, Password))
 					{
 						DisplayOutput("Login successful!");
 						// Navigate to user menu based on user type
 						// You would implement this part
-						WaitForKeyPress();
+						//WaitForKeyPress();
 						break; // add additional logic here
 					}
 					else

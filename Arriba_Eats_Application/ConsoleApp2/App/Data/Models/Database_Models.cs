@@ -16,7 +16,8 @@ namespace Arriba_Eats_App.Data.Models
 		public required string Address { get; set; }
 		public required string Email { get; set; }
 		public required string MobileNumber { get; set; }
-		public required string Username { get; set; }
+
+		//public required string Username { get; set; } // optional
 		public required string Password { get; set; } // Should be stored as hash in production
 		public EUserType UserType { get; set; }
 	}
@@ -26,7 +27,9 @@ namespace Arriba_Eats_App.Data.Models
 	/// </summary>
 	public abstract class EntityBase : UserData
 	{
-		public Guid Id { get; set; } = Guid.NewGuid();
+		private Guid id = Guid.NewGuid();
+
+		public Guid Id { get; set; }
 		public DateTime CreatedAt { get; set; } = DateTime.Now;
 		public DateTime UpdatedAt { get; set; } = DateTime.Now;
 	}
@@ -74,7 +77,7 @@ namespace Arriba_Eats_App.Data.Models
 	{
 		public required User Client { get; set; }
 		public required string CuisineType { get; set; }
-		public required Location LocationXY { get; set; } = new(0, 0);
+		public required Location Location { get; set; } = new(0, 0);
 		public List<MenuItem> MenuItems { get; set; } = new();
 		public List<Order> Orders { get; set; } = new();
 		public List<Rating> Ratings { get; set; } = new();
@@ -114,26 +117,6 @@ namespace Arriba_Eats_App.Data.Models
 		public required EOrderStatus Status { get; set; }
 		public DateTime OrderDate { get; internal set; }
 		public float TotalAmount { get; internal set; }
-	}
-
-	/// <summary>
-	/// Item in an order with quantity and special instructions
-	/// </summary>
-	public class OrderItem : EntityBase
-	{
-		public required Order Order { get; set; }
-		public required MenuItem MenuItem { get; set; }
-		public required Restaurant Restaurant { get; set; }
-		public required DeliveryPerson DeliveryPerson { get; set; }
-		public required User Customer { get; set; }
-		public required Location DeliveryLocation { get; set; } = new(0, 0);
-		public required string SpecialInstructions { get; set; } = string.Empty;
-		public required int Quantity { get; set; } = 1;
-		public required decimal Price { get; set; } = 0.0m;
-		public required string OrderStatus { get; set; } = "Pending";
-		public required string PaymentMethod { get; set; } = "Credit Card";
-		public required DateTime EstimatedDeliveryTime { get; set; }
-		public required DateTime ActualDeliveryTime { get; set; }
 	}
 
 	/// <summary>

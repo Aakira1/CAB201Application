@@ -30,7 +30,6 @@ namespace Arriba_Eats_App.Services
 				string.IsNullOrEmpty(user.MobileNumber) ||
 				string.IsNullOrEmpty(user.Age) ||
 				string.IsNullOrEmpty(user.Password) ||
-				string.IsNullOrEmpty(user.Username) ||
 				user.DeliveryLocation == null)
 			{
 				Console.WriteLine("User details are incomplete");
@@ -38,11 +37,11 @@ namespace Arriba_Eats_App.Services
 			}
 
 			// Check if username already exists
-			if (InMemoryDataStore.GetUserByUsername(user.Username) != null)
-			{
-				Console.WriteLine("Username already exists");
-				return false;
-			}
+			//if (InMemoryDataStore.GetUserByUsername(user.Username) != null)
+			//{
+				//Console.WriteLine("Username already exists");
+				//return false;
+			//}
 
 			// Set user type and ID if not set
 			user.UserType = EUserType.Customer;
@@ -67,7 +66,6 @@ namespace Arriba_Eats_App.Services
 				string.IsNullOrEmpty(deliveryPerson.MobileNumber) ||
 				string.IsNullOrEmpty(deliveryPerson.Age) ||
 				string.IsNullOrEmpty(deliveryPerson.Password) ||
-				string.IsNullOrEmpty(deliveryPerson.Username) ||
 				string.IsNullOrEmpty(deliveryPerson.VehicleType) ||
 				string.IsNullOrEmpty(deliveryPerson.LicensePlate) ||
 				string.IsNullOrEmpty(deliveryPerson.VehicleColor))
@@ -76,11 +74,11 @@ namespace Arriba_Eats_App.Services
 				return false;
 			}
 			// Check if username already exists
-			if (InMemoryDataStore.GetUserByUsername(deliveryPerson.Username) != null)
-			{
-				Console.WriteLine("Username already exists");
-				return false;
-			}
+			//if (InMemoryDataStore.GetUserByUsername(deliveryPerson.Username) != null)
+			//{
+			//	Console.WriteLine("Username already exists");
+			//	return false;
+			//}
 			// Set user type and ID if not set
 			deliveryPerson.UserType = EUserType.DeliveryPerson;
 			if (deliveryPerson.Id == Guid.Empty)
@@ -89,6 +87,40 @@ namespace Arriba_Eats_App.Services
 			// Add delivery person to data store
 			InMemoryDataStore.AddDeliveryPerson(deliveryPerson);
 			Console.WriteLine($"You have been successfully registered as a delivery person, {deliveryPerson.Name}!\n");
+			return true;
+		}
+		public bool RegisterClient(RestaurantOwner restaurant)
+		{
+			if (restaurant == null)
+			{
+				Console.WriteLine("Restaurant cannot be null");
+				return false;
+			}
+
+			if (string.IsNullOrEmpty(restaurant.Restaurant.Name) ||
+				string.IsNullOrEmpty(restaurant.Restaurant.CuisineType) ||
+				restaurant.Restaurant.Location == null) // add more
+			{
+				Console.WriteLine("Restaurant details are incomplete");
+				return false;
+			}
+
+			// Check if email already exists
+			if (InMemoryDataStore.GetUserByEmail(restaurant.Email) != null)
+			{
+				Console.WriteLine("Email already exists");
+				return false;
+			}
+
+			// Set user type and ID if not set
+			restaurant.UserType = EUserType.RestaurantOwner;
+
+			if (restaurant.Id == Guid.Empty) restaurant.Id = Guid.NewGuid();
+
+			// Add restaurant to data store
+			InMemoryDataStore.AddRestaurantOwner(restaurant); // Add restaurant owner to the list
+			InMemoryDataStore.AddRestaurant(restaurant.Restaurant); // Add restaurant to the list
+			Console.WriteLine($"You have been successfully registered as a restaurant owner, {restaurant.Name}!\n");
 			return true;
 		}
 
@@ -242,15 +274,15 @@ namespace Arriba_Eats_App.Services
 		/// <param name="username">Username</param>
 		/// <param name="password">Password</param>
 		/// <returns>True if credentials are valid</returns>
-		public bool ValidateLogin(string username, string password)
+		public bool ValidateLogin(string email, string password)
 		{
-			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+			if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
 			{
 				Console.WriteLine("Username or password cannot be empty");
 				return false;
 			}
 
-			var user = InMemoryDataStore.GetUserByUsername(username);
+			var user = InMemoryDataStore.GetUserByEmail(email);
 			if (user == null)
 			{
 				Console.WriteLine("Invalid username or password");
@@ -335,8 +367,8 @@ namespace Arriba_Eats_App.Services
 					return user.Id.ToString();
 				case "age":
 					return user.Age;
-				case "username":
-					return user.Username;
+				//case "username":
+				//	return user.Username;
 				case "usertype":
 					return user.UserType.ToString();
 				case "walletbalance":
@@ -382,16 +414,16 @@ namespace Arriba_Eats_App.Services
 				case "age":
 					user.Age = newValue;
 					break;
-				case "username":
-					// Check if username already exists
-					var existingUser = InMemoryDataStore.GetUserByUsername(newValue);
-					if (existingUser != null && existingUser.Id != user.Id)
-					{
-						Console.WriteLine("Username already exists");
-						return false;
-					}
-					user.Username = newValue;
-					break;
+				//case "username":
+				//	// Check if username already exists
+				//	var existingUser = InMemoryDataStore.GetUserByUsername(newValue);
+				//	if (existingUser != null && existingUser.Id != user.Id)
+				//	{
+				//		Console.WriteLine("Username already exists");
+				//		return false;
+				//	}
+				//	user.Username = newValue;
+				//	break;
 				case "password":
 					// In a real application, you should hash the password before storing
 					user.Password = newValue;
@@ -416,7 +448,9 @@ namespace Arriba_Eats_App.Services
 			// Get all users from the data store
 			var users = InMemoryDataStore.Users;
 			var users2 = InMemoryDataStore.DeliveryPersons;
-			
+			var users3 = InMemoryDataStore.RestaurantOwners;
+			var users4 = InMemoryDataStore.Restaurants;
+
 			// Check if there are any users
 			if (users.Count == 0)
 			{
@@ -461,7 +495,7 @@ namespace Arriba_Eats_App.Services
 				Console.WriteLine(
 					$"{user.Id.ToString().PadRight(idWidth)} | " +
 					$"{TruncateString(user.Name, nameWidth).PadRight(nameWidth)} | " +
-					$"{TruncateString(user.Username, usernameWidth).PadRight(usernameWidth)} | " +
+					//$"{TruncateString(user.Username, usernameWidth).PadRight(usernameWidth)} | " +
 					$"{TruncateString(user.Email, emailWidth).PadRight(emailWidth)} | " +
 					$"{TruncateString(user.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
 					$"{user.WalletBalance.ToString("C2").PadRight(balanceWidth)}" +
@@ -469,22 +503,44 @@ namespace Arriba_Eats_App.Services
 				);
 			}
 
-
 			foreach (var deliverer in users2)
 			{
 				Console.WriteLine(
 					$"{deliverer.Id.ToString().PadRight(idWidth)} | " +
 					$"{TruncateString(deliverer.Name, nameWidth).PadRight(nameWidth)} | " +
-					$"{TruncateString(deliverer.Username, usernameWidth).PadRight(usernameWidth)} | " +
+					//$"{TruncateString(deliverer.Username, usernameWidth).PadRight(usernameWidth)} | " +
 					$"{TruncateString(deliverer.Email, emailWidth).PadRight(emailWidth)} | " +
 					$"{TruncateString(deliverer.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
 					$" | {deliverer.UserType}"
 				);
 			}
 
+			foreach (var restaurant in users3)
+			{
+				Console.WriteLine(
+					$"{restaurant.Id.ToString().PadRight(idWidth)} | " +
+					$"{TruncateString(restaurant.Name, nameWidth).PadRight(nameWidth)} | " +
+					//$"{TruncateString(restaurant.Username, usernameWidth).PadRight(usernameWidth)} | " +
+					$"{TruncateString(restaurant.Email, emailWidth).PadRight(emailWidth)} | " +
+					$"{TruncateString(restaurant.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
+					$" | {restaurant.UserType}"
+				);
+			}
+
+			foreach (var restaurant in users4)
+			{
+				Console.WriteLine(
+					$"{restaurant.Id.ToString().PadRight(idWidth)} | " +
+					$"{TruncateString(restaurant.Name, nameWidth).PadRight(nameWidth)} | " +
+					//$"{TruncateString(restaurant.Username, usernameWidth).PadRight(usernameWidth)} | " +
+					$"{TruncateString(restaurant.CuisineType, emailWidth).PadRight(emailWidth)} | " +
+					$" | {restaurant.UserType}"
+				);
+			}
+
 			// Display footer with count
 			Console.WriteLine();
-			Console.WriteLine($"Total Users: {users.Count + users2.Count}");
+			Console.WriteLine($"Total Users: {users.Count + users2.Count + users3.Count}");
 
 		}
 
@@ -509,7 +565,7 @@ namespace Arriba_Eats_App.Services
 			Console.WriteLine();
 			Console.WriteLine($"ID:               {user.Id}");
 			Console.WriteLine($"Name:             {user.Name}");
-			Console.WriteLine($"Username:         {user.Username}");
+			//Console.WriteLine($"Username:         {user.Username}");
 			Console.WriteLine($"Email:            {user.Email}");
 			Console.WriteLine($"Phone:            {user.MobileNumber}");
 			Console.WriteLine($"Address:          {user.Address}");
@@ -549,7 +605,7 @@ namespace Arriba_Eats_App.Services
 			Console.WriteLine();
 			Console.WriteLine($"ID:               {Deliverer.Id}");
 			Console.WriteLine($"Name:             {Deliverer.Name}");
-			Console.WriteLine($"Username:         {Deliverer.Username}");
+			//Console.WriteLine($"Username:         {Deliverer.Username}");
 			Console.WriteLine($"Email:            {Deliverer.Email}");
 			Console.WriteLine($"Phone:            {Deliverer.MobileNumber}");
 			Console.WriteLine($"Address:          {Deliverer.Address}");
@@ -563,15 +619,15 @@ namespace Arriba_Eats_App.Services
 		}
 
 
-		public bool CheckUsernameExists(string username)
-		{
-			if (string.IsNullOrEmpty(username))
-			{
-				Console.WriteLine("Username cannot be empty");
-				return false;
-			}
-			return InMemoryDataStore.CheckUsernameExists(username);
-		}
+		//public bool CheckUsernameExists(string username)
+		//{
+		//	if (string.IsNullOrEmpty(username))
+		//	{
+		//		Console.WriteLine("Username cannot be empty");
+		//		return false;
+		//	}
+		//	return InMemoryDataStore.CheckUsernameExists(username);
+		//}
 
 		public bool CheckEmailExists(string email)
 		{

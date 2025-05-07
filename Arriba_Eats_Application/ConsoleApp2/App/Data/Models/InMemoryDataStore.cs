@@ -34,8 +34,8 @@ namespace Arriba_Eats_App.Data
 		public static User? GetUserById(Guid id) =>
 			_users.FirstOrDefault(u => u.Id == id);
 
-		public static User? GetUserByUsername(string username) =>
-			_users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+		public static User? GetUserByEmail(string Email) =>
+			_users.FirstOrDefault(u => u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase));
 
 		public static void UpdateUser(User user)
 		{
@@ -50,10 +50,10 @@ namespace Arriba_Eats_App.Data
 			return user != null && _users.Remove(user);
 		}
 
-		public static bool CheckUsernameExists(string username)
-		{
-			return _users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
-		}
+		//public static bool CheckEmailExists(string username)
+		//{
+			//return _users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+		//}
 
 		public static bool CheckEmailExists(string email)
 		{

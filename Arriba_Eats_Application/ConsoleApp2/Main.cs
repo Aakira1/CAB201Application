@@ -23,7 +23,7 @@ namespace Main
 	/// </summary>
 	partial class EnhancedMenuSystem
 	{
-		private readonly IUserInterface _UI;
+		//private readonly IUserInterface _UI;
 		/// <summary>
 		/// Constructor for EnhancedMenuSystem class.
 		/// </summary>

@@ -61,7 +61,7 @@ namespace Arriba_Eats_App.UI.MenuUI
 		}
 		public override bool SelectionMenu(string Input, EUserType userType)
 		{
-			bool isValid = false;
+			//bool isValid = false;
 
 			//return true;
 			/*
@@ -88,11 +88,10 @@ namespace Arriba_Eats_App.UI.MenuUI
 					userService.RegisterUser(GetRegisterDetails(Input, userType)); // register customer
 					break;
 				case EUserType.DeliveryPerson:
-					userService.RegisterDeliveryPerson(GetDeliveryPerson(Input, userType)); // register delivery person
+					userService.RegisterDeliveryPerson(GetDeliveryDriverDetails(Input, userType)); // register delivery person
 					break;
 				case EUserType.RestaurantOwner:
-					GetRegisterDetails(Input, EUserType.RestaurantOwner);
-					DisplayOutput("additional Restaurant Owner questions...");
+					userService.RegisterClient(GetRestaurantOwnerDetails(Input, userType));
 					break;
 				default:
 					DisplayError("Invalid user type.");
@@ -112,7 +111,6 @@ namespace Arriba_Eats_App.UI.MenuUI
 		{
 			User user = new User()
 			{
-				Username = string.Empty,
 				Address = string.Empty,
 				Age = string.Empty,
 				Email = string.Empty,
@@ -127,20 +125,18 @@ namespace Arriba_Eats_App.UI.MenuUI
 
 			DisplayOutput($"Registering {userType} - Please enter your details:");
 
-			DisplayOutput("Enter your username:"); // Added to set the username
-			user.Username = GetInput();
-
 			DisplayOutput("Enter your name:");
 			user.Name = GetInput();
 
 			DisplayOutput("Enter your age (18-100):");
 			user.Age = GetInput();
 
+			DisplayOutput("Enter your Mobile Number:");
+			user.MobileNumber = GetInput();
+
 			DisplayOutput("Enter your Email address:");
 			user.Email = GetInput();
 
-			DisplayOutput("Enter your Mobile Number:");
-			user.MobileNumber = GetInput();
 
 			DisplayOutput("Enter your Address:");
 			user.Address = GetInput();
@@ -225,7 +221,6 @@ namespace Arriba_Eats_App.UI.MenuUI
 
 			// Display confirmation
 			DisplayOutput("\nConfirm User Details:");
-			DisplayOutput($"Username: {user.Username}");
 			DisplayOutput($"Name: {user.Name}");
 			DisplayOutput($"Age: {user.Age}");
 			DisplayOutput($"Email: {user.Email}");
@@ -255,7 +250,7 @@ namespace Arriba_Eats_App.UI.MenuUI
 		/// <param name="input"></param>
 		/// <param name="userType"></param>
 		/// <returns></returns>
-		private DeliveryPerson GetDeliveryPerson (string input, EUserType userType)
+		private DeliveryPerson GetDeliveryDriverDetails (string input, EUserType userType)
 		{
 			DeliveryPerson deliveryPerson = new DeliveryPerson()
 			{
@@ -264,7 +259,6 @@ namespace Arriba_Eats_App.UI.MenuUI
 				Address = User.Address,
 				Email = User.Email,
 				MobileNumber = User.MobileNumber,
-				Username = User.Username,
 				Password = User.Password,
 				VehicleType = string.Empty,
 				LicensePlate = string.Empty,
@@ -280,9 +274,6 @@ namespace Arriba_Eats_App.UI.MenuUI
 
 			deliveryPerson.UserType = userType; // Set the user type
 			DisplayOutput($"Registering {userType} - Please enter your details:");
-
-			DisplayOutput("Enter your username:"); // Added to set the username
-			deliveryPerson.Username = GetInput();
 
 			DisplayOutput("Enter your name:");
 			deliveryPerson.Name = GetInput();
@@ -390,7 +381,6 @@ namespace Arriba_Eats_App.UI.MenuUI
 
 			// Display confirmation
 			DisplayOutput("\nConfirm User Details:");
-			DisplayOutput($"Username: {deliveryPerson.Username}");
 			DisplayOutput($"Name: {deliveryPerson.Name}");
 			DisplayOutput($"Age: {deliveryPerson.Age}");
 			DisplayOutput($"Email: {deliveryPerson.Email}");
@@ -408,7 +398,7 @@ namespace Arriba_Eats_App.UI.MenuUI
 			if (keyInfo.Key == ConsoleKey.R)
 			{
 				DisplayOutput("Re-entering details...");
-				return GetDeliveryPerson(input, userType);
+				return GetDeliveryDriverDetails(input, userType);
 			}
 
 			DisplayOutput($"You have successfully registered as a delivery person, {deliveryPerson.Name}!");
@@ -416,10 +406,213 @@ namespace Arriba_Eats_App.UI.MenuUI
 			WaitForKeyPress();
 			return deliveryPerson;
 		}
-		private Restaurant RestaurantOwner(string input, EUserType userType)
+		private RestaurantOwner GetRestaurantOwnerDetails(string input, EUserType userType)
 		{
-			return RestaurantOwner(string.Empty, userType);
+
+			RestaurantOwner restaurantOwner = new RestaurantOwner()
+			{
+				Name = User.Name,
+				Age = User.Age,
+				Address = User.Address,
+				Email = User.Email,
+				MobileNumber = User.MobileNumber,
+				Password = User.Password,
+				CreatedAt = User.CreatedAt,
+				UpdatedAt = User.UpdatedAt,
+				UserType = User.UserType,
+				Id = Guid.NewGuid(),
+				Restaurant = new Restaurant()
+				{
+					Name = User.Name,
+					Address = User.Address,
+					Location = new Location(0, 0),
+					MenuItems = new List<MenuItem>(),
+					Orders = new List<Order>(),
+					Age = User.Age,
+					Email = User.Email,
+					MobileNumber = User.MobileNumber,
+					Password = User.Password,
+					CreatedAt = User.CreatedAt,
+					UpdatedAt = User.UpdatedAt,
+					UserType = User.UserType,
+					Id = Guid.NewGuid(),
+					CuisineType = string.Empty,
+					RestaurantName = string.Empty,
+					Client = User
+				},
+
+			};
+
+
+			restaurantOwner.UserType = userType; // Set the user type
+			DisplayOutput($"Registering {userType} - Please enter your details:");
+			DisplayOutput("Enter your name:");
+			restaurantOwner.Name = GetInput();
+			DisplayOutput("Enter your age (18-100):");
+			restaurantOwner.Age = GetInput();
+			DisplayOutput("Enter your Email address:");
+			restaurantOwner.Email = GetInput();
+			DisplayOutput("Enter your Mobile Number:");
+			restaurantOwner.MobileNumber = GetInput();
+			DisplayOutput("Enter your Address:");
+			restaurantOwner.Address = GetInput();
+
+			// Password validation
+			DisplayOutput(
+			"Your password must: \n"
+			+ "- be at least 8 characters long \n"
+			+ "- contain a number \n"
+			+ "- contain a lowercase letter \n"
+			+ "- contain an uppercase letter \n"
+			+ "Please enter a Password:");
+
+			while (true)
+			{
+				deliveryPerson.Password = GetInput();
+
+				if (string.IsNullOrEmpty(deliveryPerson.Password))
+				{
+					DisplayError("Password cannot be empty.");
+					continue;
+				}
+
+				if (deliveryPerson.Password.Length < 8)
+				{
+					DisplayError("Password must be at least 8 characters long.");
+					continue;
+				}
+
+				if (!deliveryPerson.Password.Any(char.IsDigit))
+				{
+					DisplayError("Password must contain at least one number.");
+					continue;
+				}
+
+				if (!deliveryPerson.Password.Any(char.IsLower))
+				{
+					DisplayError("Password must contain at least one lowercase letter.");
+					continue;
+				}
+
+				if (!deliveryPerson.Password.Any(char.IsUpper))
+				{
+					DisplayError("Password must contain at least one uppercase letter.");
+					continue;
+				}
+
+				break;
+			}
+
+			// Fix password confirmation loop
+			DisplayOutput("Confirm your password:");
+			string confirmPassword;
+
+			while (true)
+			{
+				confirmPassword = GetInput();
+
+				if (string.IsNullOrEmpty(confirmPassword))
+				{
+					DisplayError("Password confirmation cannot be empty.");
+					continue;
+				}
+
+				if (deliveryPerson.Password != confirmPassword)
+				{
+					DisplayError("Passwords do not match. Please try again.");
+					continue;
+				}
+
+				break; // Only break when passwords match
+			}
+
+			// Set restaurant name
+			DisplayOutput("Please enter your restaurant's name:");
+			restaurantOwner.Restaurant.RestaurantName = GetInput();
+
+			// Set restaurant cuisine type
+			DisplayOutput("Please select you restaurant's style:");
+			DisplayOutput("1. Italian");
+			DisplayOutput("2. French");
+			DisplayOutput("3. Chinese");
+			DisplayOutput("4. Japanese");
+			DisplayOutput("5. American");
+			DisplayOutput("6. Australian");
+			DisplayOutput("Please enter a choice between 1 and 6:");
+
+			if (!int.TryParse(GetInput(), out int cuisineChoiceInt) || cuisineChoiceInt < 1 || cuisineChoiceInt > 6)
+			{
+				DisplayError("Invalid choice. Please try again.");
+				return GetRestaurantOwnerDetails(input, userType);
+			}
+
+			if (cuisineChoiceInt == 1)
+			{
+				restaurantOwner.Restaurant.CuisineType = "Italian";
+			}
+			else if (cuisineChoiceInt == 2)
+			{
+				restaurantOwner.Restaurant.CuisineType = "French";
+			}
+			else if (cuisineChoiceInt == 3)
+			{
+				restaurantOwner.Restaurant.CuisineType = "Chinese";
+			}
+			else if (cuisineChoiceInt == 4)
+			{
+				restaurantOwner.Restaurant.CuisineType = "Japanese";
+			}
+			else if (cuisineChoiceInt == 5)
+			{
+				restaurantOwner.Restaurant.CuisineType = "American";
+			}
+			else if (cuisineChoiceInt == 6)
+			{
+				restaurantOwner.Restaurant.CuisineType = "Australian";
+			}
+
+			// Set restaurant location
+			DisplayOutput("Please enter your restaurant location (in the form X,Y)");
+			DisplayOutput("X: ");
+			string restaurantX = GetInput();
+			DisplayOutput("Y: ");
+			string restaurantY = GetInput();
+
+			// Initialize Restaurant Location properly
+			restaurantOwner.Restaurant.Location = new Location(double.Parse(restaurantX), double.Parse(restaurantY));
+
+
+			//// Initialize DeliveryLocation properly
+			//restaurantOwner.Restaurant.Location = new Location(double.Parse(X), double.Parse(Y));
+			// Display confirmation
+			DisplayOutput("\nConfirm User Details:");
+			DisplayOutput($"Name: {restaurantOwner.Name}");
+			DisplayOutput($"Age: {restaurantOwner.Age}");
+			DisplayOutput($"Email: {restaurantOwner.Email}");
+			DisplayOutput($"Mobile Number: {restaurantOwner.MobileNumber}");
+			DisplayOutput($"Address: {restaurantOwner.Address}");
+			DisplayOutput($"Password: {restaurantOwner.Password}");
+			DisplayOutput($"Restaurant Name: {restaurantOwner.Restaurant.RestaurantName}");
+			DisplayOutput($"Cuisine Type: {restaurantOwner.Restaurant.CuisineType}");
+			DisplayOutput($"Location: {restaurantX}, {restaurantY}");
+			//DisplayOutput($"Location: {X}, {Y}");
+			DisplayOutput($"User Type: {userType}");
+			DisplayOutput("Press any key to confirm or 'R' to re-enter details.");
+			ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+
+			if (keyInfo.Key == ConsoleKey.R)
+			{
+				DisplayOutput("Re-entering details...");
+				return GetRestaurantOwnerDetails(input, userType);
+			}
+
+			DisplayOutput($"You have successfully registered as a client, {restaurantOwner.Name}!");
+			WaitForKeyPress();
+			return restaurantOwner;
+
 		}
+
+
 	}
 
 }
