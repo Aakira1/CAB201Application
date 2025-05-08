@@ -417,7 +417,7 @@ namespace Arriba_Eats_App.UI.MenuUI
 				Email = User.Email,
 				MobileNumber = User.MobileNumber,
 				Password = User.Password,
-				CreatedAt = User.CreatedAt,
+				CreatedAt = DateTime.Now,
 				UpdatedAt = User.UpdatedAt,
 				UserType = User.UserType,
 				Id = Guid.NewGuid(),
@@ -609,10 +609,6 @@ namespace Arriba_Eats_App.UI.MenuUI
 			DisplayOutput($"You have successfully registered as a client, {restaurantOwner.Name}!");
 			WaitForKeyPress();
 			return restaurantOwner;
-
 		}
-
-
 	}
-
 }

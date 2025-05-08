@@ -446,17 +446,16 @@ namespace Arriba_Eats_App.Services
 		public void DisplayAllUsers()
 		{
 			// Get all users from the data store
-			var users = InMemoryDataStore.Users;
-			var users2 = InMemoryDataStore.DeliveryPersons;
+			//var users = InMemoryDataStore.Users;
+			//var users2 = InMemoryDataStore.DeliveryPersons;
 			var users3 = InMemoryDataStore.RestaurantOwners;
-			var users4 = InMemoryDataStore.Restaurants;
 
 			// Check if there are any users
-			if (users.Count == 0)
-			{
-				Console.WriteLine("No users found in the system.");
-				return;
-			}
+			//if (users.Count == 0)
+			//{
+				//Console.WriteLine("No users found in the system.");
+				//return;
+			//}
 
 			// Display header
 			Console.WriteLine("=== All Users ===");
@@ -490,30 +489,30 @@ namespace Arriba_Eats_App.Services
 				balanceWidth + 10));
 
 			// Display each user & delivery person
-			foreach (var user in users)
-			{
-				Console.WriteLine(
-					$"{user.Id.ToString().PadRight(idWidth)} | " +
-					$"{TruncateString(user.Name, nameWidth).PadRight(nameWidth)} | " +
-					//$"{TruncateString(user.Username, usernameWidth).PadRight(usernameWidth)} | " +
-					$"{TruncateString(user.Email, emailWidth).PadRight(emailWidth)} | " +
-					$"{TruncateString(user.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
-					$"{user.WalletBalance.ToString("C2").PadRight(balanceWidth)}" +
-					$" | {user.UserType}"
-				);
-			}
+			//foreach (var user in users)
+			//{
+				//Console.WriteLine(
+					//$"{user.Id.ToString().PadRight(idWidth)} | " +
+					//$"{TruncateString(user.Name, nameWidth).PadRight(nameWidth)} | " +
+					////$"{TruncateString(user.Username, usernameWidth).PadRight(usernameWidth)} | " +
+					//$"{TruncateString(user.Email, emailWidth).PadRight(emailWidth)} | " +
+					//$"{TruncateString(user.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
+					//$"{user.WalletBalance.ToString("C2").PadRight(balanceWidth)}" +
+					//$" | {user.UserType}"
+				//);
+			//}
 
-			foreach (var deliverer in users2)
-			{
-				Console.WriteLine(
-					$"{deliverer.Id.ToString().PadRight(idWidth)} | " +
-					$"{TruncateString(deliverer.Name, nameWidth).PadRight(nameWidth)} | " +
-					//$"{TruncateString(deliverer.Username, usernameWidth).PadRight(usernameWidth)} | " +
-					$"{TruncateString(deliverer.Email, emailWidth).PadRight(emailWidth)} | " +
-					$"{TruncateString(deliverer.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
-					$" | {deliverer.UserType}"
-				);
-			}
+			//foreach (var deliverer in users2)
+			//{
+				//Console.WriteLine(
+					//$"{deliverer.Id.ToString().PadRight(idWidth)} | " +
+					//$"{TruncateString(deliverer.Name, nameWidth).PadRight(nameWidth)} | " +
+					////$"{TruncateString(deliverer.Username, usernameWidth).PadRight(usernameWidth)} | " +
+					//$"{TruncateString(deliverer.Email, emailWidth).PadRight(emailWidth)} | " +
+					//$"{TruncateString(deliverer.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
+					//$" | {deliverer.UserType}"
+				//);
+			//}
 
 			foreach (var restaurant in users3)
 			{
@@ -527,20 +526,9 @@ namespace Arriba_Eats_App.Services
 				);
 			}
 
-			foreach (var restaurant in users4)
-			{
-				Console.WriteLine(
-					$"{restaurant.Id.ToString().PadRight(idWidth)} | " +
-					$"{TruncateString(restaurant.Name, nameWidth).PadRight(nameWidth)} | " +
-					//$"{TruncateString(restaurant.Username, usernameWidth).PadRight(usernameWidth)} | " +
-					$"{TruncateString(restaurant.CuisineType, emailWidth).PadRight(emailWidth)} | " +
-					$" | {restaurant.UserType}"
-				);
-			}
-
 			// Display footer with count
 			Console.WriteLine();
-			Console.WriteLine($"Total Users: {users.Count + users2.Count + users3.Count}");
+			Console.WriteLine($"Total Users: {/*users.Count + users2.Count +*/ users3.Count}");
 
 		}
 
