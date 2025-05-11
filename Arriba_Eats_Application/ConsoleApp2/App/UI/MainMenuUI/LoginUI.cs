@@ -1,6 +1,6 @@
 ﻿using System;
 using Arriba_Eats_App.Data.Models;
-using Arriba_Eats_App.Services;
+using Arriba_Eats_App.Services.UserServices;
 
 namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 {

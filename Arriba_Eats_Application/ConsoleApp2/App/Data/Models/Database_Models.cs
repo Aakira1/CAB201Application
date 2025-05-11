@@ -63,31 +63,32 @@ namespace Arriba_Eats_App.Data.Models
 	/// <summary>
 	/// Restaurant owner/manager account
 	/// </summary>
-	public class RestaurantOwner : EntityBase
-	{
-		public required Restaurant Restaurant { get; set; }
-	}
-	#endregion
-
-	#region Business Entities
 	/// <summary>
 	/// Restaurant with menu and location information
 	/// </summary>
 	public class Restaurant : EntityBase
 	{
-		public required User Client { get; set; }
+		public required string RestaurantName { get; set; } = string.Empty;
+		public required string PhoneNumber { get; set; }
 		public required string CuisineType { get; set; }
 		public required Location Location { get; set; } = new(0, 0);
 		public List<MenuItem> MenuItems { get; set; } = new();
 		public List<Order> Orders { get; set; } = new();
 		public List<Rating> Ratings { get; set; } = new();
-		public required string RestaurantName { get; set; } = string.Empty;
-
-
+		public decimal AverageRating { get; set; } = 0;
+		public int TotalRatings { get; set; } = 0;
+		public int TotalOrders { get; set; } = 0;
+		public int TotalDeliveries { get; set; } = 0;
+		public int TotalEarnings { get; set; } = 0;
+		public int TotalCustomers { get; set; } = 0;
+		public int TotalMenuItems { get; set; } = 0;
 	}
+	#endregion
 
+	#region Business Entities
 	public class MenuItem : EntityBase
 	{
+		public required User Customer { get; set; }
 		public required string Category { get; set; }
 		public required string Ingredients { get; set; }
 		public required string PreparationTime { get; set; }
@@ -132,7 +133,7 @@ namespace Arriba_Eats_App.Data.Models
 		public required Location DeliveryLocation { get; set; } = new(0, 0);
 		public required string SpecialInstructions { get; set; } = string.Empty;
 	}
-
+	
 	/// <summary>
 	/// Geographic location with latitude and longitude
 	/// </summary>

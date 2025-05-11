@@ -12,13 +12,12 @@ namespace Arriba_Eats_App.Data
 	public static class InMemoryDataStore
 	{
 		#region Data Collections
-		private static readonly List<User> _users = new();
-		private static readonly List<DeliveryPerson> _deliveryPersons = new();
-		private static readonly List<RestaurantOwner> _restaurantOwners = new();
-		private static readonly List<Restaurant> _restaurants = new();
-		private static readonly List<MenuItem> _menuItems = new();
-		private static readonly List<Order> _orders = new();
-		private static readonly List<Rating> _ratings = new();
+		private static List<User> _users = new();
+		private static List<DeliveryPerson> _deliveryPersons = new();
+		private static List<Restaurant> _restaurants = new();
+		private static List<MenuItem> _menuItems = new();
+		private static List<Order> _orders = new();
+		private static List<Rating> _ratings = new();
 		#endregion
 
 		#region User Management
@@ -94,30 +93,23 @@ namespace Arriba_Eats_App.Data
 
 		#region Restaurant Management
 		public static IReadOnlyList<Restaurant> Restaurants => _restaurants.AsReadOnly();
-		public static IReadOnlyList<RestaurantOwner> RestaurantOwners => _restaurantOwners.AsReadOnly();
+		public static IReadOnlyList<Restaurant> RestaurantOwners => _restaurants.AsReadOnly();
 
-		public static void AddRestaurant(Restaurant restaurant)
-		{
-			if (restaurant.Id == Guid.Empty)
-				restaurant.Id = Guid.NewGuid();
-			_restaurants.Add(restaurant);
-		}
-
-		public static void AddRestaurantOwner(RestaurantOwner owner)
+		public static void AddRestaurantOwner(Restaurant owner)
 		{
 			if (owner.Id == Guid.Empty)
 				owner.Id = Guid.NewGuid();
-			_restaurantOwners.Add(owner);
+			_restaurants.Add(owner);
 		}
 
 		public static Restaurant? GetRestaurantById(Guid id) =>
 			_restaurants.FirstOrDefault(r => r.Id == id);
 
-		public static RestaurantOwner? GetRestaurantOwnerById(Guid id) =>
-			_restaurantOwners.FirstOrDefault(r => r.Id == id);
+		public static Restaurant? GetRestaurantOwnerById(Guid id) =>
+			_restaurants.FirstOrDefault(r => r.Id == id);
 
-		public static RestaurantOwner? GetRestaurantOwnerByRestaurantId(Guid restaurantId) =>
-			_restaurantOwners.FirstOrDefault(r => r.Restaurant.Id == restaurantId);
+		public static Restaurant? GetRestaurantOwnerByRestaurantId(Guid restaurantId) =>
+			_restaurants.FirstOrDefault(r => r.Id == restaurantId);
 
 		public static void UpdateRestaurant(Restaurant restaurant)
 		{
@@ -244,7 +236,6 @@ namespace Arriba_Eats_App.Data
 		{
 			_users.Clear();
 			_deliveryPersons.Clear();
-			_restaurantOwners.Clear();
 			_restaurants.Clear();
 			_menuItems.Clear();
 			_orders.Clear();

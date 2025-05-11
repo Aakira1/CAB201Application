@@ -3,14 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using Arriba_Eats_App.Data.Models;
 using Arriba_Eats_App.Data;
+using Arriba_Eats_App.UI.MenuUI;
+using System.Runtime.CompilerServices;
 
-namespace Arriba_Eats_App.Services
+namespace Arriba_Eats_App.Services.UserServices
 {
 	/// <summary>
 	/// Service for managing user accounts in the system
 	/// </summary>
 	public class UserService
 	{
+		// private properties for user data
+		private MenuUI _menuUI = new MenuUI();
+		private User _user { get; } = new User()
+		{
+			Address = string.Empty,
+			Age = string.Empty,
+			Email = string.Empty,
+			MobileNumber = string.Empty,
+			Name = string.Empty,
+			Password = string.Empty,
+			UserType = EUserType.Customer,
+			DeliveryLocation = new Location(0, 0)
+		};
+
+		#region User services methods (Registering, Update, Delete - CRUD)
 		/// <summary>
 		/// Registers a new user in the system
 		/// </summary>
@@ -89,7 +106,7 @@ namespace Arriba_Eats_App.Services
 			Console.WriteLine($"You have been successfully registered as a delivery person, {deliveryPerson.Name}!\n");
 			return true;
 		}
-		public bool RegisterClient(RestaurantOwner restaurant)
+		public bool RegisterClient(Restaurant restaurant)
 		{
 			if (restaurant == null)
 			{
@@ -97,9 +114,9 @@ namespace Arriba_Eats_App.Services
 				return false;
 			}
 
-			if (string.IsNullOrEmpty(restaurant.Restaurant.Name) ||
-				string.IsNullOrEmpty(restaurant.Restaurant.CuisineType) ||
-				restaurant.Restaurant.Location == null) // add more
+			if (string.IsNullOrEmpty(restaurant.Name) ||
+				string.IsNullOrEmpty(restaurant.CuisineType) ||
+				restaurant.Location == null) // add more
 			{
 				Console.WriteLine("Restaurant details are incomplete");
 				return false;
@@ -119,7 +136,7 @@ namespace Arriba_Eats_App.Services
 
 			// Add restaurant to data store
 			InMemoryDataStore.AddRestaurantOwner(restaurant); // Add restaurant owner to the list
-			InMemoryDataStore.AddRestaurant(restaurant.Restaurant); // Add restaurant to the list
+			//InMemoryDataStore.AddRestaurant(restaurant.Restaurant); // Add restaurant to the list
 			Console.WriteLine($"You have been successfully registered as a restaurant owner, {restaurant.Name}!\n");
 			return true;
 		}
@@ -233,8 +250,6 @@ namespace Arriba_Eats_App.Services
 			return users;
 		}
 
-
-
 		/// <summary>
 		/// Finds users by name, mobile or email
 		/// </summary>
@@ -341,102 +356,6 @@ namespace Arriba_Eats_App.Services
 
 			return result;
 		}
-
-		#region Private Methods
-		/// <summary>
-		/// Gets a property value from a user by property name
-		/// </summary>
-		private string GetUserPropertyValue(User user, string propertyName)
-		{
-			if (user == null)
-			{
-				return "User cannot be null";
-			}
-
-			switch (propertyName.ToLower())
-			{
-				case "name":
-					return user.Name;
-				case "email":
-					return user.Email;
-				case "mobilenumber":
-					return user.MobileNumber;
-				case "address":
-					return user.Address;
-				case "id":
-					return user.Id.ToString();
-				case "age":
-					return user.Age;
-				//case "username":
-				//	return user.Username;
-				case "usertype":
-					return user.UserType.ToString();
-				case "walletbalance":
-					return user.WalletBalance.ToString("C2");
-				case "totalspent":
-					return user.TotalSpent.ToString("C2");
-				case "deliverylocation":
-					return user.DeliveryLocation?.ToString() ?? "No location set";
-				default:
-					Console.WriteLine("Invalid property name");
-					return "Invalid property name";
-			}
-		}
-
-		/// <summary>
-		/// Sets a property value on a user by property name
-		/// </summary>
-		private bool SetUserPropertyValue(User user, string propertyName, string newValue)
-		{
-			if (user == null)
-			{
-				Console.WriteLine("User cannot be null");
-				return false;
-			}
-
-			switch (propertyName.ToLower())
-			{
-				case "name":
-					user.Name = newValue;
-					break;
-				case "email":
-					user.Email = newValue;
-					break;
-				case "mobilenumber":
-					user.MobileNumber = newValue;
-					break;
-				case "address":
-					user.Address = newValue;
-					break;
-				case "id":
-					Console.WriteLine("Cannot update user ID");
-					return false;
-				case "age":
-					user.Age = newValue;
-					break;
-				//case "username":
-				//	// Check if username already exists
-				//	var existingUser = InMemoryDataStore.GetUserByUsername(newValue);
-				//	if (existingUser != null && existingUser.Id != user.Id)
-				//	{
-				//		Console.WriteLine("Username already exists");
-				//		return false;
-				//	}
-				//	user.Username = newValue;
-				//	break;
-				case "password":
-					// In a real application, you should hash the password before storing
-					user.Password = newValue;
-					break;
-				default:
-					Console.WriteLine("Invalid property name");
-					return false;
-			}
-
-			Console.WriteLine("User updated successfully");
-			return true;
-		}
-
 		#endregion
 
 		#region Debugging Functions
@@ -446,16 +365,16 @@ namespace Arriba_Eats_App.Services
 		public void DisplayAllUsers()
 		{
 			// Get all users from the data store
-			//var users = InMemoryDataStore.Users;
-			//var users2 = InMemoryDataStore.DeliveryPersons;
-			var users3 = InMemoryDataStore.RestaurantOwners;
+			var users = InMemoryDataStore.Users;
+			var deliveryPersons = InMemoryDataStore.DeliveryPersons;
+			var restaurants = InMemoryDataStore.Restaurants;
 
-			// Check if there are any users
-			//if (users.Count == 0)
-			//{
-				//Console.WriteLine("No users found in the system.");
-				//return;
-			//}
+			// Check if there are any users at all
+			if (users.Count == 0 && deliveryPersons.Count == 0 && restaurants.Count == 0)
+			{
+				Console.WriteLine("No users found in the system.");
+				return;
+			}
 
 			// Display header
 			Console.WriteLine("=== All Users ===");
@@ -464,7 +383,6 @@ namespace Arriba_Eats_App.Services
 			// Define column widths
 			const int idWidth = 36;
 			const int nameWidth = 20;
-			const int usernameWidth = 15;
 			const int emailWidth = 25;
 			const int phoneWidth = 15;
 			const int balanceWidth = 12;
@@ -473,63 +391,63 @@ namespace Arriba_Eats_App.Services
 			Console.WriteLine(
 				$"{"ID".PadRight(idWidth)} | " +
 				$"{"Name".PadRight(nameWidth)} | " +
-				$"{"Username".PadRight(usernameWidth)} | " +
 				$"{"Email".PadRight(emailWidth)} | " +
 				$"{"Phone".PadRight(phoneWidth)} | " +
 				$"{"Balance".PadRight(balanceWidth)} | " +
 				$"User Type");
-
 			Console.WriteLine(new string(
-				'-', 
-				idWidth + 
-				nameWidth + 
-				usernameWidth + 
-				emailWidth + 
-				phoneWidth + 
+				'-',
+				idWidth +
+				nameWidth +
+				emailWidth +
+				phoneWidth +
 				balanceWidth + 10));
 
-			// Display each user & delivery person
-			//foreach (var user in users)
-			//{
-				//Console.WriteLine(
-					//$"{user.Id.ToString().PadRight(idWidth)} | " +
-					//$"{TruncateString(user.Name, nameWidth).PadRight(nameWidth)} | " +
-					////$"{TruncateString(user.Username, usernameWidth).PadRight(usernameWidth)} | " +
-					//$"{TruncateString(user.Email, emailWidth).PadRight(emailWidth)} | " +
-					//$"{TruncateString(user.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
-					//$"{user.WalletBalance.ToString("C2").PadRight(balanceWidth)}" +
-					//$" | {user.UserType}"
-				//);
-			//}
+			// Display each user
+			foreach (var user in users)
+			{
+				Console.WriteLine(
+					$"{user.Id.ToString().PadRight(idWidth)} | " +
+					$"{TruncateString(user.Name, nameWidth).PadRight(nameWidth)} | " +
+					$"{TruncateString(user.Email, emailWidth).PadRight(emailWidth)} | " +
+					$"{TruncateString(user.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
+					$"{user.WalletBalance.ToString("C2").PadRight(balanceWidth)} | " +
+					$"{user.UserType}"
+				);
+			}
 
-			//foreach (var deliverer in users2)
-			//{
-				//Console.WriteLine(
-					//$"{deliverer.Id.ToString().PadRight(idWidth)} | " +
-					//$"{TruncateString(deliverer.Name, nameWidth).PadRight(nameWidth)} | " +
-					////$"{TruncateString(deliverer.Username, usernameWidth).PadRight(usernameWidth)} | " +
-					//$"{TruncateString(deliverer.Email, emailWidth).PadRight(emailWidth)} | " +
-					//$"{TruncateString(deliverer.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
-					//$" | {deliverer.UserType}"
-				//);
-			//}
+			// Display each delivery person
+			foreach (var deliverer in deliveryPersons)
+			{
+				Console.WriteLine(
+					$"{deliverer.Id.ToString().PadRight(idWidth)} | " +
+					$"{TruncateString(deliverer.Name, nameWidth).PadRight(nameWidth)} | " +
+					$"{TruncateString(deliverer.Email, emailWidth).PadRight(emailWidth)} | " +
+					$"{TruncateString(deliverer.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
+					$"{"N/A".PadRight(balanceWidth)} | " +
+					$"{deliverer.UserType}"
+				);
+			}
 
-			foreach (var restaurant in users3)
+			// Display each restaurant
+			foreach (var restaurant in restaurants)
 			{
 				Console.WriteLine(
 					$"{restaurant.Id.ToString().PadRight(idWidth)} | " +
 					$"{TruncateString(restaurant.Name, nameWidth).PadRight(nameWidth)} | " +
-					//$"{TruncateString(restaurant.Username, usernameWidth).PadRight(usernameWidth)} | " +
 					$"{TruncateString(restaurant.Email, emailWidth).PadRight(emailWidth)} | " +
 					$"{TruncateString(restaurant.MobileNumber, phoneWidth).PadRight(phoneWidth)} | " +
-					$" | {restaurant.UserType}"
+					$"{"N/A".PadRight(balanceWidth)} | " +
+					$"{restaurant.UserType}"
 				);
+				// Also display the restaurant info
+				Console.WriteLine($"\n   Restaurant: {restaurant.RestaurantName} ({restaurant.CuisineType})");
+				Console.WriteLine($"   Location: {restaurant.Location}");
 			}
 
 			// Display footer with count
 			Console.WriteLine();
-			Console.WriteLine($"Total Users: {/*users.Count + users2.Count +*/ users3.Count}");
-
+			Console.WriteLine($"Total Users: {users.Count + deliveryPersons.Count + restaurants.Count}");
 		}
 
 		/// <summary>
@@ -639,6 +557,285 @@ namespace Arriba_Eats_App.Services
 			return str.Length <= maxLength ? str : str.Substring(0, maxLength - 3) + "...";
 		}
 
+		#endregion
+
+		#region Validation Handling
+		/// <summary>
+		/// Validates a name input from the user
+		/// </summary>
+		/// <param name="Input"></param>
+		/// <returns></returns>
+		public string ValidName(string Input)
+		{
+			// Make sure name is only letters
+			while (string.IsNullOrEmpty(Input) || Input.All(char.IsLetter) || !Input.Contains(" "))
+			{
+				_menuUI.DisplayError("Must consist of at least one letter and only letters, spaces, " +
+					"apostrophes and hyphens.");
+				Input = _menuUI.GetInput();
+			}
+			return Input;
+		}
+		public string ValidAge(string Input)
+		{
+			while (string.IsNullOrEmpty(Input) || !int.TryParse(Input, out int age) || age < 18 || age > 100)
+			{
+				_menuUI.DisplayError("Age must be a number between 18 and 100. " +
+					"Please try again.");
+				Input = _menuUI.GetInput();
+			}
+			return Input;
+		}
+		public string ValidMobileNo(string Input)
+		{
+			while (string.IsNullOrEmpty(Input) || !Input.All(char.IsDigit) 
+				|| Input.Length != 10 || Input[0] != '0')
+			{
+				_menuUI.DisplayError("Must consist of only numbers, " +
+					"be exactly 10 characters long, and have a leading zero.");
+				Input = _menuUI.GetInput();
+			}
+			return Input;
+		}
+		public string ValidEmail(string Input)
+		{
+			while (string.IsNullOrEmpty(Input) || !Input.Contains("@") || !Input.Contains("."))
+			{
+				_menuUI.DisplayError("Must include exactly one @ character and have at " +
+					"least one other character on either side.");
+				Input = _menuUI.GetInput();
+			}
+			return Input;
+		}
+		public string ValidPassword(string Input, bool isRecheck, User user)
+		{
+			while (!isRecheck)
+			{
+				if (string.IsNullOrEmpty(Input))
+				{
+					_menuUI.DisplayError("Password cannot be empty.");
+					Input = _menuUI.GetInput();
+					continue;
+				}
+
+				if (Input.Length < 8)
+				{
+					_menuUI.DisplayError("Password must be at least 8 characters long.");
+					Input = _menuUI.GetInput();
+					continue;
+				}
+
+				if (!Input.Any(char.IsDigit))
+				{
+					_menuUI.DisplayError("Password must contain at least one number.");
+					Input = _menuUI.GetInput();
+					continue;
+				}
+
+				if (!Input.Any(char.IsLower))
+				{
+					_menuUI.DisplayError("Password must contain at least one lowercase letter.");
+					Input = _menuUI.GetInput();
+					continue;
+				}
+
+				if (!Input.Any(char.IsUpper))
+				{
+					_menuUI.DisplayError("Password must contain at least one uppercase letter.");
+					Input = _menuUI.GetInput();
+					continue;
+				}
+				//if (!Input.Any(ch => "!@#$%^&*()_+-=[]{}|;':\",.<>?/`~".Contains(ch)))
+				//{
+					//_menuUI.DisplayError("Password must contain at least one special character.");
+					//Input = _menuUI.GetInput();
+					//continue;
+				//}
+				break;
+			}
+
+			while (isRecheck)
+			{
+				if (string.IsNullOrEmpty(Input))
+				{
+					_menuUI.DisplayError("Password confirmation cannot be empty.");
+					Input = _menuUI.GetInput();
+					continue;
+				}
+
+				if (user.Password != Input)
+				{
+					_menuUI.DisplayError("Passwords do not match. Please try again.");
+					Input = _menuUI.GetInput();
+					continue;
+				}
+
+				break; // Only break when passwords match
+			}
+			return Input;
+		}
+		public int ValidLocation(int Input)
+		{
+			while (Input < 0 || Input > 100)
+			{
+				_menuUI.DisplayError("Location must be between 0 and 100.");
+				Input = int.Parse(_menuUI.GetInput());
+			}
+			// check input is a digit
+			while (string.IsNullOrEmpty(Input.ToString()) || !Input.ToString().All(char.IsDigit))
+			{
+				_menuUI.DisplayError("Must be of the format X,Y " +
+					"where X and Y are both integer values");
+				Input = int.Parse(_menuUI.GetInput());
+			}
+			return Input;
+		}
+		public string ValidLicensePlate(string Input)
+		{
+			while (string.IsNullOrEmpty(Input) || !Input.All(char.IsLetterOrDigit)
+				|| string.IsNullOrWhiteSpace(Input) || Input.Contains(Input.ToUpper()))
+			{
+				_menuUI.DisplayError("Must be between 1 and 8 characters long, " +
+					"may only contain uppercase letters, " +
+					"numbers and spaces, and may not consist entirely of spaces.");
+				Input = _menuUI.GetInput();
+			}
+			return Input.ToUpper();
+		}
+		public string ValidCuisineType(int cuisineChoiceInt, string cuisinetype)
+		{
+			if (cuisineChoiceInt == 1)
+			{
+				cuisinetype = "Italian";
+			}
+			else if (cuisineChoiceInt == 2)
+			{
+				cuisinetype = "French";
+			}
+			else if (cuisineChoiceInt == 3)
+			{
+				cuisinetype = "Chinese";
+			}
+			else if (cuisineChoiceInt == 4)
+			{
+				cuisinetype = "Japanese";
+			}
+			else if (cuisineChoiceInt == 5)
+			{
+				cuisinetype = "American";
+			}
+			else if (cuisineChoiceInt == 6)
+			{
+				cuisinetype = "Australian";
+			}
+
+			while(cuisineChoiceInt.ToString() == null || cuisineChoiceInt.ToString() == string.Empty ||
+				cuisineChoiceInt < 1 || cuisineChoiceInt > 6)
+			{
+				_menuUI.DisplayError("Italian, French, Chinese, Japanese, American or Australian. Note, this will be entered via a menu option so " +
+					"you will need to enter a numeric value between 1 -6 inclusive.");
+				cuisinetype = _menuUI.GetInput();
+			}
+
+			return cuisinetype;
+		}
+
+		#endregion
+
+		#region Private Methods
+		/// <summary>
+		/// Gets a property value from a user by property name
+		/// </summary>
+		private string GetUserPropertyValue(User user, string propertyName)
+		{
+			if (user == null)
+			{
+				return "User cannot be null";
+			}
+
+			switch (propertyName.ToLower())
+			{
+				case "name":
+					return user.Name;
+				case "email":
+					return user.Email;
+				case "mobilenumber":
+					return user.MobileNumber;
+				case "address":
+					return user.Address;
+				case "id":
+					return user.Id.ToString();
+				case "age":
+					return user.Age;
+				//case "username":
+				//	return user.Username;
+				case "usertype":
+					return user.UserType.ToString();
+				case "walletbalance":
+					return user.WalletBalance.ToString("C2");
+				case "totalspent":
+					return user.TotalSpent.ToString("C2");
+				case "deliverylocation":
+					return user.DeliveryLocation?.ToString() ?? "No location set";
+				default:
+					Console.WriteLine("Invalid property name");
+					return "Invalid property name";
+			}
+		}
+
+		/// <summary>
+		/// Sets a property value on a user by property name
+		/// </summary>
+		private bool SetUserPropertyValue(User user, string propertyName, string newValue)
+		{
+			if (user == null)
+			{
+				Console.WriteLine("User cannot be null");
+				return false;
+			}
+
+			switch (propertyName.ToLower())
+			{
+				case "name":
+					user.Name = newValue;
+					break;
+				case "email":
+					user.Email = newValue;
+					break;
+				case "mobilenumber":
+					user.MobileNumber = newValue;
+					break;
+				case "address":
+					user.Address = newValue;
+					break;
+				case "id":
+					Console.WriteLine("Cannot update user ID");
+					return false;
+				case "age":
+					user.Age = newValue;
+					break;
+				//case "username":
+				//	// Check if username already exists
+				//	var existingUser = InMemoryDataStore.GetUserByUsername(newValue);
+				//	if (existingUser != null && existingUser.Id != user.Id)
+				//	{
+				//		Console.WriteLine("Username already exists");
+				//		return false;
+				//	}
+				//	user.Username = newValue;
+				//	break;
+				case "password":
+					// In a real application, you should hash the password before storing
+					user.Password = newValue;
+					break;
+				default:
+					Console.WriteLine("Invalid property name");
+					return false;
+			}
+
+			Console.WriteLine("User updated successfully");
+			return true;
+		}
 		#endregion
 	}
 }
