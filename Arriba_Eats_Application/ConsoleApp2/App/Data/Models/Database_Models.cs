@@ -72,7 +72,7 @@ namespace Arriba_Eats_App.Data.Models
 		public required string PhoneNumber { get; set; }
 		public required string CuisineType { get; set; }
 		public required Location Location { get; set; } = new(0, 0);
-		public List<MenuItem> MenuItems { get; set; } = new();
+		public List<MenuItem> Menu { get; set; } = new();
 		public List<Order> Orders { get; set; } = new();
 		public List<Rating> Ratings { get; set; } = new();
 		public decimal AverageRating { get; set; } = 0;
@@ -88,14 +88,16 @@ namespace Arriba_Eats_App.Data.Models
 	#region Business Entities
 	public class MenuItem : EntityBase
 	{
-		public required User Customer { get; set; }
+		public required string Customer { get; set; }
+		public required string ItemName { get; set; } = string.Empty;
+		public required string Description { get; set; } = string.Empty;
+		public required decimal Price { get; set; } = 0;
 		public required string Category { get; set; }
 		public required string Ingredients { get; set; }
 		public required string PreparationTime { get; set; }
 		public required string ServingSize { get; set; }
 		public required bool IsAvailable { get; set; } = true;
-		public required int Stars { get; set; } = 0;
-		public List<Rating>? Ratings { get; internal set; }
+		public List<Rating> Ratings { get; internal set; } = new();
 	}
 
 	/// <summary>
@@ -125,13 +127,14 @@ namespace Arriba_Eats_App.Data.Models
 	/// </summary>
 	public class Rating : EntityBase
 	{
-		public required Restaurant Restaurant { get; set; }
-		public required MenuItem MenuItem { get; set; }
-		public required DeliveryPerson DeliveryPerson { get; set; }
-		public required Order Order { get; set; }
-		public required User Customer { get; set; }
-		public required Location DeliveryLocation { get; set; } = new(0, 0);
-		public required string SpecialInstructions { get; set; } = string.Empty;
+		public required int Stars { get; set; } = 0;
+		public required string Feedback { get; set; } = string.Empty;
+		public required string UserName { get; set; }
+		public required string RestaurantName { get; set; }
+		public required string MenuItemName { get; set; }
+		public required DateTime CreatedAt { get; set; }
+		public required DateTime UpdatedAt { get; set; }
+
 	}
 	
 	/// <summary>

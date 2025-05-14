@@ -15,17 +15,6 @@ namespace Arriba_Eats_App.Services.UserServices
 	{
 		// private properties for user data
 		private MenuUI _menuUI = new MenuUI();
-		private User _user { get; } = new User()
-		{
-			Address = string.Empty,
-			Age = string.Empty,
-			Email = string.Empty,
-			MobileNumber = string.Empty,
-			Name = string.Empty,
-			Password = string.Empty,
-			UserType = EUserType.Customer,
-			DeliveryLocation = new Location(0, 0)
-		};
 
 		#region User services methods (Registering, Update, Delete - CRUD)
 		/// <summary>
@@ -232,58 +221,6 @@ namespace Arriba_Eats_App.Services.UserServices
 		}
 
 		/// <summary>
-		/// Retrieves all users from the system
-		/// </summary>
-		/// <returns>List of all users</returns>
-		public List<User> GetAllUsers()
-		{
-			var users = InMemoryDataStore.Users.ToList();
-			if (users.Count == 0)
-			{
-				Console.WriteLine("No users found");
-			}
-			else
-			{
-				Console.WriteLine($"Found {users.Count} users");
-			}
-
-			return users;
-		}
-
-		/// <summary>
-		/// Finds users by name, mobile or email
-		/// </summary>
-		/// <param name="name">Optional name filter</param>
-		/// <param name="mobile">Optional mobile filter</param>
-		/// <param name="email">Optional email filter</param>
-		/// <returns>List of matching users</returns>
-		public List<User> FindUsers(string name = "", string mobile = "", string email = "")
-		{
-			var users = InMemoryDataStore.Users.ToList();
-
-			// Apply filters if provided
-			if (!string.IsNullOrEmpty(name))
-				users = users.Where(u => u.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
-
-			if (!string.IsNullOrEmpty(mobile))
-				users = users.Where(u => u.MobileNumber.Contains(mobile)).ToList();
-
-			if (!string.IsNullOrEmpty(email))
-				users = users.Where(u => u.Email.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
-
-			if (users.Count == 0)
-			{
-				Console.WriteLine("No matching users found");
-			}
-			else
-			{
-				Console.WriteLine($"Found {users.Count} matching users");
-			}
-
-			return users;
-		}
-
-		/// <summary>
 		/// Validates user login credentials
 		/// </summary>
 		/// <param name="username">Username</param>
@@ -449,51 +386,6 @@ namespace Arriba_Eats_App.Services.UserServices
 			Console.WriteLine();
 			Console.WriteLine($"Total Users: {users.Count + deliveryPersons.Count + restaurants.Count}");
 		}
-
-		/// <summary>
-		/// Displays detailed information for a single user
-		/// </summary>
-		/// <param name="userId">ID of the user to display</param>
-		public void DisplayUserDetails(Guid userId)
-		{
-			// Get user from data store
-			var user = InMemoryDataStore.GetUserById(userId);
-
-			// Check if user exists
-			if (user == null)
-			{
-				Console.WriteLine($"User with ID {userId} not found.");
-				return;
-			}
-
-			// Display detailed user information
-			Console.WriteLine($"=== User Details: {user.Name} ===");
-			Console.WriteLine();
-			Console.WriteLine($"ID:               {user.Id}");
-			Console.WriteLine($"Name:             {user.Name}");
-			//Console.WriteLine($"Username:         {user.Username}");
-			Console.WriteLine($"Email:            {user.Email}");
-			Console.WriteLine($"Phone:            {user.MobileNumber}");
-			Console.WriteLine($"Address:          {user.Address}");
-			Console.WriteLine($"Age:              {user.Age}");
-			Console.WriteLine($"User Type:        {user.UserType}");
-			Console.WriteLine($"Wallet Balance:   {user.WalletBalance:C2}");
-			Console.WriteLine($"Total Spent:      {user.TotalSpent:C2}");
-			Console.WriteLine($"Delivery Location: {user.DeliveryLocation}");
-			Console.WriteLine($"User Type:		  {user.UserType}");
-
-			// Display order history if any
-			if (user.OrderHistory.Count > 0)
-			{
-				Console.WriteLine();
-				Console.WriteLine("Order History:");
-				foreach (var order in user.OrderHistory)
-				{
-					Console.WriteLine($"  - Order {order.Id.ToString().Substring(0, 8)} | {order.OrderDate.ToShortDateString()} | {order.TotalAmount:C2} | Status: {order.Status}");
-				}
-			}
-		}
-
 		public void DisplayDelivererDetails(Guid userId)
 		{
 			// Get user from data store
@@ -551,11 +443,6 @@ namespace Arriba_Eats_App.Services.UserServices
 		/// <param name="str"></param>
 		/// <param name="maxLength"></param>
 		/// <returns></returns>
-		private static string TruncateString(string str, int maxLength)
-		{
-			if (string.IsNullOrEmpty(str)) return string.Empty;
-			return str.Length <= maxLength ? str : str.Substring(0, maxLength - 3) + "...";
-		}
 
 		#endregion
 
@@ -605,6 +492,8 @@ namespace Arriba_Eats_App.Services.UserServices
 					"least one other character on either side.");
 				Input = _menuUI.GetInput();
 			}
+			CheckEmailExists(Input);
+
 			return Input;
 		}
 		public string ValidPassword(string Input, bool isRecheck, User user)
@@ -746,6 +635,36 @@ namespace Arriba_Eats_App.Services.UserServices
 		/// <summary>
 		/// Gets a property value from a user by property name
 		/// </summary>
+		private List<User> FindUsers(string name = "", string mobile = "", string email = "")
+		{
+			var users = InMemoryDataStore.Users.ToList();
+
+			// Apply filters if provided
+			if (!string.IsNullOrEmpty(name))
+				users = users.Where(u => u.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+
+			if (!string.IsNullOrEmpty(mobile))
+				users = users.Where(u => u.MobileNumber.Contains(mobile)).ToList();
+
+			if (!string.IsNullOrEmpty(email))
+				users = users.Where(u => u.Email.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
+
+			if (users.Count == 0)
+			{
+				Console.WriteLine("No matching users found");
+			}
+			else
+			{
+				Console.WriteLine($"Found {users.Count} matching users");
+			}
+
+			return users;
+		}
+		private static string TruncateString(string str, int maxLength)
+		{
+			if (string.IsNullOrEmpty(str)) return string.Empty;
+			return str.Length <= maxLength ? str : str.Substring(0, maxLength - 3) + "...";
+		}
 		private string GetUserPropertyValue(User user, string propertyName)
 		{
 			if (user == null)
@@ -835,6 +754,29 @@ namespace Arriba_Eats_App.Services.UserServices
 
 			Console.WriteLine("User updated successfully");
 			return true;
+		}
+
+		internal EUserType GetUserType(string emailInput, string password)
+		{
+			if (emailInput == null)
+			{
+				throw new ArgumentNullException(nameof(emailInput));
+			}
+			if (password == null)
+			{
+				throw new ArgumentNullException(nameof(password));
+			}
+			var user = InMemoryDataStore.GetUserByEmail(emailInput);
+
+			if (user == null)
+			{
+				throw new ArgumentException("User not found");
+			}
+			if (user.Password != password)
+			{
+				throw new ArgumentException("Invalid password");
+			}
+			return user.UserType;
 		}
 		#endregion
 	}

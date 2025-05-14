@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arriba_Eats_App.Arriba_Eats_App.UI
+namespace Arriba_Eats_App.UI.MenuUI.DeliveryUI
 {
-	internal class DeliveryUI
+	class DelivererUI
 	{
 	}
 }

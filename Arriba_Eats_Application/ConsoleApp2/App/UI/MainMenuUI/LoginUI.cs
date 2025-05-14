@@ -1,6 +1,9 @@
 ﻿using System;
 using Arriba_Eats_App.Data.Models;
 using Arriba_Eats_App.Services.UserServices;
+using Arriba_Eats_App.UI.MenuUI.CustomerMenuUI;
+using Arriba_Eats_App.UI.MenuUI.RestarauntUI;
+using Arriba_Eats_App.UI.MenuUI.DeliveryUI;
 
 namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 {
@@ -27,11 +30,12 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 
 				DisplayOutput("Enter Your Password");
 				string Password = GetSecuredInput(string.Empty, true);
+				
 
 				if (string.IsNullOrEmpty(EmailInput) || string.IsNullOrEmpty(Password))
 				{
 					if (string.IsNullOrEmpty(EmailInput)) DisplayError(HandleEmptyInput(EmailInput));
-
+				
 					if (string.IsNullOrEmpty(Password)) DisplayError(HandleEmptyInput(Password));
 					
 					//WaitForKeyPress();
@@ -40,13 +44,33 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 
 				try
 				{
+					// set usertype base on user.
+					userType = userService.GetUserType(EmailInput, Password);
+
+
 					if (userService.ValidateLogin(EmailInput, Password))
 					{
 						DisplayOutput("Login successful!");
-						// Navigate to user menu based on user type
-						// You would implement this part
-						//WaitForKeyPress();
-						break; // add additional logic here
+						CustomersUI customersUI = new CustomersUI();
+						ClientsUI clientsUI = new ClientsUI();
+						DelivererUI delivererUI = new DelivererUI();
+
+						// Here you can add logic to redirect the user to their respective menu based on their user type
+						switch (userType)
+						{
+							case EUserType.Customer:
+								customersUI.ShowMenu(true, userType);
+								break;
+							case EUserType.DeliveryPerson:
+								// Show delivery person menu
+								break;
+							case EUserType.RestaurantOwner:
+								// Show restaurant owner menu
+								break;
+							default:
+								DisplayError("Invalid user type.");
+								break;
+						}
 					}
 					else
 					{

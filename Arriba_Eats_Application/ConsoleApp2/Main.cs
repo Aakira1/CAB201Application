@@ -5,6 +5,8 @@ using Arriba_Eats_App.UI;
 using Arriba_Eats_App.UI.MenuUI;
 using Arriba_Eats_App.Services;
 using Arriba_Eats_App.UI.MenuUI.MainMenuUI;
+using System.Globalization;
+using Arriba_Eats_App.Data;
 
 namespace Main 
 {
@@ -23,7 +25,6 @@ namespace Main
 	/// </summary>
 	partial class EnhancedMenuSystem
 	{
-		//private readonly IUserInterface _UI;
 		/// <summary>
 		/// Constructor for EnhancedMenuSystem class.
 		/// </summary>
@@ -38,9 +39,6 @@ namespace Main
 		/// </summary>
 		public void RunMenu()
 		{
-			//_UI.DisplayOutput("Menu");
-
-			// use the existing menu structure but with improved and enhanced functionality
 			var MainMenu = new MainMenuUI();
 			MainMenu.ShowMenu(true, EUserType.None);
 		}
@@ -53,7 +51,6 @@ namespace Main
 		{
 			UIService.SetUserInterface(testUI);
 		}
-
 	}
 	#endregion
 }

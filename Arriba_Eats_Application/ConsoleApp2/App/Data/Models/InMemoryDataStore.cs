@@ -138,11 +138,11 @@ namespace Arriba_Eats_App.Data
 		public static MenuItem? GetMenuItemById(Guid id) =>
 			_menuItems.FirstOrDefault(m => m.Id == id);
 
-		public static List<MenuItem> GetMenuItemsByRestaurant(Guid restaurantId)
-		{
-			var restaurant = GetRestaurantById(restaurantId);
-			return restaurant?.MenuItems ?? new List<MenuItem>();
-		}
+		//public static List<MenuItem> GetMenuItemsByRestaurant(Guid restaurantId)
+		//{
+			//var restaurant = GetRestaurantById(restaurantId);
+			//return restaurant?.MenuItems ?? new List<MenuItem>();
+		//}
 
 		public static void UpdateMenuItem(MenuItem menuItem)
 		{
@@ -224,8 +224,8 @@ namespace Arriba_Eats_App.Data
 			return menuItem?.Ratings ?? new List<Rating>();
 		}
 
-		public static List<Rating> GetRatingsByUser(Guid userId) =>
-			_ratings.Where(r => r.Customer.Id == userId).ToList();
+		//public static List<Rating> GetRatingsByUser(Guid userId) =>
+			//_ratings.Where(r => r.Customer.Id == userId).ToList();
 		#endregion
 
 		#region Global Operations
