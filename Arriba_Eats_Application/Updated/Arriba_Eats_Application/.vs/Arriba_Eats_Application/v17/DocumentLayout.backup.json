@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\updated\\arriba_eats_application\\arriba_eats_application\\settings\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|solutionrelative:arriba_eats_application\\settings\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\updated\\arriba_eats_application\\arriba_eats_application\\settings\\ui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|solutionrelative:arriba_eats_application\\settings\\ui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\updated\\arriba_eats_application\\arriba_eats_application\\interfaces\\arribaeatsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|solutionrelative:arriba_eats_application\\interfaces\\arribaeatsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|c:\\users\\ayden\\onedrive\\documents\\github\\cab201application\\arriba_eats_application\\updated\\arriba_eats_application\\arriba_eats_application\\datamodels\\classes\\userbaseclass.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}|Arriba_Eats_Application\\ArribaEats.csproj|solutionrelative:arriba_eats_application\\datamodels\\classes\\userbaseclass.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,32 +22,45 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "InputHandler.cs",
-              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\Settings\\InputHandler.cs",
-              "RelativeDocumentMoniker": "Arriba_Eats_Application\\Settings\\InputHandler.cs",
-              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\Settings\\InputHandler.cs",
-              "RelativeToolTip": "Arriba_Eats_Application\\Settings\\InputHandler.cs",
-              "ViewState": "AgIAAD0AAAAAAAAAAAAYwFoAAAAVAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "UserBaseClass.cs",
+              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\DataModels\\Classes\\UserBaseClass.cs",
+              "RelativeDocumentMoniker": "Arriba_Eats_Application\\DataModels\\Classes\\UserBaseClass.cs",
+              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\DataModels\\Classes\\UserBaseClass.cs",
+              "RelativeToolTip": "Arriba_Eats_Application\\DataModels\\Classes\\UserBaseClass.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAAAEwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-17T12:53:53.267Z",
+              "WhenOpened": "2025-05-17T14:57:20.641Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ArribaEatsService.cs",
+              "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\Interfaces\\ArribaEatsService.cs",
+              "RelativeDocumentMoniker": "Arriba_Eats_Application\\Interfaces\\ArribaEatsService.cs",
+              "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\Interfaces\\ArribaEatsService.cs",
+              "RelativeToolTip": "Arriba_Eats_Application\\Interfaces\\ArribaEatsService.cs",
+              "ViewState": "AgIAAMUAAAAAAAAAAAAmwHcAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-17T14:46:26.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "UI.cs",
               "DocumentMoniker": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\Settings\\UI.cs",
               "RelativeDocumentMoniker": "Arriba_Eats_Application\\Settings\\UI.cs",
               "ToolTip": "C:\\Users\\ayden\\OneDrive\\Documents\\GitHub\\CAB201Application\\Arriba_Eats_Application\\Updated\\Arriba_Eats_Application\\Arriba_Eats_Application\\Settings\\UI.cs",
               "RelativeToolTip": "Arriba_Eats_Application\\Settings\\UI.cs",
-              "ViewState": "AgIAAF8DAAAAAAAAAAAjwIYDAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAGYBAAAAAAAAAAAWwH4BAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-17T08:47:24.515Z",
+              "WhenOpened": "2025-05-17T14:08:22.066Z",
               "EditorCaption": ""
             }
           ]

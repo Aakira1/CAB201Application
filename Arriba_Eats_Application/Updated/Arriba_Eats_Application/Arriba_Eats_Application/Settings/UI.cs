@@ -64,7 +64,7 @@ namespace ArribaEats.UI
         /// <returns>True if the user chose to exit, false otherwise</returns>
         private bool ShowStartupMenu()
         {
-			Console.WriteLine("Please make a choice from the menu below:");
+            Console.WriteLine("Please make a choice from the menu below:");
             Console.WriteLine("1: Login as a registered user");
             Console.WriteLine("2: Register as a new user");
             Console.WriteLine("3: Exit");
@@ -130,8 +130,8 @@ namespace ArribaEats.UI
         {
             Customer customer = (Customer)_service.CurrentUser;
 
-            //Console.WriteLine($"Welcome back, {customer.Name}!");
-			Console.WriteLine("Please make a choice from the menu below:");
+            Console.WriteLine($"Welcome back, {customer.Name}!");
+            Console.WriteLine("Please make a choice from the menu below:");
             Console.WriteLine("1: Display your user information");
             Console.WriteLine("2: Select a list of restaurants to order from");
             Console.WriteLine("3: See the status of your orders");
@@ -169,37 +169,28 @@ namespace ArribaEats.UI
 
             Console.WriteLine($"Welcome, {deliverer.Name}!");
             Console.WriteLine("Please make a choice from the menu below:");
-            Console.WriteLine("1: Display your user information");
-            Console.WriteLine("2: List orders available to deliver");
-            Console.WriteLine("3: Arrived at restaurant to pick up order");
-            Console.WriteLine("4: Mark this delivery as complete");
-			Console.WriteLine("5: Logout");
+            Console.WriteLine("1: View available orders");
+            Console.WriteLine("2: View my information");
+            Console.WriteLine("3: Update delivery status");
+            Console.WriteLine("4: Logout");
 
-			int choice = GetMenuChoice(1, 5);
+            int choice = GetMenuChoice(1, 4);
 
             switch (choice)
             {
                 case 1:
-					DisplayUserInfo(deliverer);
-					break;
+                    ViewAvailableOrders(deliverer);
+                    break;
                 case 2:
-					ViewAvailableOrders(deliverer);
-					break;
+                    DisplayUserInfo(deliverer);
+                    break;
                 case 3:
-					//ArriveAtRestaurant(deliverer);
-                    ArriveAtRestaurant(deliverer);
-					break;
-                case 4:
                     UpdateDeliveryStatus(deliverer);
                     break;
-				case 5:
-					Logout();
-					break;
-				default:
-					Console.WriteLine("Invalid choice. Please try again.");
-					break;
-
-			}
+                case 4:
+                    Logout();
+                    break;
+            }
         }
 
         /// <summary>
@@ -207,40 +198,44 @@ namespace ArribaEats.UI
         /// </summary>
         private void ShowClientMenu()
         {
-            Client client = (Client)_service.CurrentUser;
+			Client client = (Client)_service.CurrentUser;
 
             Console.WriteLine($"Welcome, {client.Name}!");
             Console.WriteLine("Please make a choice from the menu below:");
-            Console.WriteLine("1: View my restaurant information");
-            Console.WriteLine("2: View my information");
-            Console.WriteLine("3: Add item to menu");
-            Console.WriteLine("4: View orders");
-            Console.WriteLine("5: Update order status");
-            Console.WriteLine("6: Logout");
+            Console.WriteLine("1: Display your user information");
+            Console.WriteLine("2: Add item to restaurant menu");
+            Console.WriteLine("3: See current orders");
+            Console.WriteLine("4: Start cooking order");
+            Console.WriteLine("5: Finish cooking order");
+            Console.WriteLine("6: Handle deliverers who have arrived");
+            Console.WriteLine("7: Log out");
 
-            int choice = GetMenuChoice(1, 6);
+            int choice = GetMenuChoice(1, 7);
 
             switch (choice)
             {
                 case 1:
-                    DisplayRestaurantInfo(client.Restaurant);
-                    break;
+					DisplayUserInfo(client);
+					break;
                 case 2:
-                    DisplayUserInfo(client);
-                    break;
-                case 3:
                     AddMenuItem(client);
-                    break;
+					break;
+                case 3:
+					ViewRestaurantOrders(client.Restaurant);
+					break;
                 case 4:
-                    ViewRestaurantOrders(client.Restaurant);
-                    break;
+					client.StartCooking(client.Restaurant.Orders[0]);
+					break;
                 case 5:
-                    UpdateRestaurantOrderStatus(client);
-                    break;
+					client.FinishCooking(client.Restaurant.Orders[0]);
+					break;
                 case 6:
-                    Logout();
-                    break;
-            }
+					client.SetOrderBeingDelivered(client.Restaurant.Orders[0]);
+					break;
+                case 7:
+					Logout();
+					break;
+			}
         }
 
         /// <summary>
@@ -304,7 +299,7 @@ namespace ArribaEats.UI
             switch (userType)
             {
                 case UserType.Customer:
-                    Location location = GetValidLocation("Please enter your location (in the form of X,Y):", "");
+                    Location location = GetValidLocation("Please enter your location (in the form of X,Y):", "Invalid location.");
                     success = _service.RegisterCustomer(name, age, email, mobile, password, location);
                     break;
                 case UserType.Deliverer:
@@ -325,7 +320,7 @@ namespace ArribaEats.UI
                     int styleChoice = GetMenuChoice(1, 6);
                     FoodStyle style = (FoodStyle)styleChoice;
 
-                    Location restaurantLocation = GetValidLocation("Please enter your restaurant location (in the form of X,Y):", "Invalid location.");
+                    Location restaurantLocation = GetValidLocation("Please enter your location (in the form of X,Y):", "Invalid location.");
 
                     success = _service.RegisterClient(name, age, email, mobile, password, restaurantName, style, restaurantLocation);
                     break;
@@ -384,24 +379,12 @@ namespace ArribaEats.UI
         /// <param name="user">The user to display information for</param>
         private void DisplayUserInfo(User user)
         {
-            var customer = user as Customer;
 			var info = user.GetUserInfo();
 
             Console.WriteLine("Your user details are as follows:");
             foreach (var item in info)
             {
-
-                if (item.Key == "Name" && item.Key == "Age" && item.Key == "Email" 
-                    && item.Key == "Mobile" && item.Key == "Location" 
-                    && item.Key == "Licence plate" && item.Key == "Current Order ID"
-					&& item.Key == "Restaurant" && item.Key == "Customer")
-                {
-					Console.WriteLine($"{item.Key}: {item.Value}");
-				}
-                if (item.Key == "Spending")
-                {
-                    Console.WriteLine(item.Value);
-                }
+                Console.WriteLine(item.Value);
             }
 		}
 
@@ -426,14 +409,19 @@ namespace ArribaEats.UI
         /// <param name="customer">The customer viewing the restaurants</param>
         private void ViewRestaurants(Customer customer)
         {
-            Console.WriteLine("How would you like to sort the restaurants?");
-            Console.WriteLine("1: Sorted alphabetically by name");
-            Console.WriteLine("2: Sorted by distance");
-            Console.WriteLine("3: Sorted by style");
-            Console.WriteLine("4: Sorted by average rating");
-            Console.WriteLine("5: Return to the previous menu");
+            if (_service.Restaurants.Count == 0)
+            {
+                Console.WriteLine("There are no restaurants available.");
+                return;
+            }
 
-            int choice = GetMenuChoice(1, 5);
+            Console.WriteLine("How would you like to sort the restaurants?");
+            Console.WriteLine("1: By name");
+            Console.WriteLine("2: By distance");
+            Console.WriteLine("3: By style");
+            Console.WriteLine("4: By rating");
+
+            int choice = GetMenuChoice(1, 4);
 
             string sortBy;
             switch (choice)
@@ -449,10 +437,6 @@ namespace ArribaEats.UI
                     break;
                 case 4:
                     sortBy = "rating";
-                    break;
-                case 5:
-                    sortBy = "";
-                    ShowClientMenu();
                     break;
                 default:
                     sortBy = "name";
@@ -650,7 +634,7 @@ namespace ArribaEats.UI
 
             if (availableOrders.Count == 0)
             {
-                //Console.WriteLine("There are no orders available for delivery.");
+                Console.WriteLine("There are no orders available for delivery.");
                 return;
             }
 
@@ -757,27 +741,11 @@ namespace ArribaEats.UI
             }
         }
 
-		/// <summary>
-		/// Arrives at the restaurant for a deliverer
-		/// </summary>
-		/// <param name="deliverer"></param>
-		private void ArriveAtRestaurant(Deliverer deliverer)
-		{
-			if (deliverer.CurrentOrder == null)
-			{
-				Console.WriteLine("You are not currently delivering any orders.");
-				return;
-			}
-			var order = deliverer.CurrentOrder;
-			Console.WriteLine($"Arrived at restaurant for order #{order.Id}.");
-			deliverer.ArriveAtRestaurant();
-		}
-
-		/// <summary>
-		/// Updates the status of an order for a restaurant
-		/// </summary>
-		/// <param name="client">The client updating the order status</param>
-		private void UpdateRestaurantOrderStatus(Client client)
+        /// <summary>
+        /// Updates the status of an order for a restaurant
+        /// </summary>
+        /// <param name="client">The client updating the order status</param>
+        private void UpdateRestaurantOrderStatus(Client client, OrderStatus newStatus)
         {
             var restaurant = client.Restaurant;
 
@@ -797,7 +765,6 @@ namespace ArribaEats.UI
             int choice = GetMenuChoice(1, restaurant.Orders.Count);
             var selectedOrder = restaurant.Orders[choice - 1];
 
-            OrderStatus newStatus;
             bool validStatus = false;
 
             switch (selectedOrder.Status)
@@ -872,11 +839,11 @@ namespace ArribaEats.UI
             }
         }
 
-        /// <summary>
-        /// Adds a menu item to a restaurant
-        /// </summary>
-        /// <param name="client">The client adding the menu item</param>
-        private void AddMenuItem(Client client)
+		/// <summary>
+		/// Adds a menu item to a restaurant
+		/// </summary>
+		/// <param name="client">The client adding the menu item</param>
+		private void AddMenuItem(Client client)
         {
             string name = GetValidInput("Please enter the item name:", n => !string.IsNullOrWhiteSpace(n), "Invalid item name. Please enter a non-empty name.");
             decimal price = GetValidPrice("Please enter the item price (format: $X.XX):", "Invalid price format. Please use format $X.XX and ensure the price is between $0.00 and $999.99.");

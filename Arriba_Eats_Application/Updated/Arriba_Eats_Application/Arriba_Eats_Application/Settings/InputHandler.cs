@@ -64,15 +64,12 @@ namespace ArribaEats.Utils
         /// <returns>True if the password is valid, false otherwise</returns>
         public static bool ValidatePassword(string password)
         {
-			// Basic requirements (unchanged from your original)
-			bool meetsBasicRequirements = password.Length >= 8 &&
-										  password.Any(char.IsDigit) &&
-										  password.Any(char.IsLower) &&
-										  password.Any(char.IsUpper) &&
-										  password.Any(c => "!@#$%^&*()_+-=[]{}|;':\",.<>?/`~".Contains(c));
-
-			return meetsBasicRequirements;
-		}
+            // Must be at least 8 characters long and contain at least 1 number, lowercase letter and uppercase letter
+            return password.Length >= 8 &&
+                   password.Any(char.IsDigit) &&
+                   password.Any(char.IsLower) &&
+                   password.Any(char.IsUpper);
+        }
 
         /// <summary>
         /// Validates a licence plate
