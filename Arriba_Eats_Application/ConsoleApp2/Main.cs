@@ -15,42 +15,9 @@ namespace Main
 		static void Main(string[] args)
 		{
 			EnhancedMenuSystem enhancedMenuSystem = new EnhancedMenuSystem(new ConsoleUI());
-			enhancedMenuSystem.RunMenu();
-		}
+			enhancedMenuSystem.SetUI(new ConsoleUI());
+        }
 	}
 
-	#region MenuSystem
-	/// <summary>
-	/// EnhancedMenuSystem class is responsible for managing the menu system of the application.
-	/// </summary>
-	partial class EnhancedMenuSystem
-	{
-		/// <summary>
-		/// Constructor for EnhancedMenuSystem class.
-		/// </summary>
-		/// <param name="UI"></param>
-		public EnhancedMenuSystem(IUserInterface UI = null!)
-		{
-			UI = UI ?? UIService.Current!; // Use the default UI if none is provided
-		}
 
-		/// <summary>
-		/// RunMenu method is responsible for displaying the main menu and handling user input.
-		/// </summary>
-		public void RunMenu()
-		{
-			var MainMenu = new MainMenuUI();
-			MainMenu.ShowMenu(true, EUserType.None);
-		}
-
-		/// <summary>
-		/// SetTestUI method is used to set a test user interface for testing purposes.
-		/// </summary>
-		/// <param name="testUI"></param>
-		public void SetTestUI(IUserInterface testUI)
-		{
-			UIService.SetUserInterface(testUI);
-		}
-	}
-	#endregion
 }

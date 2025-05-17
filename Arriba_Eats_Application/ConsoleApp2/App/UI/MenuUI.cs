@@ -45,9 +45,11 @@ namespace Arriba_Eats_App.UI.MenuUI
 
 		public void ClearScreen()
 		{
-			Console.Clear();
-		}
-		public void DisplayError(string message)
+            Console.Clear();
+        }
+
+
+        public void DisplayError(string message)
 		{
 			var originalColor = Console.ForegroundColor;
 			Console.ForegroundColor = ConsoleColor.Red;
@@ -129,7 +131,21 @@ namespace Arriba_Eats_App.UI.MenuUI
 			}
 			return input;
 		}
-		public virtual void ShowMenu(bool isActive, EUserType userType)
+
+		public string HandleIncorrectInput(string input)
+		{
+			if (string.IsNullOrWhiteSpace(input) && string.IsNullOrEmpty(input))
+			{
+				return "Input is incorrect. Please try again.";
+			}
+			if (int.Parse(input) < 1 && int.Parse(input) > 3)
+			{
+				return "Input is incorrect. Please try again.";
+			}
+			return input;
+		}
+
+        public virtual void ShowMenu(bool isActive, EUserType userType)
 		{
 			Console.WriteLine("Default Menu");
 			userType = EUserType.None;

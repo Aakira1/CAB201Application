@@ -17,8 +17,8 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 		{
 			while (IsActive)
 			{
-				ClearScreen();
-				DisplayOutput(WelcomeMessage() + "\n");
+                //ClearScreen(); // uncomment this line if you want to clear the screen before displaying the menu
+                DisplayOutput(WelcomeMessage() + "\n");
 				DisplayOutput("1. Login");
 				DisplayOutput("2. Register");
 				DisplayOutput("3. Exit");
@@ -27,17 +27,18 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 				// debugging only option
 				UserService userService = new UserService();
 				userService.DisplayAllUsers();
+				string input = GetInput();
+                
 
+                if (string.IsNullOrWhiteSpace(input) && string.IsNullOrEmpty(input))
+                {
+                    DisplayError("Input cannot be empty. Please try again.");
+                    continue;
+                }
+                HandleEmptyInput(input);
+                HandleIncorrectInput(input);
 
-				string Input = GetInput();
-
-				if (string.IsNullOrEmpty(Input))
-				{
-					DisplayError(HandleEmptyInput(Input));
-					WaitForKeyPress();
-					continue;
-				}
-				IsActive = SelectionMenu(Input, EUserType.None);
+                IsActive = SelectionMenu(input, EUserType.None);
 			}
 
 			DisplayOutput("Thankyou for using Arriba Eats!");
@@ -60,12 +61,9 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 					return false;
 				default:
 					DisplayError("Invalid selection. Please try again.\n");
-					WaitForKeyPress();
 					break;
 			}
-
 			return true;
 		}
-
 	}
 }

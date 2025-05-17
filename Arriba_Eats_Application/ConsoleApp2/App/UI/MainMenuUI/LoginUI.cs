@@ -17,14 +17,14 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 		public override void ShowMenu(bool IsActive, EUserType userType)
 		{
 			MainMenuUI mainMenuUI = new MainMenuUI();
-			ConsoleKey consoleKey;
-			var keyinfo = Console.ReadKey(true);
-			consoleKey = keyinfo.Key;
+			//ConsoleKey consoleKey;
+			//var keyinfo = Console.ReadKey(true);
+			//consoleKey = keyinfo.Key;
 
 			while (IsActive)
 			{
-				ClearScreen();
-				DisplayOutput("---------- Login Screen ----------\n");
+                ClearScreen();
+				DisplayOutput("---------- Login Screen ----------");
 				DisplayOutput("Enter Your Email:");
 				string EmailInput = GetInput();
 
@@ -86,12 +86,12 @@ namespace Arriba_Eats_App.UI.MenuUI.MainMenuUI
 				string retryInput = GetInput();
 
 				// Check if the user wants to retry (if enter is press defaults to main menu)
-				if (retryInput.ToLower() != "y" || keyinfo.Key == ConsoleKey.Enter)
-				{
-					DisplayOutput("Returning to Selection Menu...");
-					mainMenuUI.ShowMenu(true, userType);
-					continue;
-				}
+				//if (retryInput.ToLower() != "y" || keyinfo.Key == ConsoleKey.Enter)
+				//{
+					//DisplayOutput("Returning to Selection Menu...");
+					//mainMenuUI.ShowMenu(true, userType);
+					//continue;
+				//}
 
 			}
 		}
