@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArribaEats", "Arriba_Eats_Application\ArribaEats.csproj", "{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFBDDDDA-952E-4C39-A96B-3EF51960DAB8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83471730-BA84-4C28-B36F-3C3825B8DD82}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,14 @@
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\bin\Debug\net8.0\ArribaEats.exe
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\bin\Debug\net8.0\ArribaEats.deps.json
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\bin\Debug\net8.0\ArribaEats.runtimeconfig.json
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\bin\Debug\net8.0\ArribaEats.dll
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\bin\Debug\net8.0\ArribaEats.pdb
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ArribaEats.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ArribaEats.AssemblyInfoInputs.cache
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ArribaEats.AssemblyInfo.cs
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ArribaEats.csproj.CoreCompileInputs.cache
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ArribaEats.dll
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\refint\ArribaEats.dll
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ArribaEats.pdb
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ArribaEats.genruntimeconfig.cache
+C:\Users\ayden\source\repos\Arriba_Eats_Application\Arriba_Eats_Application\obj\Debug\net8.0\ref\ArribaEats.dll
