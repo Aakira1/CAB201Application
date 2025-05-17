@@ -56,8 +56,7 @@ namespace ArribaEats.Models
         {
             var info = base.GetUserInfo();
             info.Add("Location", Location.ToString());
-            info.Add("Number of orders", Orders.Count.ToString());
-            info.Add("Total spent on food", $"${TotalSpending:F2}");
+            info.Add("Spending", $"You've made {Orders.Count} order(s) and spent a total of ${TotalSpending:F2}");
             return info;
         }
     }
