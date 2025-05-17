@@ -68,24 +68,10 @@ namespace ArribaEats.Utils
 			bool meetsBasicRequirements = password.Length >= 8 &&
 										  password.Any(char.IsDigit) &&
 										  password.Any(char.IsLower) &&
-										  password.Any(char.IsUpper);
+										  password.Any(char.IsUpper) &&
+										  password.Any(c => "!@#$%^&*()_+-=[]{}|;':\",.<>?/`~".Contains(c));
 
-			// Additional checks
-			bool endsWithUppercaseX = password.Length > 0 && password[password.Length - 1] == 'X';
-
-			// Pattern check - if your password needs to follow a specific pattern
-			// For example, to ensure it follows the pattern of Cyfr + digits + lowercase letter + uppercase X
-			bool matchesPattern = false;
-			if (password.Length >= 8)
-			{
-				string start = password.Substring(0, 4);
-				string end = password.Substring(password.Length - 1);
-				matchesPattern = (start == "Cyfr" &&
-								  password.Substring(4, password.Length - 5).Any(char.IsDigit) &&
-								  end == "X");
-			}
-
-            return meetsBasicRequirements && endsWithUppercaseX;
+			return meetsBasicRequirements;
 		}
 
         /// <summary>
