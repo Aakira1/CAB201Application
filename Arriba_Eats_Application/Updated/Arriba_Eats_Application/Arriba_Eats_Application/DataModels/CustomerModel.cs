@@ -12,7 +12,7 @@ namespace ArribaEats.Models
         /// Gets or sets the location of the customer
         /// </summary>
         public Location Location { get; set; }
-
+        public decimal TotalSpent { get; set; } = 0;
         /// <summary>
         /// Gets the list of orders made by the customer
         /// </summary>

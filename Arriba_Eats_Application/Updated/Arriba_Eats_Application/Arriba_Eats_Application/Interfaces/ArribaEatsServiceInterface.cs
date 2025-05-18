@@ -141,5 +141,7 @@ namespace ArribaEats.Services
         /// <param name="email">The email to check</param>
         /// <returns>True if the email is already in use, false otherwise</returns>
         bool IsEmailInUse(string email);
-	}
+
+        public bool DebugPrintUsers();
+    }
 }

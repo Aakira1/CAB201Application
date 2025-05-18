@@ -67,10 +67,10 @@ namespace ArribaEats.Models
         {
             return new Dictionary<string, string>
             {
-                { "Name", $"Name:{Name}" },
-                { "Age", $"Age:{Age.ToString()}" },
-                { "Email", $"Email:{Email}" },
-                { "Mobile", $"Mobile:{Mobile}" }
+                { "Name", Name },
+                { "Age", Age.ToString() },
+                { "Email", Email },
+                { "Mobile", Mobile }
             };
         }
     }

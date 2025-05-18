@@ -105,7 +105,7 @@ namespace ArribaEats.Services
         /// <returns>True if login was successful, false otherwise</returns>
         public bool Login(string email, string password)
         {
-            var user = _users.FirstOrDefault(u => u.Email == email);
+            var user = _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
             if (user != null && user.ValidatePassword(password))
             {
                 CurrentUser = user;
@@ -149,11 +149,11 @@ namespace ArribaEats.Services
             switch (sortBy.ToLower())
             {
                 case "name":
-                    return _restaurants.OrderBy(r => r.Name).ToList();
+                    return _restaurants.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase).ToList();
                 case "distance":
-                    return _restaurants.OrderBy(r => r.Location.DistanceTo(customer.Location)).ToList();
+                    return _restaurants.OrderBy(r => customer != null ? r.Location.DistanceTo(customer.Location) : 0).ToList();
                 case "style":
-                    return _restaurants.OrderBy(r => r.Style).ToList();
+                    return _restaurants.OrderBy(r => r.Style.ToString()).ToList();
                 case "rating":
                     return _restaurants.OrderByDescending(r => r.AverageRating).ToList();
                 default:
@@ -169,7 +169,11 @@ namespace ArribaEats.Services
         /// <returns>The newly created order</returns>
         public Order CreateOrder(Customer customer, Restaurant restaurant)
         {
-            return new Order(customer, restaurant);
+            if (customer == null || restaurant == null)
+                return null;
+
+            var order = new Order(customer, restaurant);
+            return order;
         }
 
         /// <summary>
@@ -265,6 +269,53 @@ namespace ArribaEats.Services
         public bool IsEmailInUse(string email)
         {
             return _users.Any(u => u.Email == email);
+        }
+
+        bool IArribaEatsService.DebugPrintUsers()
+        {
+            Console.WriteLine("=== Registered Users ===\n");
+
+            var customers = _users.OfType<Customer>().ToList();
+            var clients = _users.OfType<Client>().ToList();
+            var deliverers = _users.OfType<Deliverer>().ToList();
+
+            if (customers.Any())
+            {
+                Console.WriteLine(">> Customers:");
+                foreach (var c in customers)
+                {
+                    Console.WriteLine($"- {c.Name} | Email: {c.Email}, Location: {c.Location.X},{c.Location.Y}");
+                }
+                Console.WriteLine();
+            }
+
+            if (clients.Any())
+            {
+                Console.WriteLine(">> Clients:");
+                foreach (var c in clients)
+                {
+                    Console.WriteLine($"- {c.Name} | Restaurant: {c.Restaurant?.Name ?? "None"} | Style: {c.Restaurant?.Style}");
+                }
+                Console.WriteLine();
+            }
+
+            if (deliverers.Any())
+            {
+                Console.WriteLine(">> Deliverers:");
+                foreach (var d in deliverers)
+                {
+                    Console.WriteLine($"- {d.Name} | Plate: {d.LicencePlate}");
+                }
+                Console.WriteLine();
+            }
+
+            if (!customers.Any() && !clients.Any() && !deliverers.Any())
+            {
+                Console.WriteLine("No users are currently registered.");
+            }
+
+            Console.WriteLine("==========================\n");
+            return true;
         }
     }
 }

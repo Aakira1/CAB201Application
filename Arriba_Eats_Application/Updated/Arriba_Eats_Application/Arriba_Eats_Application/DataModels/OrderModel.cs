@@ -41,6 +41,8 @@ namespace ArribaEats.Models
         /// </summary>
         public Dictionary<MenuItem, int> Items { get; }
 
+        public List<MenuItem> items { get; set; } = new();
+
         /// <summary>
         /// Gets the total price of the order
         /// </summary>

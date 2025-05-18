@@ -64,8 +64,9 @@ namespace ArribaEats.Utils
         /// <returns>True if the password is valid, false otherwise</returns>
         public static bool ValidatePassword(string password)
         {
-            // Must be at least 8 characters long and contain at least 1 number, lowercase letter and uppercase letter
-            return password.Length >= 8 &&
+            // Must be at least 8 characters long, contain a digit, lowercase, and uppercase
+            return password != null &&
+                   password.Length >= 8 &&
                    password.Any(char.IsDigit) &&
                    password.Any(char.IsLower) &&
                    password.Any(char.IsUpper);
@@ -110,12 +111,19 @@ namespace ArribaEats.Utils
             if (string.IsNullOrWhiteSpace(location))
                 return false;
 
-            // Must be of the format X,Y where X and Y are both integer values
+            // Clean input further to handle edge cases
+            location = location.Trim();
+
+            // Handle potential comma formatting issues
             string[] parts = location.Split(',');
             if (parts.Length != 2)
                 return false;
 
-            if (!int.TryParse(parts[0], out int x) || !int.TryParse(parts[1], out int y))
+            // Trim individual parts to handle spaces
+            string xPart = parts[0].Trim();
+            string yPart = parts[1].Trim();
+
+            if (!int.TryParse(xPart, out int x) || !int.TryParse(yPart, out int y))
                 return false;
 
             parsedLocation = new Location(x, y);
@@ -128,23 +136,9 @@ namespace ArribaEats.Utils
         /// <param name="price">The price string to validate</param>
         /// <param name="parsedPrice">The parsed price (out parameter)</param>
         /// <returns>True if the price is valid, false otherwise</returns>
-        public static bool ValidateItemPrice(string price, out decimal parsedPrice)
-        {
-            parsedPrice = 0;
-
-            // Check if price is null or empty
-            if (string.IsNullOrEmpty(price))
-                return false;
-
-            // Must be between $0.00 and $999.99
-            if (!price.StartsWith("$"))
-                return false;
-
-            string priceStr = price.Substring(1);
-            if (!decimal.TryParse(priceStr, out parsedPrice))
-                return false;
-
-            return parsedPrice >= 0 && parsedPrice <= 999.99m;
-        }
+public static bool ValidateItemPrice(string input, out decimal price)
+{
+    return decimal.TryParse(input, out price) && price > 0 && price <= 999.99m;
+}
     }
 }
