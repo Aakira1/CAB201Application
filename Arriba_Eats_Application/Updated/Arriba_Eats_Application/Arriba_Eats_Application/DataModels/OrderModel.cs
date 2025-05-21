@@ -1,69 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ArribaEats.Models
 {
     /// <summary>
     /// Represents an order in the system
     /// </summary>
-    public class Order
+    /// <remarks>
+    /// Creates a new order with the specified details
+    /// </remarks>
+    /// <param name="customer">The customer who placed the order</param>
+    /// <param name="restaurant">The restaurant the order is from</param>
+    public class Order(Customer customer,
+                 Restaurant restaurant, 
+                 int id)
     {
-        private static int nextId = 1;
-
+        private static int _nextId = 1; // Static variable to keep track of the next order ID
         /// <summary>
         /// Gets the unique identifier for this order
         /// </summary>
-        public int Id { get; }
+        public int Id { get; } = id;
+
 
         /// <summary>
         /// Gets the customer who placed the order
         /// </summary>
-        public Customer Customer { get; }
+        public Customer Customer { get; set; } = customer;
 
         /// <summary>
         /// Gets the restaurant the order is from
         /// </summary>
-        public Restaurant Restaurant { get; }
+        public Restaurant Restaurant { get; set; } = restaurant;
 
         /// <summary>
         /// Gets the deliverer assigned to the order
         /// </summary>
-        public Deliverer Deliverer { get; private set; }
+        public Deliverer? Deliverer { get; set; }
 
         /// <summary>
         /// Gets the current status of the order
         /// </summary>
-        public OrderStatus Status { get; private set; }
+        public OrderStatus Status { get; set; } = OrderStatus.Ordered;
 
         /// <summary>
         /// Gets the items in the order with their quantities
         /// </summary>
-        public Dictionary<MenuItem, int> Items { get; }
+        public Dictionary<MenuItem, int> Items { get; set; } = new Dictionary<MenuItem, int>();
 
-        public List<MenuItem> items { get; set; } = new();
+        public List<MenuItem> items { get; set; } = new List<MenuItem>();
 
         /// <summary>
         /// Gets the total price of the order
         /// </summary>
-        public decimal TotalPrice => Items.Sum(i => i.Key.Price * i.Value);
+        public decimal TotalPrice => Items.Sum(item => item.Value * item.Key.Price);
 
-        /// <summary>
-        /// Creates a new order with the specified details
-        /// </summary>
-        /// <param name="customer">The customer who placed the order</param>
-        /// <param name="restaurant">The restaurant the order is from</param>
-        public Order(Customer customer, Restaurant restaurant)
-        {
-            Id = nextId++;
-            Customer = customer;
-            Restaurant = restaurant;
-            Status = OrderStatus.Ordered;
-            Items = new Dictionary<MenuItem, int>();
-
-            customer.AddOrder(this);
-            restaurant.AddOrder(this);
-        }
 
         /// <summary>
         /// Adds an item to the order
@@ -76,24 +68,21 @@ namespace ArribaEats.Models
             {
                 Items[item] += quantity;
             }
-            else
+            else if (quantity > 0)
             {
-                Items[item] = quantity;
+                Items.Add(item, quantity);
             }
+            else
+                Items[item] = quantity;
         }
 
         /// <summary>
         /// Sets the status of the order
         /// </summary>
         /// <param name="status">The new status</param>
-        public void SetStatus(OrderStatus status)
+        public void SetStatus(OrderStatus newStatus)
         {
-            Status = status;
-
-            if (status == OrderStatus.Delivered)
-            {
-                Restaurant.RemoveOrder(this);
-            }
+            Status = newStatus;
         }
 
         /// <summary>
@@ -114,18 +103,11 @@ namespace ArribaEats.Models
             var info = new Dictionary<string, string>
             {
                 { "Order ID", Id.ToString() },
-                { "Status", Status.ToString() },
-                { "Restaurant", Restaurant.Name },
                 { "Customer", Customer.Name },
+                { "Restaurant", Restaurant.Name },
+                { "Status", Status.ToString() },
                 { "Total Price", $"${TotalPrice:F2}" }
             };
-
-            if (Deliverer != null)
-            {
-                info.Add("Deliverer", Deliverer.Name);
-                info.Add("Licence Plate", Deliverer.LicencePlate);
-            }
-
             return info;
         }
 

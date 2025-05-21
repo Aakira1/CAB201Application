@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ArribaEats.Models 
+namespace ArribaEats.Models
 {
 
     /// <summary>
@@ -16,7 +16,7 @@ namespace ArribaEats.Models
         /// <summary>
         /// Gets the list of orders made by the customer
         /// </summary>
-        public List<Order> Orders { get; }
+        public List<Order> Orders { get; set; }
 
         /// <summary>
         /// Gets the total spending of the customer across all orders

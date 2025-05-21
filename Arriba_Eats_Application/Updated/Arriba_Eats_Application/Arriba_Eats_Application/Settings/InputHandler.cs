@@ -69,7 +69,8 @@ namespace ArribaEats.Utils
                    password.Length >= 8 &&
                    password.Any(char.IsDigit) &&
                    password.Any(char.IsLower) &&
-                   password.Any(char.IsUpper);
+                   password.Any(char.IsUpper) &&
+                   !password.Contains(" ");
         }
 
         /// <summary>
@@ -136,9 +137,9 @@ namespace ArribaEats.Utils
         /// <param name="price">The price string to validate</param>
         /// <param name="parsedPrice">The parsed price (out parameter)</param>
         /// <returns>True if the price is valid, false otherwise</returns>
-public static bool ValidateItemPrice(string input, out decimal price)
-{
-    return decimal.TryParse(input, out price) && price > 0 && price <= 999.99m;
-}
+        public static bool ValidateItemPrice(string input, out decimal price)
+        {
+            return decimal.TryParse(input, out price) && price > 0 && price <= 999.99m;
+        }
     }
 }

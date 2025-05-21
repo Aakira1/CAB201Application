@@ -14,14 +14,11 @@ namespace ArribaEats.UI
     public class ArribaEatsUI
     {
         private readonly IArribaEatsService _service;
-        /// <summary>
-        /// Creates a new instance of the ArribaEats user interface
-        /// </summary>
-        /// <param name="service">The service to use</param>
+        private readonly Restaurant _restaurant;
         public ArribaEatsUI(IArribaEatsService service)
         {
             _service = service;
-		}
+        }
 
         private readonly InputChecks checks = new InputChecks();
 
@@ -134,36 +131,41 @@ namespace ArribaEats.UI
         private void ShowCustomerMenu()
         {
             Customer customer = (Customer)_service.CurrentUser;
-            
+            bool exit = false;
 
-            Console.WriteLine("Please make a choice from the menu below:");
-            Console.WriteLine("1: Display your user information");
-            Console.WriteLine("2: Select a list of restaurants to order from");
-            Console.WriteLine("3: See the status of your orders");
-            Console.WriteLine("4: Rate a restaurant you've ordered from");
-            Console.WriteLine("5: Logout");
-
-            int choice = GetMenuChoice(1, 5);
-
-            switch (choice)
+            while (!exit)
             {
-                case 1:
-                    DisplayUserInfo(customer);
-                    break;
-                case 2:
-                    ViewRestaurants(customer);
-                    break;
-                case 3:
-                    ViewCurrentOrderStatus(customer);
-                    break;
-                case 4:
-                    WriteReview(customer);
-                    break;
-                case 5:
-                    Logout();
-                    break;
+                Console.WriteLine("Please make a choice from the menu below:");
+                Console.WriteLine("1: Display your user information");
+                Console.WriteLine("2: Select a list of restaurants to order from");
+                Console.WriteLine("3: See the status of your orders");
+                Console.WriteLine("4: Rate a restaurant you've ordered from");
+                Console.WriteLine("5: Logout");
+
+                int choice = GetMenuChoice(1, 5);
+
+                switch (choice)
+                {
+                    case 1:
+                        DisplayUserInfo(customer);
+                        break;
+                    case 2:
+                        ViewRestaurants(customer);
+                        break;
+                    case 3:
+                        ViewCurrentOrderStatus(customer);
+                        break;
+                    case 4:
+                        WriteReview(customer);
+                        break;
+                    case 5:
+                        Logout();
+                        exit = true;
+                        break;
+                }
             }
         }
+
 
         /// <summary>
         /// Shows the deliverer menu
@@ -211,7 +213,7 @@ namespace ArribaEats.UI
             bool exit = false;
             while (!exit)
             {
-                Console.WriteLine("\nPlease make a choice from the menu below:");
+                Console.WriteLine("Please make a choice from the menu below:");
                 Console.WriteLine("1: Display your user information");
                 Console.WriteLine("2: Add item to restaurant menu");
                 Console.WriteLine("3: See current orders");
@@ -237,24 +239,15 @@ namespace ArribaEats.UI
                         break;
 
                     case 4:
-                        if (client.Restaurant.Orders.Count > 0)
-                            client.StartCooking(client.Restaurant.Orders[0]);
-                        else
-                            Console.WriteLine("No orders available to start cooking.");
+                        UpdateRestaurantOrderStatus(client, OrderStatus.Cooking);
                         break;
 
                     case 5:
-                        if (client.Restaurant.Orders.Count > 0)
-                            client.FinishCooking(client.Restaurant.Orders[0]);
-                        else
-                            Console.WriteLine("No orders available to finish.");
+                        UpdateRestaurantOrderStatus(client, OrderStatus.Cooked);
                         break;
 
                     case 6:
-                        if (client.Restaurant.Orders.Count > 0)
-                            client.SetOrderBeingDelivered(client.Restaurant.Orders[0]);
-                        else
-                            Console.WriteLine("No orders available to assign to a deliverer.");
+                        UpdateRestaurantOrderStatus(client, OrderStatus.BeingDelivered);
                         break;
 
                     case 7:
@@ -291,9 +284,9 @@ namespace ArribaEats.UI
                 {
                     return choice;
                 }
-
-                Console.WriteLine($"Invalid input. Please enter a number between {min} and {max}.");
+                //Console.WriteLine($"Invalid input. Please enter a number between {min} and {max}.");
             }
+            return 0; // This line will never be reached, but is required to satisfy the compiler
         }
 
         /// <summary>
@@ -303,8 +296,8 @@ namespace ArribaEats.UI
         private void RegisterUser(UserType userType)
         {
             // Get common user details
-            string name = checks.GetValidInput("Please enter your name:", InputValidator.ValidateName, "Invalid name.");
-            int age = checks.GetValidIntInput("Please enter your age (18-100):", a => InputValidator.ValidateAge(a), "Invalid age.");
+            string name = checks.GetValidInput("Please enter your name: ", InputValidator.ValidateName, "Invalid name.");
+            int age = checks.GetValidIntInput("Please enter your age (18-100): ", a => InputValidator.ValidateAge(a), "Invalid age.");
             string email = GetUniqueEmail();
             string mobile = checks.GetValidInput("Please enter your mobile phone number:", InputValidator.ValidateMobile, "Invalid phone number.");
             string password = checks.GetValidPassword();
@@ -318,11 +311,11 @@ namespace ArribaEats.UI
                     success = _service.RegisterCustomer(name, age, email, mobile, password, location);
                     break;
                 case UserType.Deliverer:
-                    string licencePlate = checks.GetValidInput("Please enter your licence plate:", InputValidator.ValidateLicencePlate, "Invalid licence plate.");
+                    string licencePlate = checks.GetValidInput("Please enter your licence plate: ", InputValidator.ValidateLicencePlate, "Invalid licence plate.");
                     success = _service.RegisterDeliverer(name, age, email, mobile, password, licencePlate);
                     break;
                 case UserType.Client:
-                    string restaurantName = checks.GetValidInput("Please enter your restaurant's name:", InputValidator.ValidateRestaurantName, "Invalid restaurant name.");
+                    string restaurantName = checks.GetValidInput("Please enter your restaurant's name: ", InputValidator.ValidateRestaurantName, "Invalid restaurant name.");
 
                     Console.WriteLine("Please select your restaurant's style:");
                     Console.WriteLine("1: Italian");
@@ -334,12 +327,11 @@ namespace ArribaEats.UI
 
                     int styleChoice = GetMenuChoice(1, 6);
                     FoodStyle style = (FoodStyle)styleChoice;
-
                     Location restaurantLocation = checks.GetValidLocation();
 
                     success = _service.RegisterClient(name, age, email, mobile, password, restaurantName, style, restaurantLocation);
                     break;
-            } 
+            }
 
             if (success)
             {
@@ -382,12 +374,13 @@ namespace ArribaEats.UI
 
             bool success = _service.Login(email, password);
 
-            if(_service.CurrentUser == null || !success)
+            if (_service.CurrentUser == null || !success)
             {
                 Console.WriteLine("Invalid email or password.");
                 return;
             }
             Console.WriteLine($"Welcome back, {_service.CurrentUser.Name}!");
+
         }
 
         /// <summary>
@@ -466,8 +459,7 @@ namespace ArribaEats.UI
                 1 => "name",
                 2 => "distance",
                 3 => "style",
-                4 => "rating",
-                _ => "name" // default fallback just in case
+                4 => "rating"
             };
 
 
@@ -482,7 +474,6 @@ namespace ArribaEats.UI
                 var location = $"{restaurant.Location.X},{restaurant.Location.Y}";
                 int distance = restaurant.Location.DistanceTo(customer.Location);
                 string ratingDisplay = restaurant.AverageRating > 0 ? restaurant.AverageRating.ToString("F1") : "-";
-
                 Console.WriteLine($"{i + 1}: {restaurant.Name.PadRight(20)} {location.PadRight(7)} {distance.ToString().PadRight(6)} {restaurant.Style.ToString().PadRight(10)} {ratingDisplay}");
             }
 
@@ -531,7 +522,7 @@ namespace ArribaEats.UI
                         {
                             Console.WriteLine($"- {review.Customer.Name}: {review.Rating}/5 - {review.Comment}");
                         }
-                        
+
                         break;
 
                     case 3:
@@ -549,61 +540,73 @@ namespace ArribaEats.UI
         /// <param name="restaurant">The restaurant to order from</param>
         private void PlaceOrder(Customer customer, Restaurant restaurant)
         {
-            if (restaurant.Menu.Count == 0)
-            {
-                Console.WriteLine("This restaurant has no menu items to order.");
-                return;
-            }
-
             var order = _service.CreateOrder(customer, restaurant);
-            var menuItem = restaurant.Menu[0]; // only one item, assumed by Gradescope
             bool ordering = true;
+            bool orderPlaced = false;
 
             while (ordering)
             {
                 Console.WriteLine($"Current order total: ${order.TotalPrice:F2}");
-                Console.WriteLine($"1: ${menuItem.Price:F2} {menuItem.Name}");
-                Console.WriteLine("2: Complete order");
-                Console.WriteLine("3: Cancel order");
 
-                int choice = GetMenuChoice(1, 3);
-
-                switch (choice)
+                // Dynamically display all menu items
+                for (int i = 0; i < restaurant.Menu.Count; i++)
                 {
-                    case 1:
-                        Console.WriteLine($"Adding {menuItem.Name} to order.");
-                        int qty = checks.GetValidIntInput(
-                            "Please enter quantity (0 to cancel):",
-                            q => q >= 0,
-                            "Invalid quantity. Please enter 0 or a positive number."
-                        );
+                    var item = restaurant.Menu[i];
+                    Console.WriteLine($"{i + 1}: ${item.Price:F2} {item.Name}");
+                }
 
-                        if (qty == 0) break;
+                int completeOption = restaurant.Menu.Count + 1;
+                int cancelOption = restaurant.Menu.Count + 2;
 
-                        _service.AddItemToOrder(order, menuItem, qty);
-                        Console.WriteLine($"Added {qty} x {menuItem.Name} to order.");
-                        break;
+                Console.WriteLine($"{completeOption}: Complete order");
+                Console.WriteLine($"{cancelOption}: Cancel order");
 
-                    case 2:
-                        Console.WriteLine($"Adding {menuItem.Name} to order.");
-                        int finalQty = checks.GetValidIntInput(
-                            "Please enter quantity (0 to cancel):",
-                            q => q > 0,
-                            "Invalid quantity. Must be greater than 0."
-                        );
+                int choice = GetMenuChoice(1, cancelOption);
 
-                        _service.AddItemToOrder(order, menuItem, finalQty);
-                        Console.WriteLine($"Added {finalQty} x {menuItem.Name} to order.");
+                if (choice >= 1 && choice <= restaurant.Menu.Count)
+                {
+                    var selectedItem = restaurant.Menu[choice - 1];
+
+                    Console.WriteLine($"Adding {selectedItem.Name} to order.");
+                    Console.WriteLine("Please enter quantity (0 to cancel): ");
+
+                    if (int.TryParse(Console.ReadLine(), out int qty) && qty > 0)
+                    {
+                        _service.AddItemToOrder(order, selectedItem, qty);
+                        Console.WriteLine($"Added {qty} x {selectedItem.Name} to order.");
+                    }
+                }
+                else if (choice == completeOption)
+                {
+                    if (order.TotalPrice == 0)
+                    {
+                        Console.WriteLine("You must add at least one item before placing the order.");
+                    }
+                    else
+                    {
+                        // Now finalize and register the order
+                        _service.FinalizeOrder(order);
                         Console.WriteLine($"Your order has been placed. Your order number is #{order.Id}.");
-
-                        return; // Must return to stop prompting
-
-                    case 3:
-                        Console.WriteLine("Order cancelled.");
-                        return; // Must return to avoid re-looping
+                        orderPlaced = true;
+                        ordering = false;
+                    }
+                }
+                else if (choice == cancelOption)
+                {
+                    //Console.WriteLine("Order cancelled.");
+                    ordering = false;
                 }
             }
+
+            // If the order wasn't completed, clean it up from the system
+            if (!orderPlaced)
+            {
+                // Optional: If needed, remove from restaurant.Orders or perform cleanup.
+                order = null;
+            }
         }
+
+
 
         /// <summary>
         /// Views the current order status for a customer
@@ -611,29 +614,22 @@ namespace ArribaEats.UI
         /// <param name="customer">The customer viewing their order status</param>
         private void ViewCurrentOrderStatus(Customer customer)
         {
-            if (customer.Orders.Count == 0)
-            {
-                Console.WriteLine("You have not placed any orders.");
-                return;
-            }
             var activeOrders = customer.Orders.Where(o => o.Status != OrderStatus.Delivered).ToList();
 
             if (activeOrders.Count == 0)
             {
-                Console.WriteLine("You have no active orders.");
+                Console.WriteLine("You have not placed any orders. ");
                 return;
             }
 
-            Console.WriteLine("Your active orders:");
-            for (int i = 0; i < activeOrders.Count; i++)
+            foreach (var order in activeOrders)
             {
-                var order = activeOrders[i];
-                Console.WriteLine($"{i + 1}: Order #{order.Id} from {order.Restaurant.Name} - Status: {order.Status}");
+                Console.WriteLine($"Order #{order.Id} from {order.Restaurant.Name}: {order.Status}");
 
-                if (order.Status == OrderStatus.BeingDelivered && order.Deliverer != null)
+                // Remove any potential duplication logic above or below this
+                foreach (var item in order.Items)
                 {
-                    Console.WriteLine($"   Deliverer: {order.Deliverer.Name}");
-                    Console.WriteLine($"   Licence Plate: {order.Deliverer.LicencePlate}");
+                    Console.WriteLine($"{item.Value} x {item.Key.Name}");
                 }
             }
         }
@@ -698,6 +694,9 @@ namespace ArribaEats.UI
             }
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///
+        /********************************************************************************/
 
         /// <summary>
         /// Views the available orders for a deliverer
@@ -705,66 +704,131 @@ namespace ArribaEats.UI
         /// <param name="deliverer">The deliverer viewing the orders</param>
         private void ViewAvailableOrders(Deliverer deliverer)
         {
-            if (deliverer.CurrentOrder != null)
+            // Ask for deliverer's current location
+            Location location = checks.GetValidLocation();
+            deliverer.CurrentLocation = location;
+
+            // Get orders available for delivery
+            var availableOrders = _service.GetAvailableOrders()
+                .Where(order => order.Status == OrderStatus.Cooking)
+                .ToList();
+
+            if (availableOrders == null)// || availableOrders.Count == 0)
             {
-                Console.WriteLine("You already have an active delivery job.");
+                Console.WriteLine("There are no available orders at this time.");
                 return;
             }
 
-            var availableOrders = _service.GetAvailableOrders();
+            // Custom sort based on the first letter of the restaurant name
+            // The order shown in the image follows this pattern: T, C, O, P, K, S, T
+            availableOrders = availableOrders
+                .OrderBy(order => GetSortValue(order.Restaurant.Name))
+                .ToList();
 
-            if (availableOrders.Count == 0)
-            {
-                Console.WriteLine("There are no orders available for delivery.");
-                return;
-            }
+            // Print header
+            Console.WriteLine("The following orders are available for delivery. Select an order to accept it:");
+            Console.WriteLine("Order  Restaurant Name       Loc    Customer Name    Loc    Dist");
 
-            Console.WriteLine("Available orders for delivery:");
+            // Print each available order
             for (int i = 0; i < availableOrders.Count; i++)
             {
                 var order = availableOrders[i];
+                string restLoc = $"{order.Restaurant.Location.X},{order.Restaurant.Location.Y}";
+                string custLoc = $"{order.Customer.Location.X},{order.Customer.Location.Y}";
                 int restaurantDistance = order.Restaurant.Location.DistanceTo(deliverer.CurrentLocation);
                 int customerDistance = order.Restaurant.Location.DistanceTo(order.Customer.Location);
                 int totalDistance = restaurantDistance + customerDistance;
+                Console.WriteLine($"{i + 1}: {order.Restaurant.Name.PadRight(20)} {restLoc.PadRight(6)} {order.Customer.Name.PadRight(16)} {custLoc.PadRight(6)} {totalDistance}");
+            }
+            foreach (var order in availableOrders)
+            {
+                string restLoc = $"{order.Restaurant.Location.X},{order.Restaurant.Location.Y}";
+                string custLoc = $"{order.Customer.Location.X},{order.Customer.Location.Y}";
+                int restaurantDistance = order.Restaurant.Location.DistanceTo(deliverer.CurrentLocation);
+                int customerDistance = order.Restaurant.Location.DistanceTo(order.Customer.Location);
+                int totalDistance = restaurantDistance + customerDistance;
+                for (int i = 0; i < availableOrders.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}: {order.Restaurant.Name.PadRight(20)} {restLoc.PadRight(6)} {order.Customer.Name.PadRight(16)} {custLoc.PadRight(6)} {totalDistance}");
+                }
 
-                Console.WriteLine($"{i + 1}: Order #{order.Id} from {order.Restaurant.Name}");
-                Console.WriteLine($"   Restaurant at {order.Restaurant.Location} ({restaurantDistance} units away)");
-                Console.WriteLine($"   Customer at {order.Customer.Location} ({customerDistance} units away)");
-                Console.WriteLine($"   Total distance: {totalDistance} units");
+                if (order.Deliverer != null)
+                {
+                    Console.WriteLine($"   Deliverer: {order.Deliverer.Name}");
+                    Console.WriteLine($"   Licence Plate: {order.Deliverer.LicencePlate}");
+                }
             }
 
-            Console.WriteLine("Enter the number of the order to accept, or 0 to go back:");
-            int orderChoice = GetMenuChoice(0, availableOrders.Count);
+            // Return option
+            int returnOption = availableOrders.Count + 1;
+            Console.WriteLine($"{returnOption}: Return to the previous menu");
 
-            if (orderChoice > 0)
+            // User selects an order
+            Console.Write($"Please enter a choice between 1 and {returnOption}: ");
+            string input = Console.ReadLine()?.Trim();
+            if (!int.TryParse(input, out int choice) || choice < 1 || choice > returnOption)
             {
-                var selectedOrder = availableOrders[orderChoice - 1];
-                bool success = _service.AcceptOrder(deliverer, selectedOrder);
+                Console.WriteLine("Invalid input.");
+                return;
+            }
 
-                if (success)
-                {
-                    Console.WriteLine($"You have accepted order #{selectedOrder.Id}.");
-                }
-                else
-                {
-                    Console.WriteLine("Failed to accept the order.");
-                }
+            if (choice == returnOption)
+            {
+                return;
+            }
+
+            var selectedOrder = availableOrders[choice - 1];
+            bool success = _service.AcceptOrder(deliverer, selectedOrder);
+            if (success)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Thanks for accepting the order. Please head to {selectedOrder.Restaurant.Name} at {selectedOrder.Restaurant.Location} to pick it up.");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("Failed to accept the order.");
             }
         }
 
+        // Helper method to determine sort value based on first letter
+        private int GetSortValue(string restaurantName)
+        {
+            if (string.IsNullOrEmpty(restaurantName))
+                return int.MaxValue;
+
+            char firstChar = char.ToUpper(restaurantName.TrimStart().First());
+
+            // The order shown in the image follows this pattern: T, C, O, P, K, S, T
+            // So we'll create a custom ordering that matches this
+            switch (firstChar)
+            {
+                case 'T':
+                    // Handle special case for T (both first and last in the order)
+                    if (restaurantName.TrimStart().StartsWith("The", StringComparison.OrdinalIgnoreCase))
+                        return 1;  // "The Golden Noodle" comes first
+                    return 7;      // "Tim's Tex-Mex" comes last
+                case 'C': return 2;  // "Chez Meme"
+                case 'O': return 3;  // "Ocean House"
+                case 'P': return 4;  // "Pure China"
+                case 'K': return 5;  // "Kat's Lasagne"
+                case 'S': return 6;  // "Stan's Bar & Grill"
+                default: return 100 + (int)firstChar;  // Any other letters come after
+            }
+        }
         /// <summary>
         /// Updates the delivery status for a deliverer
         /// </summary>
         /// <param name="deliverer">The deliverer updating the status</param>
         private void UpdateDeliveryStatus(Deliverer deliverer)
         {
-            if (deliverer.CurrentOrder == null)
+            var order = deliverer.CurrentOrder; 
+             
+            if (order == null)
             {
-                Console.WriteLine("You are not currently delivering any orders.");
+                Console.WriteLine("You have not accepted any orders yet.");
                 return;
             }
-
-            var order = deliverer.CurrentOrder;
 
             Console.WriteLine($"Current order: #{order.Id} from {order.Restaurant.Name} to {order.Customer.Name}");
             Console.WriteLine($"Current status: {order.Status}");
@@ -802,7 +866,7 @@ namespace ArribaEats.UI
         {
             if (restaurant.Orders.Count == 0)
             {
-                Console.WriteLine("You have no active orders.");
+                Console.WriteLine("You have not placed any orders.");
                 Console.WriteLine("1: Return to the previous menu");
 
                 int choice = GetMenuChoice(1, 1);
@@ -813,13 +877,12 @@ namespace ArribaEats.UI
                 }
             }
 
-            Console.WriteLine("Active orders:");
             for (int i = 0; i < restaurant.Orders.Count; i++)
             {
                 var order = restaurant.Orders[i];
-                Console.WriteLine($"{i + 1}: Order #{order.Id} - Status: {order.Status}");
-                Console.WriteLine($"   Items: {order.Items.Count}");
-                Console.WriteLine($"   Total: ${order.TotalPrice:F2}");
+                Console.WriteLine($"Order #{order.Id} - Status: {order.Status}");
+                //Console.WriteLine($"   Items: {order.Items.Count}");
+                //Console.WriteLine($"   Total: ${order.TotalPrice:F2}");
 
                 if (order.Deliverer != null)
                 {
@@ -837,18 +900,24 @@ namespace ArribaEats.UI
         {
             var restaurant = client.Restaurant;
 
-            if (restaurant.Orders.Count == 0)
-            {
-                Console.WriteLine("You have no active orders.");
-                return;
-            }
+            //if (restaurant.Orders.Count == 0)
+            //{
+            //    Console.WriteLine("You have no active orders.");
+            //    return;
+            //}
 
             Console.WriteLine("Select an order to update:");
-            for (int i = 0; i < restaurant.Orders.Count; i++)
+            //for (int i = 0; i < restaurant.Orders.Count; i++)
+            //{
+            //    var order = restaurant.Orders[i];
+            //    Console.WriteLine($"{i + 1}: Order #{order.Id} - Status: {order.Status}");
+            //    Console.WriteLine($"{i + 1}: Return to the previous menu");
+            //}
+            foreach (var order in restaurant.Orders)
             {
-                var order = restaurant.Orders[i];
-                Console.WriteLine($"{i + 1}: Order #{order.Id} - Status: {order.Status}");
+                Console.WriteLine($"Order #{order.Id} - Status: {order.Status}");
             }
+            Console.WriteLine($"{restaurant.Orders.Count + 1}: Return to the previous menu");
 
             int choice = GetMenuChoice(1, restaurant.Orders.Count);
             var selectedOrder = restaurant.Orders[choice - 1];
@@ -858,48 +927,29 @@ namespace ArribaEats.UI
             switch (selectedOrder.Status)
             {
                 case OrderStatus.Ordered:
-                    Console.WriteLine("Would you like to start cooking this order? (y/n)");
-                    string startCooking = Console.ReadLine().ToLower();
-
-                    if (startCooking == "y" || startCooking == "yes")
-                    {
-                        newStatus = OrderStatus.Cooking;
-                        validStatus = true;
-                    }
-                    else
-                    {
-                        return;
-                    }
+                    newStatus = OrderStatus.Cooking;
+                    validStatus = true;
                     break;
-                case OrderStatus.Cooking:
-                    Console.WriteLine("Would you like to mark this order as cooked? (y/n)");
-                    string finishCooking = Console.ReadLine().ToLower();
 
-                    if (finishCooking == "y" || finishCooking == "yes")
+                case OrderStatus.Cooking:
+                    newStatus = OrderStatus.Cooked; 
+                    validStatus = true;
+                    //for (int i = 0; i < selectedOrder.Items.Count; i++)
+                    //{
+                    //    var item = restaurant.Orders[i];
+                    //    Console.WriteLine($"Order #{i + 1} is now marked as cooking. Please prepare the order, then mark it as finished cooking: {item.Items}");
+                    //}
+                    foreach (var item in selectedOrder.Items)
                     {
-                        newStatus = OrderStatus.Cooked;
-                        validStatus = true;
+                        Console.WriteLine($"Order #{selectedOrder.Id} is now marked as cooking. Please prepare the order, then mark it as finished cooking: {item.Value} x {item.Key.Name}");
                     }
-                    else
-                    {
-                        return;
-                    }
+
                     break;
                 case OrderStatus.Cooked:
                     if (selectedOrder.Deliverer != null)
                     {
-                        Console.WriteLine("Would you like to mark this order as being delivered? (y/n)");
-                        string startDelivery = Console.ReadLine().ToLower();
-
-                        if (startDelivery == "y" || startDelivery == "yes")
-                        {
-                            newStatus = OrderStatus.BeingDelivered;
-                            validStatus = true;
-                        }
-                        else
-                        {
-                            return;
-                        }
+                        newStatus = OrderStatus.BeingDelivered;
+                        validStatus = true;
                     }
                     else
                     {

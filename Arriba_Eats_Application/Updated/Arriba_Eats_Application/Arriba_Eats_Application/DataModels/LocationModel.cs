@@ -35,6 +35,7 @@ namespace ArribaEats.Models
         /// <returns>The Manhattan distance between the two locations</returns>
         public int DistanceTo(Location other)
         {
+            // Manhattan distance is the sum of the absolute differences of their coordinates
             return Math.Abs(X - other.X) + Math.Abs(Y - other.Y);
         }
 

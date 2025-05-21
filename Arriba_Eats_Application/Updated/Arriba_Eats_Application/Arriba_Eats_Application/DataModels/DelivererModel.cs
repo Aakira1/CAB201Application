@@ -16,7 +16,7 @@ namespace ArribaEats.Models
         /// <summary>
         /// Gets or sets the current order being delivered
         /// </summary>
-        public Order CurrentOrder { get; private set; }
+        public Order CurrentOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the current location of the deliverer
@@ -62,6 +62,23 @@ namespace ArribaEats.Models
             CurrentOrder = order;
             order.AssignDeliverer(this);
         }
+
+        public void GetOrderDetails()
+        {
+            if (CurrentOrder != null)
+            {
+                Console.WriteLine($"Order ID: {CurrentOrder.Id}");
+                Console.WriteLine($"Restaurant: {CurrentOrder.Restaurant.Name}");
+                Console.WriteLine($"Customer: {CurrentOrder.Customer.Name}");
+                Console.WriteLine($"Total Price: {CurrentOrder.TotalPrice:C}");
+            }
+            else
+            {
+                Console.WriteLine("No current order.");
+            }
+        }
+
+        public Deliverer deliverer { get; set; }
 
         /// <summary>
         /// Sets the deliverer's status as at the restaurant

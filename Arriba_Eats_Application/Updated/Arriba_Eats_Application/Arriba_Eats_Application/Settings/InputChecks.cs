@@ -63,26 +63,23 @@ namespace ArribaEats.UI.Settings
         /// <returns>The valid location</returns>
         public Location GetValidLocation()
         {
-            string prompt = "Please enter your location (in the form of X,Y):";
-            string errorMessage = "Invalid location.";
-
             while (true)
             {
-                Console.WriteLine(prompt);
-                string input = GetInput();
+                Console.WriteLine("Please enter your location (in the form of X,Y):");
+                string input = Console.ReadLine()?.Trim();
 
-                // Add more robust input cleaning
-                input = input?.Trim() ?? "";
+                var parts = input.Split(',');
 
-                // Replace any spaces around the comma
-                input = input.Replace(" ,", ",").Replace(", ", ",");
-
-                if (InputValidator.ValidateLocation(input, out Location location))
+                if (parts.Length == 2 &&
+                    int.TryParse(parts[0], out int x) &&
+                    int.TryParse(parts[1], out int y))
                 {
-                    return location;
+                    return new Location { X = x, Y = y };
                 }
-
-                Console.WriteLine(errorMessage);
+                else
+                {
+                    Console.WriteLine("Invalid location.");
+                }
             }
         }
 
@@ -118,36 +115,36 @@ namespace ArribaEats.UI.Settings
 
         public string GetValidPassword()
         {
-            string password;
-
-            // Step 1: Prompt once for a valid password
             while (true)
             {
-                Console.WriteLine("Your password must:");
-                Console.WriteLine("- be at least 8 characters long");
-                Console.WriteLine("- contain a number");
-                Console.WriteLine("- contain a lowercase letter");
-                Console.WriteLine("- contain an uppercase letter");
+                // Always show password rules before entering
+                Console.WriteLine("Your password must: ");
+                Console.WriteLine("- be at least 8 characters long ");
+                Console.WriteLine("- contain a number ");
+                Console.WriteLine("- contain a lowercase letter ");
+                Console.WriteLine("- contain an uppercase letter ");
                 Console.WriteLine("Please enter a password: ");
-                password = GetInput();
 
-                if (InputValidator.ValidatePassword(password))
-                    break;
+                string password = Console.ReadLine()?.Trim();
 
-                Console.WriteLine("Invalid password.");
-            }
+                if (!InputValidator.ValidatePassword(password))
+                {
+                    Console.WriteLine("Invalid password.");
+                    continue; // Loop again — rules will reprint
+                }
 
-            // Step 2: Confirm it (loop only this step if mismatch)
-            while (true)
-            {
                 Console.WriteLine("Please confirm your password: ");
-                string confirmPassword = GetInput();
+                string confirm = Console.ReadLine()?.Trim();
 
-                if (confirmPassword == password)
+                if (password == confirm)
+                {
                     return password;
+                }
 
                 Console.WriteLine("Passwords do not match.");
+                // Loop again — rules will reprint
             }
         }
+
     }
 }

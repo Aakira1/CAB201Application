@@ -110,7 +110,7 @@ namespace ArribaEats.Services
         List<Order> GetAvailableOrders();
 
         /// <summary>
-        /// Accepts an order for delivery
+        /// Accepts an order for deliveryz
         /// </summary>
         /// <param name="deliverer">The deliverer accepting the order</param>
         /// <param name="order">The order to accept</param>
@@ -143,5 +143,7 @@ namespace ArribaEats.Services
         bool IsEmailInUse(string email);
 
         public bool DebugPrintUsers();
+
+        void FinalizeOrder(Order order); 
     }
 }

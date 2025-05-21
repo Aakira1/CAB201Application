@@ -9,40 +9,13 @@ namespace ArribaEats.Models
     /// </summary>
     public class Restaurant
     {
-        /// <summary>
-        /// Gets or sets the name of the restaurant
-        /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the food style of the restaurant
-        /// </summary>
         public FoodStyle Style { get; set; }
-
-        /// <summary>
-        /// Gets or sets the location of the restaurant
-        /// </summary>
         public Location Location { get; set; }
-
-        /// <summary>
-        /// Gets or sets the client who owns the restaurant
-        /// </summary>
+        public List<MenuItem> Menu { get; set; } = new();
+        public List<Review> Reviews { get; set; } = new();
+        public List<Order> Orders { get; set; } = new();
         public Client Owner { get; set; }
-
-        /// <summary>
-        /// Gets the menu items available at the restaurant
-        /// </summary>
-        public List<MenuItem> Menu { get; }
-
-        /// <summary>
-        /// Gets the reviews for the restaurant
-        /// </summary>
-        public List<Review> Reviews { get; }
-
-        /// <summary>
-        /// Gets the active orders for the restaurant
-        /// </summary>
-        public List<Order> Orders { get; }
 
         /// <summary>
         /// Gets the average rating of the restaurant

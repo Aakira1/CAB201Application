@@ -48,6 +48,11 @@ namespace ArribaEats.Models
         /// <param name="order">The order to start cooking</param>
         public void StartCooking(Order order)
         {
+            if (order.Status != OrderStatus.Ordered)
+            {
+                //Console.WriteLine("Cannot start cooking. Order must be in 'Ordered' status.");
+                return;
+            }
             order.SetStatus(OrderStatus.Cooking);
         }
 
@@ -57,6 +62,11 @@ namespace ArribaEats.Models
         /// <param name="order">The order that is finished cooking</param>
         public void FinishCooking(Order order)
         {
+            if (order.Status != OrderStatus.Cooking)
+            {
+                //Console.WriteLine("Cannot finish cooking. Order must be in 'Cooking' status.");
+                return;
+            }
             order.SetStatus(OrderStatus.Cooked);
         }
 
@@ -66,6 +76,11 @@ namespace ArribaEats.Models
         /// <param name="order">The order that is being delivered</param>
         public void SetOrderBeingDelivered(Order order)
         {
+            if (order.Status != OrderStatus.Cooked)
+            {
+                //Console.WriteLine("Cannot mark as being delivered. Order must be 'Cooked'.");
+                return;
+            }
             order.SetStatus(OrderStatus.BeingDelivered);
         }
 

@@ -10,13 +10,18 @@ namespace ArribaEats.Services
     /// </summary>
     public class ArribaEatsService : IArribaEatsService
     {
-        private List<User> _users;
-        private List<Restaurant> _restaurants;
+        private List<User> _users = new List<User>();
+        private List<Restaurant> _restaurants = new List<Restaurant>();
+        private List<Order> _orders = new List<Order>();
+        private List<Deliverer> _deliverers = new List<Deliverer>();
+        private int _nextOrderId;
 
         /// <summary>
         /// Gets the currently logged in user
         /// </summary>
-        public User CurrentUser { get; private set; }
+        public User CurrentUser { get; set; }
+
+        public Deliverer Deliverer { get; set; }
 
         /// <summary>
         /// Gets the list of all restaurants in the system
@@ -31,6 +36,7 @@ namespace ArribaEats.Services
             _users = new List<User>();
             _restaurants = new List<Restaurant>();
             CurrentUser = null;
+            _nextOrderId = 1; // Initialize the next order ID
         }
 
         /// <summary>
@@ -149,9 +155,10 @@ namespace ArribaEats.Services
             switch (sortBy.ToLower())
             {
                 case "name":
-                    return _restaurants.OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase).ToList();
+                    return _restaurants.OrderBy((r => r.Name)).ToList();
                 case "distance":
-                    return _restaurants.OrderBy(r => customer != null ? r.Location.DistanceTo(customer.Location) : 0).ToList();
+                    return _restaurants.OrderBy(
+                        r => customer.Location.DistanceTo(r.Location)).ToList();
                 case "style":
                     return _restaurants.OrderBy(r => r.Style.ToString()).ToList();
                 case "rating":
@@ -166,14 +173,11 @@ namespace ArribaEats.Services
         /// </summary>
         /// <param name="customer">The customer placing the order</param>
         /// <param name="restaurant">The restaurant the order is from</param>
+        /// <param name="deliverers">The list of available deliverers</param>"
         /// <returns>The newly created order</returns>
         public Order CreateOrder(Customer customer, Restaurant restaurant)
         {
-            if (customer == null || restaurant == null)
-                return null;
-
-            var order = new Order(customer, restaurant);
-            return order;
+            return new Order(customer, restaurant, _nextOrderId);
         }
 
         /// <summary>
@@ -187,6 +191,20 @@ namespace ArribaEats.Services
             order.AddItem(item, quantity);
         }
 
+        public void FinalizeOrder(Order order)
+        {
+            if (order != null)
+            {
+                if (!_orders.Contains(order))
+                {
+                    order.Customer.Orders.Add(order);
+                    order.Restaurant.Orders.Add(order);
+                    _orders.Add(order);
+                    _nextOrderId++;
+                }
+            }
+        }
+
         /// <summary>
         /// Gets the available orders for a deliverer
         /// </summary>
@@ -194,6 +212,7 @@ namespace ArribaEats.Services
         public List<Order> GetAvailableOrders()
         {
             return _restaurants
+                .Where(r => r.Orders != null)
                 .SelectMany(r => r.Orders)
                 .Where(o => o.Status == OrderStatus.Cooked && o.Deliverer == null)
                 .ToList();
@@ -222,29 +241,9 @@ namespace ArribaEats.Services
         /// <returns>True if the status was updated successfully, false otherwise</returns>
         public bool UpdateOrderStatus(Order order, OrderStatus status)
         {
-            // Validate the status transition
-            bool isValidTransition = false;
+            if (order == null) return false;
 
-            switch (order.Status)
-            {
-                case OrderStatus.Ordered:
-                    isValidTransition = status == OrderStatus.Cooking;
-                    break;
-                case OrderStatus.Cooking:
-                    isValidTransition = status == OrderStatus.Cooked;
-                    break;
-                case OrderStatus.Cooked:
-                    isValidTransition = status == OrderStatus.BeingDelivered;
-                    break;
-                case OrderStatus.BeingDelivered:
-                    isValidTransition = status == OrderStatus.Delivered;
-                    break;
-            }
-
-            if (!isValidTransition)
-                return false;
-
-            order.SetStatus(status);
+            order.Status = status;
             return true;
         }
 
@@ -273,7 +272,7 @@ namespace ArribaEats.Services
 
         bool IArribaEatsService.DebugPrintUsers()
         {
-            Console.WriteLine("=== Registered Users ===\n");
+            Console.WriteLine("=== Registered Users ===");
 
             var customers = _users.OfType<Customer>().ToList();
             var clients = _users.OfType<Client>().ToList();
@@ -314,7 +313,7 @@ namespace ArribaEats.Services
                 Console.WriteLine("No users are currently registered.");
             }
 
-            Console.WriteLine("==========================\n");
+            Console.WriteLine("==========================");
             return true;
         }
     }
