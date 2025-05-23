@@ -7,32 +7,34 @@ namespace ArribaEats.Models
     /// </summary>
     public struct Location
     {
-        /// <summary>
-        /// Gets or sets the X coordinate
-        /// </summary>
+        #region Properties
+
+        /// <summary>Gets or sets the X coordinate</summary>
         public int X { get; set; }
 
-        /// <summary>
-        /// Gets or sets the Y coordinate
-        /// </summary>
+        /// <summary>Gets or sets the Y coordinate</summary>
         public int Y { get; set; }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Creates a new location with the specified X and Y coordinates
         /// </summary>
-        /// <param name="x">The X coordinate</param>
-        /// <param name="y">The Y coordinate</param>
         public Location(int x, int y)
         {
             X = x;
             Y = y;
         }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Calculates the Manhattan distance between this location and another location
         /// </summary>
-        /// <param name="other">The other location</param>
-        /// <returns>The Manhattan distance between the two locations</returns>
         public int DistanceTo(Location other)
         {
             // Manhattan distance is the sum of the absolute differences of their coordinates
@@ -42,10 +44,12 @@ namespace ArribaEats.Models
         /// <summary>
         /// Returns a string representation of this location in the format "X,Y"
         /// </summary>
-        /// <returns>A string representation of this location</returns>
         public override string ToString()
         {
+            // Format the location as "X,Y"
             return $"{X},{Y}";
         }
+
+        #endregion
     }
 }

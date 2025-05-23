@@ -1,32 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ArribaEats.Models;
 using ArribaEats.Utils;
 
 namespace ArribaEats.UI.Settings
 {
+    /// <summary>
+    /// Provides reusable input validation and prompts.
+    /// </summary>
     class InputChecks
     {
-        public InputChecks()
-        {
-            // Constructor logic here
-        }
+        public InputChecks() { }
 
+        #region Basic Input
+        /// <summary>
+        /// Outputs a string to the console.
+        /// </summary>
+        /// <param name="input"></param>
         public void Output(string input)
         {
             Console.WriteLine(input);
         }
-
+        /// <summary>
+        /// Prompts the user for input and returns it as a string.
+        /// </summary>
+        /// <returns></returns>
         public string GetInput()
         {
-            string input = Console.ReadLine() ?? string.Empty;
-            return input;
+            return Console.ReadLine() ?? string.Empty;
         }
 
-        public string GetValidInput(string prompt, Func<string, bool> validationFunc, string Error)
+        #endregion
+
+        #region General Validation
+        /// <summary>
+        /// Prompts the user for a valid input and validates it using a custom validation function.
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="validationFunc"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        public string GetValidInput(string prompt, Func<string, bool> validationFunc, string error)
         {
             string input;
             do
@@ -35,12 +49,20 @@ namespace ArribaEats.UI.Settings
                 input = GetInput();
                 if (!validationFunc(input))
                 {
-                    Output(Error);
+                    Output(error);
                 }
             } while (!validationFunc(input));
+
             return input;
         }
-        public int GetValidIntInput(string prompt, Func<int, bool> validationFunc, string Error)
+        /// <summary>
+        /// Prompts the user for a valid integer input and validates it using a custom validation function.
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="validationFunc"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        public int GetValidIntInput(string prompt, Func<int, bool> validationFunc, string error)
         {
             int input;
             do
@@ -49,18 +71,20 @@ namespace ArribaEats.UI.Settings
                 string userInput = GetInput();
                 if (!int.TryParse(userInput, out input) || !validationFunc(input))
                 {
-                    Output(Error);
+                    Output(error);
                 }
             } while (!validationFunc(input));
+
             return input;
         }
 
+        #endregion
+
+        #region Location Input
         /// <summary>
-        /// Gets a valid location from the user
+        /// Prompts the user for a valid location input and validates it.
         /// </summary>
-        /// <param name="prompt">The prompt to display</param>
-        /// <param name="errorMessage">The error message to display</param>
-        /// <returns>The valid location</returns>
+        /// <returns></returns>
         public Location GetValidLocation()
         {
             while (true)
@@ -69,26 +93,45 @@ namespace ArribaEats.UI.Settings
                 string input = Console.ReadLine()?.Trim();
 
                 var parts = input.Split(',');
-
                 if (parts.Length == 2 &&
                     int.TryParse(parts[0], out int x) &&
                     int.TryParse(parts[1], out int y))
                 {
                     return new Location { X = x, Y = y };
                 }
-                else
+
+                Console.WriteLine("Invalid location.");
+            }
+        }
+        /// <summary>
+        /// Prompts the user for a menu choice between min and max values.
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public int GetMenuChoice(int min, int max)
+        {
+            while (true)
+            {
+                Console.WriteLine($"Please enter a choice between {min} and {max}: ");
+                string input = Console.ReadLine()?.Trim();
+                if (int.TryParse(input, out int choice) && choice >= min && choice <= max)
                 {
-                    Console.WriteLine("Invalid location.");
+                    return choice;
                 }
             }
         }
 
+
+        #endregion
+
+        #region Price Input
         /// <summary>
-        /// Gets a valid price from the user
+        /// Prompts the user for a valid price input and validates it.
         /// </summary>
-        /// <param name="prompt">The prompt to display</param>
-        /// <param name="errorMessage">The error message to display</param>
-        /// <returns>The valid price</returns>
+        /// <param name="prompt"></param>
+        /// <param name="errorMessage"></param>
+        /// <returns></returns>
         public decimal GetValidPrice(string prompt, string errorMessage)
         {
             while (true)
@@ -96,7 +139,6 @@ namespace ArribaEats.UI.Settings
                 Console.WriteLine(prompt);
                 string input = Console.ReadLine()?.Trim();
 
-                // Reject if it contains a dollar sign
                 if (input.Contains('$'))
                 {
                     Console.WriteLine(errorMessage);
@@ -112,17 +154,22 @@ namespace ArribaEats.UI.Settings
             }
         }
 
+        #endregion
 
+        #region Password Input
+        /// <summary>
+        /// Prompts the user for a valid password and confirms it.
+        /// </summary>
+        /// <returns></returns>
         public string GetValidPassword()
         {
             while (true)
             {
-                // Always show password rules before entering
                 Console.WriteLine("Your password must: ");
-                Console.WriteLine("- be at least 8 characters long ");
-                Console.WriteLine("- contain a number ");
-                Console.WriteLine("- contain a lowercase letter ");
-                Console.WriteLine("- contain an uppercase letter ");
+                Console.WriteLine("- be at least 8 characters long");
+                Console.WriteLine("- contain a number");
+                Console.WriteLine("- contain a lowercase letter");
+                Console.WriteLine("- contain an uppercase letter");
                 Console.WriteLine("Please enter a password: ");
 
                 string password = Console.ReadLine()?.Trim();
@@ -130,7 +177,7 @@ namespace ArribaEats.UI.Settings
                 if (!InputValidator.ValidatePassword(password))
                 {
                     Console.WriteLine("Invalid password.");
-                    continue; // Loop again — rules will reprint
+                    continue;
                 }
 
                 Console.WriteLine("Please confirm your password: ");
@@ -142,9 +189,8 @@ namespace ArribaEats.UI.Settings
                 }
 
                 Console.WriteLine("Passwords do not match.");
-                // Loop again — rules will reprint
             }
         }
-
+        #endregion
     }
 }

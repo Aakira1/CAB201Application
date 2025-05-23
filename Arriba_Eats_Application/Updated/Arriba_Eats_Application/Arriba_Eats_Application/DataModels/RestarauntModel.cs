@@ -9,16 +9,58 @@ namespace ArribaEats.Models
     /// </summary>
     public class Restaurant
     {
+        #region Properties
+        /// <summary>
+        /// Gets or sets the restaurant's unique identifier
+        /// </summary>
+        int Id { get; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's name
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's food style
+        /// </summary>
         public FoodStyle Style { get; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's location
+        /// </summary>
         public Location Location { get; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's menu
+        /// </summary>
         public List<MenuItem> Menu { get; set; } = new();
+        /// <summary>
+        /// Gets or sets the restaurant's reviews
+        /// </summary>
         public List<Review> Reviews { get; set; } = new();
+        /// <summary>
+        /// Gets or sets the restaurant's orders
+        /// </summary>
         public List<Order> Orders { get; set; } = new();
-        public Client Owner { get; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's customer
+        /// </summary>
+        public Customer Customer { get  ; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's deliverer
+        /// </summary>
+        public Deliverer Deliverer { get; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's location
+        /// </summary>
+        public Location Locations { get; set; }
+        /// <summary>
+        /// Gets or sets the restaurant's orders
+        /// </summary>
+        Restaurant restaurant { get; set; } // Not needed unless used for something specific
 
         /// <summary>
-        /// Gets the average rating of the restaurant
+        /// Gets or sets the restaurant's owner
+        /// </summary>
+        public Client Owner { get; set; }
+        /// <summary>
+        /// Gets the average rating of the restaurant based on its reviews
         /// </summary>
         public double AverageRating
         {
@@ -28,15 +70,15 @@ namespace ArribaEats.Models
                     return 0;
                 return Reviews.Average(r => r.Rating);
             }
+            set { }
         }
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Creates a new restaurant with the specified details
         /// </summary>
-        /// <param name="name">The name of the restaurant</param>
-        /// <param name="style">The food style of the restaurant</param>
-        /// <param name="location">The location of the restaurant</param>
-        /// <param name="owner">The client who owns the restaurant</param>
         public Restaurant(string name, FoodStyle style, Location location, Client owner)
         {
             Name = name;
@@ -48,12 +90,20 @@ namespace ArribaEats.Models
             Orders = new List<Order>();
         }
 
+
+        /// <summary>
+        /// Creates a new restaurant with the specified details
+        /// </summary>
+        List<Restaurant> _restaurants = new List<Restaurant>();
+
+
+        #endregion
+
+        #region Menu Management
+
         /// <summary>
         /// Adds a menu item to the restaurant's menu
         /// </summary>
-        /// <param name="name">The name of the menu item</param>
-        /// <param name="price">The price of the menu item</param>
-        /// <returns>The newly created menu item</returns>
         public MenuItem AddMenuItem(string name, decimal price)
         {
             var item = new MenuItem(name, price);
@@ -61,37 +111,30 @@ namespace ArribaEats.Models
             return item;
         }
 
-        /// <summary>
-        /// Adds an order to the restaurant's order list
-        /// </summary>
-        /// <param name="order">The order to add</param>
-        public void AddOrder(Order order)
-        {
-            Orders.Add(order);
-        }
+        #endregion
 
-        /// <summary>
-        /// Adds a review to the restaurant
-        /// </summary>
-        /// <param name="review">The review to add</param>
-        public void AddReview(Review review)
-        {
-            Reviews.Add(review);
-        }
+        #region Order Management
 
-        /// <summary>
-        /// Removes an order from the restaurant's order list
-        /// </summary>
-        /// <param name="order">The order to remove</param>
-        public void RemoveOrder(Order order)
-        {
-            Orders.Remove(order);
-        }
+        /// <summary>Adds an order to the restaurant</summary>
+        public void AddOrder(Order order) => Orders.Add(order);
+
+        /// <summary>Removes an order from the restaurant</summary>
+        public void RemoveOrder(Order order) => Orders.Remove(order);
+
+        #endregion
+
+        #region Review Management
+
+        /// <summary>Adds a review to the restaurant</summary>
+        public void AddReview(Review review) => Reviews.Add(review);
+
+        #endregion
+
+        #region Utility
 
         /// <summary>
         /// Gets the restaurant information as a dictionary of property names and values
         /// </summary>
-        /// <returns>A dictionary of restaurant information</returns>
         public Dictionary<string, string> GetRestaurantInfo()
         {
             return new Dictionary<string, string>
@@ -103,5 +146,6 @@ namespace ArribaEats.Models
                 { "Menu Items", Menu.Count.ToString() }
             };
         }
+        #endregion
     }
 }

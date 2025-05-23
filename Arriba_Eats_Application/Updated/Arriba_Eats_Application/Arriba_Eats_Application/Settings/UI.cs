@@ -5,6 +5,7 @@ using ArribaEats.Models;
 using ArribaEats.Services;
 using ArribaEats.Utils;
 using ArribaEats.UI.Settings;
+using ArribaEats.Interfaces;
 
 namespace ArribaEats.UI
 {
@@ -13,17 +14,23 @@ namespace ArribaEats.UI
     /// </summary>
     public class ArribaEatsUI
     {
+        #region Fields and Constructor
+
         private readonly IArribaEatsService _service;
-        private readonly Restaurant _restaurant;
+        private readonly InputChecks checks = new();
+        private readonly Restaurant restaurant1;
+
         public ArribaEatsUI(IArribaEatsService service)
         {
             _service = service;
         }
 
-        private readonly InputChecks checks = new InputChecks();
+        #endregion
+
+        #region Application Entry
 
         /// <summary>
-        /// Runs the application
+        /// Main entry point for the application
         /// </summary>
         public void Run()
         {
@@ -42,15 +49,13 @@ namespace ArribaEats.UI
                 {
                     switch (_service.CurrentUser)
                     {
-                        case Customer customer:
-                            ShowCustomerMenu(); // doesn't return until done
+                        case Customer:
+                            ShowCustomerMenu();
                             break;
-
-                        case Deliverer deliverer:
+                        case Deliverer:
                             ShowDelivererMenu();
                             break;
-
-                        case Client client:
+                        case Client:
                             ShowClientMenu();
                             break;
                     }
@@ -60,10 +65,10 @@ namespace ArribaEats.UI
             Console.WriteLine("Thank you for using Arriba Eats!");
         }
 
-        /// <summary>
-        /// Shows the startup menu
-        /// </summary>
-        /// <returns>True if the user chose to exit, false otherwise</returns>
+        #endregion
+
+        #region Startup/Login/Registration
+
         private bool ShowStartupMenu()
         {
             Console.WriteLine("Please make a choice from the menu below:");
@@ -73,24 +78,42 @@ namespace ArribaEats.UI
 
             int choice = GetMenuChoice(1, 3);
 
-            switch (choice)
+            return choice switch
             {
-                case 1:
-                    LoginUser();
-                    return false;
-                case 2:
-                    RegisterUserMenu();
-                    return false;
-                case 3:
-                    return true;
-                default:
-                    return false;
+                1 => TryLogin(),
+                2 => TryRegister(),
+                3 => true,
+                _ => false,
+            };
+        }
+
+        private bool TryLogin()
+        {
+            LoginUser();
+            return false;
+        }
+
+        private bool TryRegister()
+        {
+            RegisterUserMenu();
+            return false;
+        }
+
+        private void LoginUser()
+        {
+            string email = checks.GetValidInput("Email:", InputValidator.ValidateEmail, "Invalid email address.");
+            string password = checks.GetValidInput("Password:", _ => true, "");
+
+            if (!_service.Login(email, password))
+            {
+                Console.WriteLine("Invalid email or password.");
+            }
+            else
+            {
+                Console.WriteLine($"Welcome back, {_service.CurrentUser.Name}!");
             }
         }
 
-        /// <summary>
-        /// Shows the user registration menu
-        /// </summary>
         private void RegisterUserMenu()
         {
             Console.WriteLine("Which type of user would you like to register as?");
@@ -100,34 +123,66 @@ namespace ArribaEats.UI
             Console.WriteLine("4: Return to the previous menu");
 
             int choice = GetMenuChoice(1, 4);
+            if (choice == 4) return;
 
-            if (choice == 4)
+            var userType = choice switch
             {
-                return;
-            }
-
-            UserType userType;
-            switch (choice)
-            {
-                case 1:
-                    userType = UserType.Customer;
-                    break;
-                case 2:
-                    userType = UserType.Deliverer;
-                    break;
-                case 3:
-                    userType = UserType.Client;
-                    break;
-                default:
-                    return;
-            }
+                1 => UserType.Customer,
+                2 => UserType.Deliverer,
+                3 => UserType.Client,
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
             RegisterUser(userType);
         }
 
-        /// <summary>
-        /// Shows the customer menu
-        /// </summary>
+        private void RegisterUser(UserType userType)
+        {
+            string name = checks.GetValidInput("Please enter your name: ", InputValidator.ValidateName, "Invalid name.");
+            int age = checks.GetValidIntInput("Please enter your age (18-100): ", InputValidator.ValidateAge, "Invalid age.");
+            string email = GetUniqueEmail();
+            string mobile = checks.GetValidInput("Please enter your mobile phone number:", InputValidator.ValidateMobile, "Invalid phone number.");
+            string password = checks.GetValidPassword();
+
+            bool success = userType switch
+            {
+                UserType.Customer => _service.RegisterCustomer(name, age, email, mobile, password, checks.GetValidLocation()),
+                UserType.Deliverer => _service.RegisterDeliverer(name, age, email, mobile, password,
+                    checks.GetValidInput("Please enter your licence plate: ", InputValidator.ValidateLicencePlate, "Invalid licence plate.")),
+                UserType.Client => _service.RegisterClient(
+                    name,
+                    age,
+                    email,
+                    mobile,
+                    password,
+                    checks.GetValidInput("Please enter your restaurant's name: ", InputValidator.ValidateRestaurantName, "Invalid restaurant name."),
+                    InputValidator.SelectFoodStyle(),
+                    checks.GetValidLocation()
+                ),
+                _ => false
+            };
+
+            Console.WriteLine(success
+                ? $"You have been successfully registered as a {userType.ToString().ToLower()}, {name}!"
+                : "Registration failed. Please try again.");
+        }
+
+        private string GetUniqueEmail()
+        {
+            while (true)
+            {
+                string email = checks.GetValidInput("Please enter your email address:", InputValidator.ValidateEmail, "Invalid email address.");
+                if (_service.IsEmailInUse(email))
+                    Console.WriteLine("This email address is already in use.");
+                else
+                    return email;
+            }
+        }
+
+        #endregion
+
+        #region Menu Dispatchers
+
         private void ShowCustomerMenu()
         {
             Customer customer = (Customer)_service.CurrentUser;
@@ -165,52 +220,48 @@ namespace ArribaEats.UI
                 }
             }
         }
-
-
-        /// <summary>
-        /// Shows the deliverer menu
-        /// </summary>
         private void ShowDelivererMenu()
         {
             Deliverer deliverer = (Deliverer)_service.CurrentUser;
 
-            Console.WriteLine("Please make a choice from the menu below:");
-            Console.WriteLine("1: Display your user information");
-            Console.WriteLine("2: List orders available to deliver");
-            Console.WriteLine("3: Arrived at restaurant to pick up order");
-            Console.WriteLine("4: Mark this delivery as complete");
-            Console.WriteLine("5: Logout");
-
-            int choice = GetMenuChoice(1, 5);
-
-            switch (choice)
+            bool exit = false;
+            while (!exit)
             {
-                case 1:
-                    DisplayUserInfo(deliverer);
-                    break;
-                case 2:
-                    ViewAvailableOrders(deliverer);
-                    break;
-                case 3:
-                    UpdateDeliveryStatus(deliverer);
-                    break;
-                case 4:
-                    UpdateDeliveryStatus(deliverer);
-                    break;
-                case 5:
-                    Logout();
-                    break;
+                Console.WriteLine("Please make a choice from the menu below:");
+                Console.WriteLine("1: Display your user information");
+                Console.WriteLine("2: List orders available to deliver");
+                Console.WriteLine("3: Arrived at restaurant to pick up order");
+                Console.WriteLine("4: Mark this delivery as complete");
+                Console.WriteLine("5: Logout");
+
+                int choice = GetMenuChoice(1, 5);
+
+                switch (choice)
+                {
+                    case 1:
+                        DisplayDelivererInfo(deliverer);
+                        break;
+                    case 2:
+                        ViewAvailableOrders(_service.Restaurants);
+                        break;
+                    case 3:
+                        UpdateDeliveryStatus(deliverer);
+                        break;
+                    case 4:
+                        UpdateDeliveryStatus(deliverer);
+                        break;
+                    case 5:
+                        Logout();
+                        exit = true;
+                        break;
+                }
             }
         }
-
-        /// <summary>
-        /// Shows the client menu
-        /// </summary>
         private void ShowClientMenu()
         {
             Client client = (Client)_service.CurrentUser;
-
             bool exit = false;
+
             while (!exit)
             {
                 Console.WriteLine("Please make a choice from the menu below:");
@@ -220,36 +271,30 @@ namespace ArribaEats.UI
                 Console.WriteLine("4: Start cooking order");
                 Console.WriteLine("5: Finish cooking order");
                 Console.WriteLine("6: Handle deliverers who have arrived");
-                Console.WriteLine("7: Log out");
+                Console.WriteLine("7: Logout");
 
                 int choice = GetMenuChoice(1, 7);
 
                 switch (choice)
                 {
                     case 1:
-                        DisplayUserInfo(client);
+                        DisplayClientInfo(client);
                         break;
-
                     case 2:
                         AddMenuItem(client);
                         break;
-
                     case 3:
                         ViewRestaurantOrders(client.Restaurant);
                         break;
-
                     case 4:
-                        UpdateRestaurantOrderStatus(client, OrderStatus.Cooking);
+                        CookOrders(client);
                         break;
-
                     case 5:
-                        UpdateRestaurantOrderStatus(client, OrderStatus.Cooked);
+                        FinishCookingOrders(client);
                         break;
-
                     case 6:
-                        UpdateRestaurantOrderStatus(client, OrderStatus.BeingDelivered);
+                        HandleDeliveryDispatch(client);
                         break;
-
                     case 7:
                         Logout();
                         exit = true;
@@ -257,169 +302,81 @@ namespace ArribaEats.UI
                 }
             }
         }
-
-        /// <summary>
-        /// Logs out the current user
-        /// </summary>
         private void Logout()
         {
             _service.Logout();
             Console.WriteLine("You are now logged out.");
         }
+        #endregion
 
-        /// <summary>
-        /// Gets a menu choice from the user
-        /// </summary>
-        /// <param name="min">The minimum valid choice</param>
-        /// <param name="max">The maximum valid choice</param>
-        /// <returns>The user's choice</returns>
+        #region Helpers
+
         private int GetMenuChoice(int min, int max)
         {
             while (true)
             {
                 Console.WriteLine($"Please enter a choice between {min} and {max}: ");
                 string input = Console.ReadLine()?.Trim();
-
                 if (int.TryParse(input, out int choice) && choice >= min && choice <= max)
                 {
                     return choice;
                 }
-                //Console.WriteLine($"Invalid input. Please enter a number between {min} and {max}.");
-            }
-            return 0; // This line will never be reached, but is required to satisfy the compiler
-        }
-
-        /// <summary>
-        /// Registers a new user
-        /// </summary>
-        /// <param name="userType">The type of user to register</param>
-        private void RegisterUser(UserType userType)
-        {
-            // Get common user details
-            string name = checks.GetValidInput("Please enter your name: ", InputValidator.ValidateName, "Invalid name.");
-            int age = checks.GetValidIntInput("Please enter your age (18-100): ", a => InputValidator.ValidateAge(a), "Invalid age.");
-            string email = GetUniqueEmail();
-            string mobile = checks.GetValidInput("Please enter your mobile phone number:", InputValidator.ValidateMobile, "Invalid phone number.");
-            string password = checks.GetValidPassword();
-
-            bool success = false;
-
-            switch (userType)
-            {
-                case UserType.Customer:
-                    Location location = checks.GetValidLocation();
-                    success = _service.RegisterCustomer(name, age, email, mobile, password, location);
-                    break;
-                case UserType.Deliverer:
-                    string licencePlate = checks.GetValidInput("Please enter your licence plate: ", InputValidator.ValidateLicencePlate, "Invalid licence plate.");
-                    success = _service.RegisterDeliverer(name, age, email, mobile, password, licencePlate);
-                    break;
-                case UserType.Client:
-                    string restaurantName = checks.GetValidInput("Please enter your restaurant's name: ", InputValidator.ValidateRestaurantName, "Invalid restaurant name.");
-
-                    Console.WriteLine("Please select your restaurant's style:");
-                    Console.WriteLine("1: Italian");
-                    Console.WriteLine("2: French");
-                    Console.WriteLine("3: Chinese");
-                    Console.WriteLine("4: Japanese");
-                    Console.WriteLine("5: American");
-                    Console.WriteLine("6: Australian");
-
-                    int styleChoice = GetMenuChoice(1, 6);
-                    FoodStyle style = (FoodStyle)styleChoice;
-                    Location restaurantLocation = checks.GetValidLocation();
-
-                    success = _service.RegisterClient(name, age, email, mobile, password, restaurantName, style, restaurantLocation);
-                    break;
-            }
-
-            if (success)
-            {
-                Console.WriteLine($"You have been successfully registered as a {userType.ToString().ToLower()}, {name}!");
-            }
-            else
-            {
-                Console.WriteLine("Registration failed. Please try again.");
             }
         }
 
-        /// <summary>
-        /// Gets a valid email that is not already in use
-        /// </summary>
-        /// <returns>A valid email</returns>
-        private string GetUniqueEmail()
-        {
-            while (true)
-            {
-                string email = checks.GetValidInput("Please enter your email address:", InputValidator.ValidateEmail, "Invalid email address.");
+        #endregion
 
-                if (_service.IsEmailInUse(email))
-                {
-                    Console.WriteLine("This email address is already in use.");
-                }
-                else
-                {
-                    return email;
-                }
-            }
-        }
+        #region Display Methods
 
-        /// <summary>
-        /// Logs in a user
-        /// </summary>
-        private void LoginUser()
-        {
-            string email = checks.GetValidInput("Email:", InputValidator.ValidateEmail, "Invalid email address.");
-            string password = checks.GetValidInput("Password:", p => true, null); // Any password format is accepted for login attempt
-
-            bool success = _service.Login(email, password);
-
-            if (_service.CurrentUser == null || !success)
-            {
-                Console.WriteLine("Invalid email or password.");
-                return;
-            }
-            Console.WriteLine($"Welcome back, {_service.CurrentUser.Name}!");
-
-        }
-
-        /// <summary>
-        /// Displays user information
-        /// </summary>
-        /// <param name="user">The user to display information for</param>
-        private void DisplayUserInfo(User user)
+        private void DisplayUserInfo(Customer user)
         {
             Console.WriteLine("Your user details are as follows:");
             Console.WriteLine($"Name: {user.Name}");
             Console.WriteLine($"Age: {user.Age}");
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Mobile: {user.Mobile}");
-
-            if (user is Customer customer)
-            {
-                Console.WriteLine($"Location: {customer.Location}");
-                Console.WriteLine($"You've made {customer.Orders.Count} order(s) and spent a total of ${customer.Orders.Sum(order => order.TotalPrice):F2} here.");
-            }
-            else if (user is Deliverer deliverer)
-            {
-                Console.WriteLine($"Licence plate: {deliverer.LicencePlate}");
-            }
-            else if (user is Client client)
-            {
-                Console.WriteLine($"Restaurant name: {client.Restaurant.Name}");
-                Console.WriteLine($"Restaurant style: {client.Restaurant.Style}");
-                Console.WriteLine($"Restaurant location: {client.Restaurant.Location}");
-            }
+            Console.WriteLine($"Location: {user.Location}");
+            Console.WriteLine($"You've made {user.Orders.Count} order(s) and spent a total of ${user.Orders.Sum(order => order.TotalPrice):F2} here.");
         }
 
         /// <summary>
-        /// Displays restaurant information
+        /// Displays user information for a deliverer, including active order and vehicle
         /// </summary>
-        /// <param name="restaurant">The restaurant to display information for</param>
+        private void DisplayDelivererInfo(Deliverer deliverer)
+        {
+            Console.WriteLine("Your user details are as follows:");
+            Console.WriteLine($"Name: {deliverer.Name}");
+            Console.WriteLine($"Age: {deliverer.Age}");
+            Console.WriteLine($"Email: {deliverer.Email}");
+            Console.WriteLine($"Mobile: {deliverer.Mobile}");
+            Console.WriteLine($"Licence plate: {deliverer.LicencePlate}");
+
+            if (deliverer.CurrentOrder != null)
+            {
+                Console.WriteLine("You are currently delivering the following order:");
+                Console.WriteLine($"Order ID: {deliverer.CurrentOrder.Id}");
+                Console.WriteLine($"Restaurant: {deliverer.CurrentOrder.Restaurant.Name} at {deliverer.CurrentOrder.Restaurant.Location}");
+                Console.WriteLine($"Customer: {deliverer.CurrentOrder.Customer.Name} at {deliverer.CurrentOrder.Customer.Location}");
+                Console.WriteLine($"Status: {deliverer.CurrentOrder.Status}");
+            }
+        }
+
+        private void DisplayClientInfo(Client client)
+        {
+            Console.WriteLine("Your user details are as follows:");
+            Console.WriteLine($"Name: {client.Name}");
+            Console.WriteLine($"Age: {client.Age}");
+            Console.WriteLine($"Email: {client.Email}");
+            Console.WriteLine($"Mobile: {client.Mobile}");
+            Console.WriteLine($"Restaurant name: {client.Restaurant.Name}");
+            Console.WriteLine($"Restaurant style: {client.Restaurant.Style}");
+            Console.WriteLine($"Restaurant location: {client.Restaurant.Location}");
+        }
+
+
         private void DisplayRestaurantInfo(Restaurant restaurant)
         {
             var info = restaurant.GetRestaurantInfo();
-
             Console.WriteLine("Restaurant Information:");
             foreach (var item in info)
             {
@@ -427,18 +384,15 @@ namespace ArribaEats.UI
             }
         }
 
+        #endregion
+
+        #region Customer Order & Review
         /// <summary>
         /// Views the restaurants available to a customer
         /// </summary>
         /// <param name="customer">The customer viewing the restaurants</param>
         private void ViewRestaurants(Customer customer)
         {
-            //if (_service.Restaurants.Count == 0)
-            //{
-            //    Console.WriteLine("There are no restaurants available.");
-            //    return;
-            //}
-
             Console.WriteLine("How would you like the list of restaurants ordered?");
             Console.WriteLine("1: Sorted alphabetically by name");
             Console.WriteLine("2: Sorted by distance");
@@ -448,48 +402,39 @@ namespace ArribaEats.UI
 
             int choice = GetMenuChoice(1, 5);
 
-            // Exit early if user selects "Return"
-            if (choice == 5)
-            {
-                return;
-            }
+            if (choice == 5) return;
 
-            string sortBy = choice switch
+            IRestaurantSorter sorter = choice switch
             {
-                1 => "name",
-                2 => "distance",
-                3 => "style",
-                4 => "rating"
+                1 => new NameSorter(),
+                2 => new DistanceSorter(),
+                3 => new StyleSorter(),
+                4 => new RatingSorter(),
+                _ => throw new InvalidOperationException("Invalid selection.")
             };
 
-
-            var restaurants = _service.GetSortedRestaurants(customer, sortBy);
+            var restaurants = sorter.SortRestaurants(_service.Restaurants, customer);
 
             Console.WriteLine("You can order from the following restaurants:");
             Console.WriteLine("Restaurant Name       Loc     Dist  Style       Rating");
 
             for (int i = 0; i < restaurants.Count; i++)
             {
-                var restaurant = restaurants[i];
-                var location = $"{restaurant.Location.X},{restaurant.Location.Y}";
-                int distance = restaurant.Location.DistanceTo(customer.Location);
-                string ratingDisplay = restaurant.AverageRating > 0 ? restaurant.AverageRating.ToString("F1") : "-";
-                Console.WriteLine($"{i + 1}: {restaurant.Name.PadRight(20)} {location.PadRight(7)} {distance.ToString().PadRight(6)} {restaurant.Style.ToString().PadRight(10)} {ratingDisplay}");
+                var r = restaurants[i];
+                var location = $"{r.Location.X},{r.Location.Y}";
+                int distance = r.Location.DistanceTo(customer.Location);
+                string ratingDisplay = r.AverageRating > 0 ? r.AverageRating.ToString("F1") : "-";
+
+                Console.WriteLine($"{i + 1}: {r.Name.PadRight(20)} {location.PadRight(7)} {distance.ToString().PadRight(6)} {r.Style.ToString().PadRight(10)} {ratingDisplay}");
             }
 
-            int returnOption = restaurants.Count + 1;
-            Console.WriteLine($"{returnOption}: Return to the previous menu");
-            int choice1 = GetMenuChoice(1, returnOption);
+            Console.WriteLine($"{restaurants.Count + 1}: Return to the previous menu");
+            int selection = GetMenuChoice(1, restaurants.Count + 1);
 
-            switch (choice1)
+            if (selection <= restaurants.Count)
             {
-                case var n when n >= 1 && n <= restaurants.Count:
-                    var selectedRestaurant = restaurants[n - 1];
-                    ViewRestaurantDetails(customer, selectedRestaurant);
-                    break;
-
-                case var r when r == returnOption:
-                    return;
+                var selectedRestaurant = restaurants[selection - 1];
+                ViewRestaurantDetails(customer, selectedRestaurant);
             }
         }
 
@@ -578,18 +523,13 @@ namespace ArribaEats.UI
                 }
                 else if (choice == completeOption)
                 {
-                    if (order.TotalPrice == 0)
-                    {
-                        Console.WriteLine("You must add at least one item before placing the order.");
-                    }
-                    else
-                    {
-                        // Now finalize and register the order
-                        _service.FinalizeOrder(order);
-                        Console.WriteLine($"Your order has been placed. Your order number is #{order.Id}.");
-                        orderPlaced = true;
-                        ordering = false;
-                    }
+
+                    // Now finalize and register the order
+                    _service.FinalizeOrder(order);
+                    Console.WriteLine($"Your order has been placed. Your order number is #{order.Id}.");
+                    orderPlaced = true;
+                    ordering = false;
+
                 }
                 else if (choice == cancelOption)
                 {
@@ -616,12 +556,6 @@ namespace ArribaEats.UI
         {
             var activeOrders = customer.Orders.Where(o => o.Status != OrderStatus.Delivered).ToList();
 
-            if (activeOrders.Count == 0)
-            {
-                Console.WriteLine("You have not placed any orders. ");
-                return;
-            }
-
             foreach (var order in activeOrders)
             {
                 Console.WriteLine($"Order #{order.Id} from {order.Restaurant.Name}: {order.Status}");
@@ -632,12 +566,21 @@ namespace ArribaEats.UI
                     Console.WriteLine($"{item.Value} x {item.Key.Name}");
                 }
             }
+            if (activeOrders.Count == 0)
+            {
+                Console.WriteLine("You have not placed any orders.");
+            }
+            //else
+            //{
+            //    Console.WriteLine("1: Return to previous menu");
+            //    int choice = GetMenuChoice(1, 1);
+            //    if (choice == 1) return;
+            //}
         }
 
         /// <summary>
-        /// Writes a review for a restaurant
+        /// Allows a customer to write a review for a delivered order
         /// </summary>
-        /// <param name="customer">The customer writing the review</param>
         private void WriteReview(Customer customer)
         {
             var deliveredOrders = customer.Orders
@@ -646,176 +589,70 @@ namespace ArribaEats.UI
                 .Distinct()
                 .ToList();
 
-            if (deliveredOrders.Count == 0)
-            {
-                Console.WriteLine("Select a previous order to rate the restaurant it came from:");
-                Console.WriteLine("1: Return to the previous menu");
-
-                int fallback = GetMenuChoice(1, 1);
-                switch (fallback)
-                {
-                    case 1:
-                        return;
-                }
-            }
-
-            Console.WriteLine("Select a restaurant to review:");
+            Console.WriteLine("Select a previous order to rate the restaurant it came from:");
             for (int i = 0; i < deliveredOrders.Count; i++)
             {
-                var restaurant = deliveredOrders[i];
-                Console.WriteLine($"{i + 1}: {restaurant.Name}");
+                Console.WriteLine($"{i + 1}: {deliveredOrders[i].Name}");
             }
             Console.WriteLine($"{deliveredOrders.Count + 1}: Return to the previous menu");
 
             int choice = GetMenuChoice(1, deliveredOrders.Count + 1);
-            switch (choice)
-            {
-                case var c when c == deliveredOrders.Count + 1:
-                    return;
+            if (choice == deliveredOrders.Count + 1) return;
 
-                case var c when c >= 1 && c <= deliveredOrders.Count:
-                    var selectedRestaurant = deliveredOrders[c - 1];
+            var restaurant = deliveredOrders[choice - 1];
 
-                    int rating = checks.GetValidIntInput(
-                        "Please enter your rating (1-5 stars):",
-                        r => r >= 1 && r <= 5,
-                        "Invalid rating. Please enter a number between 1 and 5."
-                    );
+            int rating = checks.GetValidIntInput(
+                "Please enter your rating (1-5 stars):",
+                r => r >= 1 && r <= 5,
+                "Invalid rating. Please enter a number between 1 and 5.");
 
-                    string comment = checks.GetValidInput(
-                        "Please enter your comment:",
-                        c => !string.IsNullOrWhiteSpace(c),
-                        "Invalid comment. Please enter a non-empty comment."
-                    );
+            string comment = checks.GetValidInput(
+                "Please enter your comment:",
+                c => !string.IsNullOrWhiteSpace(c),
+                "Invalid comment. Please enter a non-empty comment.");
 
-                    var review = _service.CreateReview(customer, selectedRestaurant, rating, comment);
-                    Console.WriteLine("Thank you for your review!");
-                    return;
-            }
+            var review = _service.CreateReview(customer, restaurant, rating, comment);
+            Console.WriteLine("Thank you for your review!");
         }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ///
-        /********************************************************************************/
 
         /// <summary>
         /// Views the available orders for a deliverer
         /// </summary>
         /// <param name="deliverer">The deliverer viewing the orders</param>
-        private void ViewAvailableOrders(Deliverer deliverer)
+        private void ViewAvailableOrders(List<Restaurant> restaurant)
         {
-            // Ask for deliverer's current location
-            Location location = checks.GetValidLocation();
-            deliverer.CurrentLocation = location;
+            InputChecks inputChecks = new InputChecks();
+            Location loc = inputChecks.GetValidLocation();
+            var r = restaurant[0]; // Assuming you want to check the first restaurant in the list
 
-            // Get orders available for delivery
-            var availableOrders = _service.GetAvailableOrders()
-                .Where(order => order.Status == OrderStatus.Cooking)
-                .ToList();
+            //int distance = (int)Math.Sqrt(Math.Pow(r.Location.X - _service.CurrentCustomer.Location.X, 2) + Math.Pow(r.Location.Y - _service.CurrentCustomer.Location.Y, 2));
+            //int total = (int)Math.Sqrt(Math.Pow(loc.X + _service.CurrentCustomer.Location.X, r.Location.X) + Math.Pow(loc.Y - _service.CurrentCustomer.Location.Y, r.Location.Y));
 
-            if (availableOrders == null)// || availableOrders.Count == 0)
-            {
-                Console.WriteLine("There are no available orders at this time.");
-                return;
-            }
+            //Console.WriteLine($"Distance from restaurant to customer: {total} units");
 
-            // Custom sort based on the first letter of the restaurant name
-            // The order shown in the image follows this pattern: T, C, O, P, K, S, T
-            availableOrders = availableOrders
-                .OrderBy(order => GetSortValue(order.Restaurant.Name))
-                .ToList();
-
-            // Print header
             Console.WriteLine("The following orders are available for delivery. Select an order to accept it:");
             Console.WriteLine("Order  Restaurant Name       Loc    Customer Name    Loc    Dist");
 
-            // Print each available order
-            for (int i = 0; i < availableOrders.Count; i++)
+            for (int i = 0; i < _service.GetAvailableOrders(r).Count; i++)
             {
-                var order = availableOrders[i];
-                string restLoc = $"{order.Restaurant.Location.X},{order.Restaurant.Location.Y}";
-                string custLoc = $"{order.Customer.Location.X},{order.Customer.Location.Y}";
-                int restaurantDistance = order.Restaurant.Location.DistanceTo(deliverer.CurrentLocation);
-                int customerDistance = order.Restaurant.Location.DistanceTo(order.Customer.Location);
-                int totalDistance = restaurantDistance + customerDistance;
-                Console.WriteLine($"{i + 1}: {order.Restaurant.Name.PadRight(20)} {restLoc.PadRight(6)} {order.Customer.Name.PadRight(16)} {custLoc.PadRight(6)} {totalDistance}");
-            }
-            foreach (var order in availableOrders)
-            {
-                string restLoc = $"{order.Restaurant.Location.X},{order.Restaurant.Location.Y}";
-                string custLoc = $"{order.Customer.Location.X},{order.Customer.Location.Y}";
-                int restaurantDistance = order.Restaurant.Location.DistanceTo(deliverer.CurrentLocation);
-                int customerDistance = order.Restaurant.Location.DistanceTo(order.Customer.Location);
-                int totalDistance = restaurantDistance + customerDistance;
-                for (int i = 0; i < availableOrders.Count; i++)
-                {
-                    Console.WriteLine($"{i + 1}: {order.Restaurant.Name.PadRight(20)} {restLoc.PadRight(6)} {order.Customer.Name.PadRight(16)} {custLoc.PadRight(6)} {totalDistance}");
-                }
+                // make it match Console.WriteLine("Order  Restaurant Name       Loc    Customer Name    Loc    Dist");
+                var order = _service.GetAvailableOrders(r)[i];
 
-                if (order.Deliverer != null)
-                {
-                    Console.WriteLine($"   Deliverer: {order.Deliverer.Name}");
-                    Console.WriteLine($"   Licence Plate: {order.Deliverer.LicencePlate}");
-                }
-            }
+                var parts = loc;
+                int restaurantX = r.Location.X;
+                int restaurantY = r.Location.Y;
+                int customerX = order.Customer.Location.X;
+                int customerY = order.Customer.Location.Y;
+                int distDelivererToRestauraunt = (int)Math.Sqrt(Math.Pow(restaurantX - loc.X, 2) + Math.Pow(restaurantY - loc.Y, 2));
+                int distRestaurantToCustomer = (int)Math.Sqrt(Math.Pow(restaurantX - customerX, 2) + Math.Pow(restaurantY - customerY, 2));
+                int total = distDelivererToRestauraunt + distRestaurantToCustomer;
 
-            // Return option
-            int returnOption = availableOrders.Count + 1;
-            Console.WriteLine($"{returnOption}: Return to the previous menu");
 
-            // User selects an order
-            Console.Write($"Please enter a choice between 1 and {returnOption}: ");
-            string input = Console.ReadLine()?.Trim();
-            if (!int.TryParse(input, out int choice) || choice < 1 || choice > returnOption)
-            {
-                Console.WriteLine("Invalid input.");
-                return;
-            }
+                Console.WriteLine($"{i + 1}      {order.Restaurant.Name}       {order.Restaurant.Location.X},{order.Restaurant.Location.Y}    {order.Customer.Name}       {order.Customer.Location.X},{order.Customer.Location.Y}    {total}");
 
-            if (choice == returnOption)
-            {
-                return;
-            }
-
-            var selectedOrder = availableOrders[choice - 1];
-            bool success = _service.AcceptOrder(deliverer, selectedOrder);
-            if (success)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Thanks for accepting the order. Please head to {selectedOrder.Restaurant.Name} at {selectedOrder.Restaurant.Location} to pick it up.");
-                Console.ResetColor();
-            }
-            else
-            {
-                Console.WriteLine("Failed to accept the order.");
             }
         }
 
-        // Helper method to determine sort value based on first letter
-        private int GetSortValue(string restaurantName)
-        {
-            if (string.IsNullOrEmpty(restaurantName))
-                return int.MaxValue;
-
-            char firstChar = char.ToUpper(restaurantName.TrimStart().First());
-
-            // The order shown in the image follows this pattern: T, C, O, P, K, S, T
-            // So we'll create a custom ordering that matches this
-            switch (firstChar)
-            {
-                case 'T':
-                    // Handle special case for T (both first and last in the order)
-                    if (restaurantName.TrimStart().StartsWith("The", StringComparison.OrdinalIgnoreCase))
-                        return 1;  // "The Golden Noodle" comes first
-                    return 7;      // "Tim's Tex-Mex" comes last
-                case 'C': return 2;  // "Chez Meme"
-                case 'O': return 3;  // "Ocean House"
-                case 'P': return 4;  // "Pure China"
-                case 'K': return 5;  // "Kat's Lasagne"
-                case 'S': return 6;  // "Stan's Bar & Grill"
-                default: return 100 + (int)firstChar;  // Any other letters come after
-            }
-        }
         /// <summary>
         /// Updates the delivery status for a deliverer
         /// </summary>
@@ -896,86 +733,107 @@ namespace ArribaEats.UI
         /// Updates the status of an order for a restaurant
         /// </summary>
         /// <param name="client">The client updating the order status</param>
-        private void UpdateRestaurantOrderStatus(Client client, OrderStatus newStatus)
+        /// <summary>
+        /// Shows all orders for the client's restaurant and allows updating status to "Cooking"
+        /// </summary>
+        private void CookOrders(Client client)
         {
             var restaurant = client.Restaurant;
+            var ordersToCook = restaurant.Orders
+                .Where(o => o.Status == OrderStatus.Ordered)
+                .ToList();
 
-            //if (restaurant.Orders.Count == 0)
-            //{
-            //    Console.WriteLine("You have no active orders.");
-            //    return;
-            //}
-
-            Console.WriteLine("Select an order to update:");
-            //for (int i = 0; i < restaurant.Orders.Count; i++)
-            //{
-            //    var order = restaurant.Orders[i];
-            //    Console.WriteLine($"{i + 1}: Order #{order.Id} - Status: {order.Status}");
-            //    Console.WriteLine($"{i + 1}: Return to the previous menu");
-            //}
-            foreach (var order in restaurant.Orders)
+            Console.WriteLine("Select an order to start cooking:");
+            for (int i = 0; i < ordersToCook.Count; i++)
             {
-                Console.WriteLine($"Order #{order.Id} - Status: {order.Status}");
+                var order = ordersToCook[i];
+                Console.WriteLine($"{i + 1}: Order #{order.Id} - {order.Customer.Name} - Status: {order.Status}");
             }
-            Console.WriteLine($"{restaurant.Orders.Count + 1}: Return to the previous menu");
+            Console.WriteLine($"{ordersToCook.Count + 1}: Return to previous menu");
 
-            int choice = GetMenuChoice(1, restaurant.Orders.Count);
-            var selectedOrder = restaurant.Orders[choice - 1];
+            int choice = GetMenuChoice(1, ordersToCook.Count + 1);
+            if (choice == ordersToCook.Count + 1) return;
 
-            bool validStatus = false;
+            var selectedOrder = ordersToCook[choice - 1];
+            selectedOrder.SetStatus(OrderStatus.Cooking);
+            Console.WriteLine($"Order #{selectedOrder.Id} is now marked as Cooking.");
+        }
+        /// <summary>
+        /// Handles cooking orders after a driver has already been assigned
+        /// </summary>
+        private void FinishCookingOrders(Client client)
+        {
+            var restaurant = client.Restaurant;
+            var ordersToFinish = restaurant.Orders
+                .Where(o => o.Status == OrderStatus.Cooking)
+                .ToList();
 
-            switch (selectedOrder.Status)
+            Console.WriteLine("Select an order to mark as cooked:");
+            for (int i = 0; i < ordersToFinish.Count; i++)
             {
-                case OrderStatus.Ordered:
-                    newStatus = OrderStatus.Cooking;
-                    validStatus = true;
-                    break;
-
-                case OrderStatus.Cooking:
-                    newStatus = OrderStatus.Cooked; 
-                    validStatus = true;
-                    //for (int i = 0; i < selectedOrder.Items.Count; i++)
-                    //{
-                    //    var item = restaurant.Orders[i];
-                    //    Console.WriteLine($"Order #{i + 1} is now marked as cooking. Please prepare the order, then mark it as finished cooking: {item.Items}");
-                    //}
-                    foreach (var item in selectedOrder.Items)
-                    {
-                        Console.WriteLine($"Order #{selectedOrder.Id} is now marked as cooking. Please prepare the order, then mark it as finished cooking: {item.Value} x {item.Key.Name}");
-                    }
-
-                    break;
-                case OrderStatus.Cooked:
-                    if (selectedOrder.Deliverer != null)
-                    {
-                        newStatus = OrderStatus.BeingDelivered;
-                        validStatus = true;
-                    }
-                    else
-                    {
-                        Console.WriteLine("This order does not have a deliverer assigned yet.");
-                        return;
-                    }
-                    break;
-                default:
-                    Console.WriteLine("You cannot update the status of this order.");
-                    return;
+                var order = ordersToFinish[i];
+                Console.WriteLine($"{i + 1}: Order #{order.Id} - {order.Customer.Name} - Status: {order.Status}");
             }
+            Console.WriteLine($"{ordersToFinish.Count + 1}: Return to previous menu");
 
-            if (validStatus)
+            int choice = GetMenuChoice(1, ordersToFinish.Count + 1);
+            if (choice == ordersToFinish.Count + 1) return;
+
+            var selectedOrder = ordersToFinish[choice - 1];
+            bool success = _service.UpdateOrderStatus(selectedOrder, OrderStatus.Cooked);
+
+            if (success)
             {
-                bool success = _service.UpdateOrderStatus(selectedOrder, newStatus);
-
-                if (success)
-                {
-                    Console.WriteLine($"Order #{selectedOrder.Id} has been updated to {newStatus}.");
-                }
-                else
-                {
-                    Console.WriteLine("Failed to update the order status.");
-                }
+                Console.WriteLine($"Order #{selectedOrder.Id} has been marked as Cooked.");
+            }
+            else
+            {
+                Console.WriteLine("Failed to update the order status.");
             }
         }
+        /// <summary>
+        /// Marks a delivery as completed once the deliverer reaches the customer's location
+        /// </summary>
+        /// <summary>
+        /// Marks an order as "Being Delivered" if it has been cooked and assigned a deliverer,
+        /// and then completes the delivery for demonstration/testing flow.
+        /// </summary>
+        private void HandleDeliveryDispatch(Client client)
+        {
+            var restaurant = client.Restaurant;
+            var readyOrders = restaurant.Orders
+                .Where(o => o.Status == OrderStatus.Cooked && o.Deliverer != null)
+                .ToList();
+
+
+            Console.WriteLine("Select an order to mark as 'Being Delivered':");
+            for (int i = 0; i < readyOrders.Count; i++)
+            {
+                var order = readyOrders[i];
+                Console.WriteLine($"{i + 1}: Order #{order.Id} - Deliverer: {order.Deliverer.Name} - Status: {order.Status}");
+            }
+            Console.WriteLine($"{readyOrders.Count + 1}: Return to previous menu");
+
+            int choice = GetMenuChoice(1, readyOrders.Count + 1);
+            if (choice == readyOrders.Count + 1) return;
+
+            var selectedOrder = readyOrders[choice - 1];
+            bool dispatched = _service.UpdateOrderStatus(selectedOrder, OrderStatus.BeingDelivered);
+
+            if (dispatched)
+            {
+                Console.WriteLine($"Order #{selectedOrder.Id} has been marked as 'Being Delivered'.");
+
+                // Auto-complete for flow testing
+                selectedOrder.Deliverer?.CompleteDelivery();
+                Console.WriteLine($"Order #{selectedOrder.Id} has been marked as Delivered by {selectedOrder.Deliverer?.Name}.");
+            }
+            else
+            {
+                Console.WriteLine("Failed to update order status.");
+            }
+        }
+
 
         /// <summary>
         /// Adds a menu item to a restaurant
@@ -1030,5 +888,8 @@ namespace ArribaEats.UI
                 break;
             }
         }
+
+#endregion
+
     }
 }

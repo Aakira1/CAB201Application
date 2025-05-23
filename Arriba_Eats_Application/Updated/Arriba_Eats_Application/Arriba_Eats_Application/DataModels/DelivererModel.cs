@@ -8,80 +8,54 @@ namespace ArribaEats.Models
     /// </summary>
     public class Deliverer : User
     {
+        #region Properties
         /// <summary>
-        /// Gets or sets the licence plate of the deliverer's vehicle
+        /// Gets or sets the deliverer's licence plate
         /// </summary>
         public string LicencePlate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current order being delivered
-        /// </summary>
         public Order CurrentOrder { get; set; }
+        public Location CurrentLocation { get; set; } = new(0, 0);
+        public Deliverer deliverer { get; set; } // Not needed unless used for something specific
 
-        /// <summary>
-        /// Gets or sets the current location of the deliverer
-        /// </summary>
-        public Location CurrentLocation { get; set; }
+        #endregion
 
+        #region Constructor
         /// <summary>
         /// Creates a new deliverer with the specified details
         /// </summary>
-        /// <param name="name">The name of the deliverer</param>
-        /// <param name="age">The age of the deliverer</param>
-        /// <param name="email">The email address of the deliverer</param>
-        /// <param name="mobile">The mobile number of the deliverer</param>
-        /// <param name="password">The password of the deliverer</param>
-        /// <param name="licencePlate">The licence plate of the deliverer's vehicle</param>
+        /// <param name="name"></param>
+        /// <param name="age"></param>
+        /// <param name="email"></param>
+        /// <param name="mobile"></param>
+        /// <param name="password"></param>
+        /// <param name="licencePlate"></param>
         public Deliverer(string name, int age, string email, string mobile, string password, string licencePlate)
             : base(name, age, email, mobile, password)
         {
             LicencePlate = licencePlate;
-            CurrentOrder = null;
-            // Initialize at default location (0,0)
-            CurrentLocation = new Location(0, 0);
         }
 
-        /// <summary>
-        /// Calculates the total distance for delivering an order
-        /// </summary>
-        /// <param name="order">The order to deliver</param>
-        /// <returns>The total distance to deliver the order</returns>
-        public int CalculateTotalDistance(Order order)
-        {
-            int toRestaurant = CurrentLocation.DistanceTo(order.Restaurant.Location);
-            int toCustomer = order.Restaurant.Location.DistanceTo(order.Customer.Location);
-            return toRestaurant + toCustomer;
-        }
+        #endregion
 
+        #region Order Interaction
         /// <summary>
         /// Accepts an order for delivery
         /// </summary>
-        /// <param name="order">The order to accept</param>
-        public void AcceptOrder(Order order)
+        /// <param name="order"></param>
+        /// <param name="deliverer"></param>
+        public void AcceptOrder(Order order, Deliverer deliverer)
         {
-            CurrentOrder = order;
-            order.AssignDeliverer(this);
-        }
-
-        public void GetOrderDetails()
-        {
-            if (CurrentOrder != null)
+            if (order.Status == OrderStatus.Cooked && order.Deliverer == null)
             {
-                Console.WriteLine($"Order ID: {CurrentOrder.Id}");
-                Console.WriteLine($"Restaurant: {CurrentOrder.Restaurant.Name}");
-                Console.WriteLine($"Customer: {CurrentOrder.Customer.Name}");
-                Console.WriteLine($"Total Price: {CurrentOrder.TotalPrice:C}");
-            }
-            else
-            {
-                Console.WriteLine("No current order.");
+                order.Deliverer = deliverer;
+                deliverer.CurrentOrder = order;
+                // Optionally, update order status here or leave it as Cooked until client sets BeingDelivered
+                order.SetStatus(OrderStatus.BeingDelivered);
             }
         }
-
-        public Deliverer deliverer { get; set; }
 
         /// <summary>
-        /// Sets the deliverer's status as at the restaurant
+        /// Sets the current location of the deliverer
         /// </summary>
         public void ArriveAtRestaurant()
         {
@@ -105,9 +79,36 @@ namespace ArribaEats.Models
         }
 
         /// <summary>
-        /// Gets the deliverer information as a dictionary of property names and values
+        /// Calculates the total distance for the order delivery
         /// </summary>
-        /// <returns>A dictionary of deliverer information</returns>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public int CalculateTotalDistance(Order order)
+        {
+            int toRestaurant = CurrentLocation.DistanceTo(order.Restaurant.Location);
+            int toCustomer = order.Restaurant.Location.DistanceTo(order.Customer.Location);
+            return toRestaurant + toCustomer;
+        }
+
+        #endregion
+
+        #region Display Methods
+
+        public void GetOrderDetails()
+        {
+            if (CurrentOrder != null)
+            {
+                Console.WriteLine($"Order ID: {CurrentOrder.Id}");
+                Console.WriteLine($"Restaurant: {CurrentOrder.Restaurant.Name}");
+                Console.WriteLine($"Customer: {CurrentOrder.Customer.Name}");
+                Console.WriteLine($"Total Price: {CurrentOrder.TotalPrice:C}");
+            }
+            else
+            {
+                Console.WriteLine("No current order.");
+            }
+        }
+
         public override Dictionary<string, string> GetUserInfo()
         {
             var info = base.GetUserInfo();
@@ -126,5 +127,7 @@ namespace ArribaEats.Models
 
             return info;
         }
+
+        #endregion
     }
 }

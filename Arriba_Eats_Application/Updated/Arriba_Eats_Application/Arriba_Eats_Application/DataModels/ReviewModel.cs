@@ -7,25 +7,23 @@ namespace ArribaEats.Models
     /// </summary>
     public class Review
     {
-        /// <summary>
-        /// Gets the customer who wrote the review
-        /// </summary>
+        #region Properties
+
+        /// <summary>Gets the customer who wrote the review</summary>
         public Customer Customer { get; }
 
-        /// <summary>
-        /// Gets the restaurant being reviewed
-        /// </summary>
+        /// <summary>Gets the restaurant being reviewed</summary>
         public Restaurant Restaurant { get; }
 
-        /// <summary>
-        /// Gets the rating (1-5 stars)
-        /// </summary>
+        /// <summary>Gets the rating (1-5 stars)</summary>
         public int Rating { get; }
 
-        /// <summary>
-        /// Gets the comment for the review
-        /// </summary>
+        /// <summary>Gets the comment for the review</summary>
         public string Comment { get; }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Creates a new review with the specified details
@@ -41,9 +39,12 @@ namespace ArribaEats.Models
             Rating = rating;
             Comment = comment;
 
-            // Add this review to the restaurant's reviews
             restaurant.AddReview(this);
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Returns a string representation of this review
@@ -53,5 +54,7 @@ namespace ArribaEats.Models
         {
             return $"{Rating} stars - {Comment} (by {Customer.Name})";
         }
+
+        #endregion
     }
 }

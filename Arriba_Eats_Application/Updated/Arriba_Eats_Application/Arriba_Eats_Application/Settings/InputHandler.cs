@@ -10,61 +10,65 @@ namespace ArribaEats.Utils
     /// </summary>
     public static class InputValidator
     {
+        #region Name Validation
         /// <summary>
-        /// Validates a name
+        /// Validates the name input.
         /// </summary>
-        /// <param name="name">The name to validate</param>
-        /// <returns>True if the name is valid, false otherwise</returns>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static bool ValidateName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return false;
 
-            // Must consist of at least one letter and only letters, spaces, apostrophes and hyphens
             return Regex.IsMatch(name, @"^[a-zA-Z]+[a-zA-Z\s'-]*$");
         }
 
-        /// <summary>
-        /// Validates an age
-        /// </summary>
-        /// <param name="age">The age to validate</param>
-        /// <returns>True if the age is valid, false otherwise</returns>
+        #endregion
+
+        #region Age Validation
+
         public static bool ValidateAge(int age)
         {
-            // An integer value between 18 -100 inclusive
             return age >= 18 && age <= 100;
         }
 
+        #endregion
+
+        #region Mobile Validation
         /// <summary>
-        /// Validates a mobile number
+        /// Validates the mobile number input.
         /// </summary>
-        /// <param name="mobile">The mobile number to validate</param>
-        /// <returns>True if the mobile number is valid, false otherwise</returns>
+        /// <param name="mobile"></param>
+        /// <returns></returns>
         public static bool ValidateMobile(string mobile)
         {
-            // Must consist of only numbers, be exactly 10 characters long, and have a leading zero
             return Regex.IsMatch(mobile, @"^0\d{9}$");
         }
 
+        #endregion
+
+        #region Email Validation
         /// <summary>
-        /// Validates an email address
+        /// Validates the email input.
         /// </summary>
-        /// <param name="email">The email address to validate</param>
-        /// <returns>True if the email address is valid, false otherwise</returns>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public static bool ValidateEmail(string email)
         {
-            // Must include exactly one @ character and have at least one other character on either side
             return Regex.IsMatch(email, @"^[^@]+@[^@]+$");
         }
 
+        #endregion
+
+        #region Password Validation
         /// <summary>
-        /// Validates a password
+        /// Validates the password input.
         /// </summary>
-        /// <param name="password">The password to validate</param>
-        /// <returns>True if the password is valid, false otherwise</returns>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public static bool ValidatePassword(string password)
         {
-            // Must be at least 8 characters long, contain a digit, lowercase, and uppercase
             return password != null &&
                    password.Length >= 8 &&
                    password.Any(char.IsDigit) &&
@@ -73,38 +77,72 @@ namespace ArribaEats.Utils
                    !password.Contains(" ");
         }
 
+        #endregion
+
+        #region Licence Plate Validation
         /// <summary>
-        /// Validates a licence plate
+        /// Validates the licence plate input.
         /// </summary>
-        /// <param name="plate">The licence plate to validate</param>
-        /// <returns>True if the licence plate is valid, false otherwise</returns>
+        /// <param name="plate"></param>
+        /// <returns></returns>
         public static bool ValidateLicencePlate(string plate)
         {
-            // Must be between 1 and 8 characters long, may only contain uppercase letters, numbers and spaces
-            // and may not consist entirely of spaces
             if (string.IsNullOrWhiteSpace(plate) || plate.Length > 8)
                 return false;
 
             return Regex.IsMatch(plate, @"^[A-Z0-9 ]+$") && plate.Trim().Length > 0;
         }
 
+        #endregion
+
+        #region Restaurant Name Validation
         /// <summary>
-        /// Validates a restaurant name
+        /// Validates the restaurant name input.
         /// </summary>
-        /// <param name="name">The restaurant name to validate</param>
-        /// <returns>True if the restaurant name is valid, false otherwise</returns>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static bool ValidateRestaurantName(string name)
         {
-            // Must consist of at least one non-whitespace character
             return !string.IsNullOrWhiteSpace(name);
         }
-
         /// <summary>
-        /// Validates a location
+        /// Selects the food style for the restaurant.
         /// </summary>
-        /// <param name="location">The location string to validate</param>
-        /// <param name="parsedLocation">The parsed location (out parameter)</param>
-        /// <returns>True if the location is valid, false otherwise</returns>
+        /// <returns></returns>
+        public static FoodStyle SelectFoodStyle()
+        {
+            Console.WriteLine("Please select your restaurant's style:");
+            Console.WriteLine("1: Italian");
+            Console.WriteLine("2: French");
+            Console.WriteLine("3: Chinese");
+            Console.WriteLine("4: Japanese");
+            Console.WriteLine("5: American");
+            Console.WriteLine("6: Australian");
+            Console.WriteLine("Please enter a choice between 1 and 6:\n");
+
+            while (true)
+            {
+                string input = Console.ReadLine()?.Trim();
+
+                if (int.TryParse(input, out int choice) && choice >= 1 && choice <= 6)
+                {
+                    return (FoodStyle)choice;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid choice. Please enter a number between 1 and 6.");
+                }
+            }
+        }
+        #endregion
+
+        #region Location Validation
+        /// <summary>
+        /// Validates the location input in the form of "X,Y" where X and Y are integers.
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="parsedLocation"></param>
+        /// <returns></returns>
         public static bool ValidateLocation(string location, out Location parsedLocation)
         {
             parsedLocation = new Location();
@@ -112,15 +150,11 @@ namespace ArribaEats.Utils
             if (string.IsNullOrWhiteSpace(location))
                 return false;
 
-            // Clean input further to handle edge cases
             location = location.Trim();
-
-            // Handle potential comma formatting issues
             string[] parts = location.Split(',');
             if (parts.Length != 2)
                 return false;
 
-            // Trim individual parts to handle spaces
             string xPart = parts[0].Trim();
             string yPart = parts[1].Trim();
 
@@ -131,15 +165,15 @@ namespace ArribaEats.Utils
             return true;
         }
 
-        /// <summary>
-        /// Validates an item price
-        /// </summary>
-        /// <param name="price">The price string to validate</param>
-        /// <param name="parsedPrice">The parsed price (out parameter)</param>
-        /// <returns>True if the price is valid, false otherwise</returns>
+        #endregion
+
+        #region Price Validation
+
         public static bool ValidateItemPrice(string input, out decimal price)
         {
             return decimal.TryParse(input, out price) && price > 0 && price <= 999.99m;
         }
+
+        #endregion
     }
 }

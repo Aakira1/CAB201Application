@@ -7,15 +7,17 @@ namespace ArribaEats.Models
     /// </summary>
     public class MenuItem
     {
-        /// <summary>
-        /// Gets or sets the name of the menu item
-        /// </summary>
+        #region Properties
+
+        /// <summary>Gets or sets the name of the menu item</summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// Gets or sets the price of the menu item
-        /// </summary>
+        /// <summary>Gets or sets the price of the menu item</summary>
         public decimal Price { get; set; }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Creates a new menu item with the specified details
@@ -28,13 +30,18 @@ namespace ArribaEats.Models
             Price = price;
         }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Returns a string representation of this menu item
         /// </summary>
-        /// <returns>A string representation of this menu item</returns>
         public override string ToString()
         {
             return $"{Name} - ${Price:F2}";
         }
+
+        #endregion
     }
 }

@@ -1,48 +1,53 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ArribaEats.Models
 {
-
     /// <summary>
     /// Represents a customer in the system
     /// </summary>
     public class Customer : User
     {
+        #region Properties
         /// <summary>
-        /// Gets or sets the location of the customer
+        /// Gets or sets the customer's location
         /// </summary>
         public Location Location { get; set; }
-        public decimal TotalSpent { get; set; } = 0;
         /// <summary>
-        /// Gets the list of orders made by the customer
+        /// Gets or sets the list of orders made by the customer
         /// </summary>
-        public List<Order> Orders { get; set; }
+        public List<Order> Orders { get; set; } = new();
+        /// <summary>
+        /// Gets or sets the total amount spent by the customer
+        /// </summary>
+        public decimal TotalSpent { get; set; } = 0;
 
         /// <summary>
         /// Gets the total spending of the customer across all orders
         /// </summary>
         public decimal TotalSpending => Orders.Sum(o => o.TotalPrice);
 
+        #endregion
+
+        #region Constructor
+
         /// <summary>
         /// Creates a new customer with the specified details
         /// </summary>
-        /// <param name="name">The name of the customer</param>
-        /// <param name="age">The age of the customer</param>
-        /// <param name="email">The email address of the customer</param>
-        /// <param name="mobile">The mobile number of the customer</param>
-        /// <param name="password">The password of the customer</param>
-        /// <param name="location">The location of the customer</param>
         public Customer(string name, int age, string email, string mobile, string password, Location location)
             : base(name, age, email, mobile, password)
         {
             Location = location;
-            Orders = new List<Order>();
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Adds an order to the customer's order history
         /// </summary>
-        /// <param name="order">The order to add</param>
         public void AddOrder(Order order)
         {
             Orders.Add(order);
@@ -51,7 +56,6 @@ namespace ArribaEats.Models
         /// <summary>
         /// Gets the customer information as a dictionary of property names and values
         /// </summary>
-        /// <returns>A dictionary of customer information</returns>
         public override Dictionary<string, string> GetUserInfo()
         {
             var info = base.GetUserInfo();
@@ -59,5 +63,7 @@ namespace ArribaEats.Models
             info.Add("Spending", $"You've made {Orders.Count} order(s) and spent a total of ${TotalSpending:F2}");
             return info;
         }
+
+        #endregion
     }
 }

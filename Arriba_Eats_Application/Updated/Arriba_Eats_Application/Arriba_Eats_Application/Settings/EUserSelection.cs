@@ -2,11 +2,14 @@
 
 namespace ArribaEats.Models
 {
+    #region Food Style Enum
+
     /// <summary>
     /// Represents the types of food styles available for restaurants
     /// </summary>
     public enum FoodStyle
     {
+        None = 0,   
         Italian = 1,
         French = 2,
         Chinese = 3,
@@ -14,6 +17,10 @@ namespace ArribaEats.Models
         American = 5,
         Australian = 6
     }
+
+    #endregion
+
+    #region Order Status Enum
 
     /// <summary>
     /// Represents the possible statuses of an order in the system
@@ -36,6 +43,10 @@ namespace ArribaEats.Models
         Delivered
     }
 
+    #endregion
+
+    #region User Type Enum
+
     /// <summary>
     /// Represents the type of user in the system
     /// </summary>
@@ -50,4 +61,6 @@ namespace ArribaEats.Models
         /// <summary>User is a client who owns a restaurant</summary>
         Client
     }
+
+    #endregion
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ArribaEats.Interfaces;
 using ArribaEats.Models;
 
 namespace ArribaEats.Services
@@ -10,105 +11,30 @@ namespace ArribaEats.Services
     /// </summary>
     public class ArribaEatsService : IArribaEatsService
     {
-        private List<User> _users = new List<User>();
-        private List<Restaurant> _restaurants = new List<Restaurant>();
-        private List<Order> _orders = new List<Order>();
-        private List<Deliverer> _deliverers = new List<Deliverer>();
-        private int _nextOrderId;
+        private List<User> _users = new();
+        private List<Restaurant> _restaurants = new();
+        private List<Order> _orders = new();
+        private List<Deliverer> _deliverers = new();
+        private int _nextOrderId = 1;
 
-        /// <summary>
-        /// Gets the currently logged in user
-        /// </summary>
         public User CurrentUser { get; set; }
 
-        public Deliverer Deliverer { get; set; }
-
-        /// <summary>
-        /// Gets the list of all restaurants in the system
-        /// </summary>
         public List<Restaurant> Restaurants => _restaurants;
 
-        /// <summary>
-        /// Creates a new instance of the ArribaEats service
-        /// </summary>
-        public ArribaEatsService()
-        {
-            _users = new List<User>();
-            _restaurants = new List<Restaurant>();
-            CurrentUser = null;
-            _nextOrderId = 1; // Initialize the next order ID
-        }
+        public Customer CurrentCustomer { get; }
 
-        /// <summary>
-        /// Registers a new customer in the system
-        /// </summary>
-        /// <param name="name">The name of the customer</param>
-        /// <param name="age">The age of the customer</param>
-        /// <param name="email">The email address of the customer</param>
-        /// <param name="mobile">The mobile number of the customer</param>
-        /// <param name="password">The password of the customer</param>
-        /// <param name="location">The location of the customer</param>
-        /// <returns>True if registration was successful, false otherwise</returns>
-        public bool RegisterCustomer(string name, int age, string email, string mobile, string password, Location location)
-        {
-            if (IsEmailInUse(email))
-                return false;
+        public Deliverer CurrentDeliverer { get;}
 
-            var customer = new Customer(name, age, email, mobile, password, location);
-            _users.Add(customer);
-            return true;
-        }
+        public Restaurant CurrentRestaurant { get; }
 
-        /// <summary>
-        /// Registers a new deliverer in the system
-        /// </summary>
-        /// <param name="name">The name of the deliverer</param>
-        /// <param name="age">The age of the deliverer</param>
-        /// <param name="email">The email address of the deliverer</param>
-        /// <param name="mobile">The mobile number of the deliverer</param>
-        /// <param name="password">The password of the deliverer</param>
-        /// <param name="licencePlate">The licence plate of the deliverer's vehicle</param>
-        /// <returns>True if registration was successful, false otherwise</returns>
-        public bool RegisterDeliverer(string name, int age, string email, string mobile, string password, string licencePlate)
-        {
-            if (IsEmailInUse(email))
-                return false;
+        public List<Restaurant> Restaurant => _restaurants;
 
-            var deliverer = new Deliverer(name, age, email, mobile, password, licencePlate);
-            _users.Add(deliverer);
-            return true;
-        }
+        public Client CurrentClient { get; }
 
-        /// <summary>
-        /// Registers a new client in the system
-        /// </summary>
-        /// <param name="name">The name of the client</param>
-        /// <param name="age">The age of the client</param>
-        /// <param name="email">The email address of the client</param>
-        /// <param name="mobile">The mobile number of the client</param>
-        /// <param name="password">The password of the client</param>
-        /// <param name="restaurantName">The name of the restaurant</param>
-        /// <param name="style">The food style of the restaurant</param>
-        /// <param name="location">The location of the restaurant</param>
-        /// <returns>True if registration was successful, false otherwise</returns>
-        public bool RegisterClient(string name, int age, string email, string mobile, string password,
-                                 string restaurantName, FoodStyle style, Location location)
-        {
-            if (IsEmailInUse(email))
-                return false;
+        public Order Order { get; set; }
 
-            var client = new Client(name, age, email, mobile, password, restaurantName, style, location);
-            _users.Add(client);
-            _restaurants.Add(client.Restaurant);
-            return true;
-        }
+        #region User Management
 
-        /// <summary>
-        /// Logs in a user with the specified email and password
-        /// </summary>
-        /// <param name="email">The email address of the user</param>
-        /// <param name="password">The password of the user</param>
-        /// <returns>True if login was successful, false otherwise</returns>
         public bool Login(string email, string password)
         {
             var user = _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
@@ -120,20 +46,48 @@ namespace ArribaEats.Services
             return false;
         }
 
-        /// <summary>
-        /// Logs out the current user
-        /// </summary>
         public void Logout()
         {
             CurrentUser = null;
         }
 
-        /// <summary>
-        /// Adds a menu item to a restaurant
-        /// </summary>
-        /// <param name="name">The name of the menu item</param>
-        /// <param name="price">The price of the menu item</param>
-        /// <returns>True if the item was added successfully, false otherwise</returns>
+        public bool IsEmailInUse(string email)
+        {
+            return _users.Any(u => u.Email == email);
+        }
+
+        #endregion
+
+        #region Registration
+
+        public bool RegisterCustomer(string name, int age, string email, string mobile, string password, Location location)
+        {
+            if (IsEmailInUse(email)) return false;
+            _users.Add(new Customer(name, age, email, mobile, password, location));
+            return true;
+        }
+
+        public bool RegisterDeliverer(string name, int age, string email, string mobile, string password, string licencePlate)
+        {
+            if (IsEmailInUse(email)) return false;
+            _users.Add(new Deliverer(name, age, email, mobile, password, licencePlate));
+            return true;
+        }
+
+        public bool RegisterClient(string name, int age, string email, string mobile, string password,
+            string restaurantName, FoodStyle style, Location location)
+        {
+            if (IsEmailInUse(email)) return false;
+            var client = new Client(name, age, email, mobile, password, restaurantName, style, location);
+            _users.Add(client);
+            _restaurants.Add(client.Restaurant);
+            return true;
+        }
+
+        #endregion
+
+        #region Menu Management
+
         public bool AddMenuItem(string name, decimal price)
         {
             if (CurrentUser is Client client)
@@ -144,132 +98,126 @@ namespace ArribaEats.Services
             return false;
         }
 
+        #endregion
+
+        #region Restaurant
         /// <summary>
-        /// Gets the restaurants sorted by the specified criteria
+        /// Sorts the restaurants based on the given criteria
         /// </summary>
-        /// <param name="customer">The customer to calculate distances for</param>
-        /// <param name="sortBy">The criteria to sort by</param>
-        /// <returns>A list of restaurants sorted by the specified criteria</returns>
+        /// <param name="customer"></param>
+        /// <param name="sortBy"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public List<Restaurant> GetSortedRestaurants(Customer customer, string sortBy)
         {
-            switch (sortBy.ToLower())
+            IRestaurantSorter sorter = sortBy.ToLower() switch
             {
-                case "name":
-                    return _restaurants.OrderBy((r => r.Name)).ToList();
-                case "distance":
-                    return _restaurants.OrderBy(
-                        r => customer.Location.DistanceTo(r.Location)).ToList();
-                case "style":
-                    return _restaurants.OrderBy(r => r.Style.ToString()).ToList();
-                case "rating":
-                    return _restaurants.OrderByDescending(r => r.AverageRating).ToList();
-                default:
-                    return _restaurants.ToList();
-            }
+                "name" => new NameSorter(),
+                "rating" => new RatingSorter(),
+                "distance" => new DistanceSorter(),
+                "style" => new StyleSorter(),
+                _ => throw new ArgumentException("Invalid sorting criteria")
+            };
+
+            return sorter.SortRestaurants(_restaurants, customer);
         }
 
+        #endregion
+
+        #region Orders
         /// <summary>
-        /// Creates an order for a customer at a restaurant
+        /// Creates a new order for the customer at the specified restaurant
         /// </summary>
-        /// <param name="customer">The customer placing the order</param>
-        /// <param name="restaurant">The restaurant the order is from</param>
-        /// <param name="deliverers">The list of available deliverers</param>"
-        /// <returns>The newly created order</returns>
+        /// <param name="customer"></param>
+        /// <param name="restaurant"></param>
+        /// <returns></returns>
         public Order CreateOrder(Customer customer, Restaurant restaurant)
         {
             return new Order(customer, restaurant, _nextOrderId);
         }
-
         /// <summary>
-        /// Adds an item to an order
+        /// Adds a menu item to the order with the specified quantity
         /// </summary>
-        /// <param name="order">The order to add the item to</param>
-        /// <param name="item">The menu item to add</param>
-        /// <param name="quantity">The quantity of the item to add</param>
+        /// <param name="order"></param>
+        /// <param name="item"></param>
+        /// <param name="quantity"></param>
         public void AddItemToOrder(Order order, MenuItem item, int quantity)
         {
             order.AddItem(item, quantity);
         }
-
+        /// <summary>
+        /// Finalizes the order and links it to the customer and restaurant
+        /// </summary>
+        /// <param name="order"></param>
         public void FinalizeOrder(Order order)
         {
-            if (order != null)
+            if (order != null && !_orders.Contains(order))
             {
-                if (!_orders.Contains(order))
-                {
-                    order.Customer.Orders.Add(order);
-                    order.Restaurant.Orders.Add(order);
-                    _orders.Add(order);
-                    _nextOrderId++;
-                }
+                order.Customer.Orders.Add(order);
+                order.Restaurant.Orders.Add(order);
+                _orders.Add(order);
+                _nextOrderId++;
             }
         }
-
         /// <summary>
-        /// Gets the available orders for a deliverer
+        /// Updates the status of the order
         /// </summary>
-        /// <returns>A list of available orders</returns>
-        public List<Order> GetAvailableOrders()
+        /// <param name="order"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public bool UpdateOrderStatus(Order order, OrderStatus status)
+        {
+            if (order == null) return false;
+            order.Status = status;
+            return true;
+        }
+        /// <summary>
+        /// Gets all available orders that can be accepted by deliverers
+        /// </summary>
+        /// <param name="restaurant"></param>
+        /// <returns></returns>
+        public List<Order> GetAvailableOrders(Restaurant restaurant)
         {
             return _restaurants
-                .Where(r => r.Orders != null)
                 .SelectMany(r => r.Orders)
                 .Where(o => o.Status == OrderStatus.Cooked && o.Deliverer == null)
                 .ToList();
         }
-
         /// <summary>
-        /// Accepts an order for delivery
+        /// Accepts an order for delivery by a deliverer 
         /// </summary>
-        /// <param name="deliverer">The deliverer accepting the order</param>
-        /// <param name="order">The order to accept</param>
-        /// <returns>True if the order was accepted successfully, false otherwise</returns>
+        /// <param name="deliverer"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public bool AcceptOrder(Deliverer deliverer, Order order)
         {
-            if (order.Status != OrderStatus.Cooked || order.Deliverer != null)
-                return false;
-
-            deliverer.AcceptOrder(order);
+            if (order.Status != OrderStatus.Cooked || order.Deliverer != null) return false;
+            deliverer.AcceptOrder(order, deliverer);
             return true;
         }
 
-        /// <summary>
-        /// Updates the status of an order
-        /// </summary>
-        /// <param name="order">The order to update</param>
-        /// <param name="status">The new status</param>
-        /// <returns>True if the status was updated successfully, false otherwise</returns>
-        public bool UpdateOrderStatus(Order order, OrderStatus status)
-        {
-            if (order == null) return false;
+        #endregion
 
-            order.Status = status;
-            return true;
-        }
+        #region Reviews
 
         /// <summary>
-        /// Creates a review for a restaurant
+        /// Creates a review and links it properly to restaurant and customer
         /// </summary>
-        /// <param name="customer">The customer writing the review</param>
-        /// <param name="restaurant">The restaurant being reviewed</param>
-        /// <param name="rating">The rating (1-5 stars)</param>
-        /// <param name="comment">The comment for the review</param>
-        /// <returns>The newly created review</returns>
         public Review CreateReview(Customer customer, Restaurant restaurant, int rating, string comment)
         {
-            return new Review(customer, restaurant, rating, comment);
+            var review = new Review(customer, restaurant, rating, comment);
+            restaurant.AddReview(review);
+            return review;
         }
 
+
+        #endregion
+
+        #region Debug
         /// <summary>
-        /// Checks if an email is already in use
+        /// Prints the details of all registered users in the system
         /// </summary>
-        /// <param name="email">The email to check</param>
-        /// <returns>True if the email is already in use, false otherwise</returns>
-        public bool IsEmailInUse(string email)
-        {
-            return _users.Any(u => u.Email == email);
-        }
-
+        /// <returns></returns>
         bool IArribaEatsService.DebugPrintUsers()
         {
             Console.WriteLine("=== Registered Users ===");
@@ -282,9 +230,7 @@ namespace ArribaEats.Services
             {
                 Console.WriteLine(">> Customers:");
                 foreach (var c in customers)
-                {
                     Console.WriteLine($"- {c.Name} | Email: {c.Email}, Location: {c.Location.X},{c.Location.Y}");
-                }
                 Console.WriteLine();
             }
 
@@ -292,9 +238,7 @@ namespace ArribaEats.Services
             {
                 Console.WriteLine(">> Clients:");
                 foreach (var c in clients)
-                {
                     Console.WriteLine($"- {c.Name} | Restaurant: {c.Restaurant?.Name ?? "None"} | Style: {c.Restaurant?.Style}");
-                }
                 Console.WriteLine();
             }
 
@@ -302,19 +246,17 @@ namespace ArribaEats.Services
             {
                 Console.WriteLine(">> Deliverers:");
                 foreach (var d in deliverers)
-                {
                     Console.WriteLine($"- {d.Name} | Plate: {d.LicencePlate}");
-                }
                 Console.WriteLine();
             }
 
             if (!customers.Any() && !clients.Any() && !deliverers.Any())
-            {
                 Console.WriteLine("No users are currently registered.");
-            }
 
             Console.WriteLine("==========================");
             return true;
         }
+
+        #endregion
     }
 }
